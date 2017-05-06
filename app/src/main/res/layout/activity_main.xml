@@ -11,6 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Hello World!"
+        android:textSize="80sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -29,5 +30,15 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginRight="8dp"
+        android:text="Độ nhạy"
+        app:layout_constraintBottom_toBottomOf="@+id/editText"
+        app:layout_constraintRight_toLeftOf="@+id/editText" />
 
 </android.support.constraint.ConstraintLayout>
