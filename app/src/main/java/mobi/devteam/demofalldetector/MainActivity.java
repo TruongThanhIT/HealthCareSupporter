@@ -17,7 +17,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     EditText editText;
 
-    TextView txtDemo;
+    TextView txtDemo,txtMax;
+    double max;
+    int count = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +32,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         Sensor mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
         txtDemo = (TextView) findViewById(R.id.txtDemo);
+        txtMax = (TextView) findViewById(R.id.txtMax);
 
     }
 
@@ -38,14 +41,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         if (event.timestamp - lastTimestamp < 300){
             return;
         }
-
         lastTimestamp = event.timestamp;
-
-        Log.e("TIMESTAMP",event.timestamp + " "+event.accuracy);
 
         // alpha is calculated as t / (t + dT)
         // with t, the low-pass filter's time-constant
         // and dT, the event delivery rate
+
+        //Bo loc chuyen dong , cang -> 1 thi bo loc cang giam (van dong nhieu)
+        // -> 0 bo loc nhay hay (nguoi gia)
         float alpha = 0;
         try {
             alpha = Float.parseFloat(editText.getText().toString());
@@ -53,20 +56,25 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             alpha = 0;
         }
 
-        gravity[0] = alpha * gravity[0] + (1 - alpha) * event.values[0];
-        gravity[1] = alpha * gravity[1] + (1 - alpha) * event.values[1];
-        gravity[2] = alpha * gravity[2] + (1 - alpha) * event.values[2];
+        gravity[0] = alpha * gravity[0] + (1 - alpha) * event.values[0]; //x
+        gravity[1] = alpha * gravity[1] + (1 - alpha) * event.values[1]; //y
+        gravity[2] = alpha * gravity[2] + (1 - alpha) * event.values[2]; //Z
 
-        linear_acceleration[0] = event.values[0] - gravity[0];
-        linear_acceleration[1] = event.values[1] - gravity[1];
-        linear_acceleration[2] = event.values[2] - gravity[2];
+//        linear_acceleration[0] = event.values[0] - gravity[0];
+//        linear_acceleration[1] = event.values[1] - gravity[1];
+//        linear_acceleration[2] = event.values[2] - gravity[2];
 
-        double m = Math.sqrt(
-                linear_acceleration[0]*linear_acceleration[0]
-        + linear_acceleration[1]*linear_acceleration[1]
-        + linear_acceleration[2]*linear_acceleration[2]);
+        double m = Math.abs(gravity[2]); //Truong hop dien thoai up va ngang
+        if (count >= 5) {
+            txtDemo.setText(String.format("%.2f", m));
 
-        txtDemo.setText(String.format("%.2f", m));
+            if (m > max) {
+                max = m;
+                txtMax.setText(String.format("%.2f", m));
+            }
+        }else{
+            count++;
+        }
     }
 
     @Override
