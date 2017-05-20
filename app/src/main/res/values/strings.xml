@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">DemoFallDetector</string>
+
     <string name="title_activity_main">MainActivity</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -13,4 +14,12 @@
     <string name="nav_relatives_list">Relatives</string>
     <string name="nav_reminders">Reminders</string>
     <string name="nav_setting">Settings</string>
+
+    <!--Login activity strings-->
+    <string name="hintYourPassword">Nhập password của bạn</string>
+    <string name="hintYourEmail">Nhập email của bạn</string>
+    <string name="tenDangNhap">Tên đăng nhập</string>
+    <string name="matKhau">Mật khẩu</string>
+    <string name="login">Đăng nhập với Gmail</string>
+
 </resources>
