@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="10dp"
+    android:padding="@dimen/size_10"
     tools:context="mobi.devteam.demofalldetector.activity.LoginActivity">
 
     <ImageView
@@ -13,6 +13,7 @@
         android:layout_height="@dimen/size_180"
         android:layout_gravity="center"
         android:layout_marginTop="@dimen/size_20"
+        android:layout_marginBottom="@dimen/size_20"
         android:background="@drawable/image_user_login" />
 
     <LinearLayout
@@ -25,12 +26,13 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="0.6"
-            android:text="@string/tenDangNhap" />
+            android:text="@string/userName" />
 
         <EditText
             android:id="@+id/text_userName"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:inputType="textEmailAddress"
             android:layout_weight="0.4" />
     </LinearLayout>
 
@@ -44,14 +46,14 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="0.6"
-            android:text="@string/matKhau" />
+            android:text="@string/password" />
 
         <EditText
             android:id="@+id/text_password"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:inputType="textPassword"
-            android:layout_weight="0.4" />
+            android:layout_weight="0.4"
+            android:inputType="textPassword" />
     </LinearLayout>
 
     <Button

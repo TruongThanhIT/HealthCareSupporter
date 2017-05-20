@@ -5,9 +5,11 @@
     <dimen name="size_15">15dp</dimen>
     <dimen name="size_20">20dp</dimen>
     <dimen name="size_180">180dp</dimen>
+    <dimen name="size_200">200dp</dimen>
     <dimen name="size_300">300dp</dimen>
 
 
+    <dimen name="size_text_15">15sp</dimen>
     <dimen name="size_text_20">20sp</dimen>
 
 
