@@ -21,5 +21,6 @@
     <string name="tenDangNhap">Tên đăng nhập</string>
     <string name="matKhau">Mật khẩu</string>
     <string name="login">Đăng nhập với Gmail</string>
+    <string name="nav_logout">Logout</string>
 
 </resources>
