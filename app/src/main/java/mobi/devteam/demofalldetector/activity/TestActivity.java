@@ -1,4 +1,4 @@
-package mobi.devteam.demofalldetector;
+package mobi.devteam.demofalldetector.activity;
 
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -6,11 +6,12 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.EditText;
 import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity implements SensorEventListener {
+import mobi.devteam.demofalldetector.R;
+
+public class TestActivity extends AppCompatActivity implements SensorEventListener {
     private float[] gravity = new float[3];
     private float[] linear_acceleration = new float[3];
     private long lastTimestamp = 0;
@@ -24,7 +25,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_test);
 
         editText = (EditText) findViewById(R.id.editText);
 
@@ -38,7 +39,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        if (event.timestamp - lastTimestamp < 300){
+        if (event.timestamp - lastTimestamp < 200){
             return;
         }
         lastTimestamp = event.timestamp;
