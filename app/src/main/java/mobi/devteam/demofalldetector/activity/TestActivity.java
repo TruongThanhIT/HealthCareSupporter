@@ -61,11 +61,11 @@ public class TestActivity extends AppCompatActivity implements SensorEventListen
         gravity[1] = alpha * gravity[1] + (1 - alpha) * event.values[1]; //y
         gravity[2] = alpha * gravity[2] + (1 - alpha) * event.values[2]; //Z
 
-//        linear_acceleration[0] = event.values[0] - gravity[0];
-//        linear_acceleration[1] = event.values[1] - gravity[1];
-//        linear_acceleration[2] = event.values[2] - gravity[2];
+        linear_acceleration[0] = event.values[0] - gravity[0];
+        linear_acceleration[1] = event.values[1] - gravity[1];
+        linear_acceleration[2] = event.values[2] - gravity[2];
 
-        double m = Math.abs(gravity[2]); //Truong hop dien thoai up va ngang
+        double m = Math.abs(linear_acceleration[2]); //Truong hop dien thoai up va ngang
         if (count >= 5) {
             txtDemo.setText(String.format("%.2f", m));
 

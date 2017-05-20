@@ -1,11 +1,25 @@
 <resources>
-    <string name="app_name">DemoFallDetector</string>
+    <string name="app_name">Healthcare Supporter</string>
+    <string name="title_activity_main">Healthcare Supporter</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="nav_feedback">Feedback</string>
+    <string name="nav_share">Share</string>
+    <string name="nav_rate">Rate</string>
+    <string name="nav_home">Home</string>
+    <string name="nav_relatives_list">Relatives</string>
+    <string name="nav_setting">Settings</string>
+
     <!--Login activity-->
     <string name="hintYourPassword">Your password</string>
     <string name="hintYourEmail">Your email</string>
     <string name="userName">User name</string>
     <string name="password">Password</string>
     <string name="login">Login with Gmail</string>
+  
     <!--Create information of relative-->
     <string name="nameText">Name <font color='red'>*</font> </string>
     <string name="phoneText">Phone <font color='red'>*</font> </string>
