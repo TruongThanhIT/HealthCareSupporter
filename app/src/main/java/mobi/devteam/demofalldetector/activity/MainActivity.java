@@ -1,8 +1,11 @@
 package mobi.devteam.demofalldetector.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -14,9 +17,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import mobi.devteam.demofalldetector.R;
+import mobi.devteam.demofalldetector.fragment.HomeFragment;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private FragmentManager fragmentManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +39,21 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        fragmentManager = getSupportFragmentManager();
+        addControls();
+        initData();
+
+        onNavigationItemSelected(navigationView.getMenu().getItem(0));// select home for default
+
+    }
+
+    private void initData() {
+
+    }
+
+    private void addControls() {
+
     }
 
     @Override
@@ -60,8 +81,17 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
 
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         switch (item.getItemId()){
+            case R.id.nav_home :
+                fragmentTransaction.replace(R.id.frame_container, HomeFragment.newInstance());
+                fragmentTransaction.commit();
 
+                break;
+            case R.id.nav_test_faling :
+                Intent intent = new Intent(MainActivity.this,TestActivity.class);
+                startActivity(intent);
+                break;
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
