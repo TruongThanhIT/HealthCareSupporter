@@ -1,9 +1,12 @@
 <resources>
     <string name="app_name">DemoFallDetector</string>
-    <!--Login activity strings-->
-    <string name="hintYourPassword">Nhập password của bạn</string>
-    <string name="hintYourEmail">Nhập email của bạn</string>
-    <string name="tenDangNhap">Tên đăng nhập</string>
-    <string name="matKhau">Mật khẩu</string>
-    <string name="login">Đăng nhập với Gmail</string>
+    <!--Login activity-->
+    <string name="hintYourPassword">Your password</string>
+    <string name="hintYourEmail">Your email</string>
+    <string name="userName">User name</string>
+    <string name="password">Password</string>
+    <string name="login">Login with Gmail</string>
+    <!--Create information of relative-->
+    <string name="nameText">Name <font color='red'>*</font> </string>
+    <string name="phoneText">Phone <font color='red'>*</font> </string>
 </resources>
