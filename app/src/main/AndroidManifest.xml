@@ -17,16 +17,20 @@
 
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".activity.LoginActivity">
-
         </activity>
         <activity android:name=".activity.CreateRelativeActivity" />
         <activity android:name=".activity.UpdateRelativeActivity">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity android:name=".activity.CreateRelativeActivity">
+
+        </activity>
+        <activity android:name=".activity.UpdateRelativeActivity">
+
         </activity>
     </application>
 

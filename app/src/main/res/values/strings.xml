@@ -13,7 +13,7 @@
     <string name="nav_setting">Settings</string>
     <string name="nav_logout">Logout</string>
 
-    <!--Login activity-->
+    <!--Login-->
     <string name="hintYourPassword">Your password</string>
     <string name="hintYourEmail">Your email</string>
     <string name="userName">User name</string>
@@ -24,6 +24,15 @@
     <!--Create information of relative-->
     <string name="nameText">Name <font color='red'>*</font> </string>
     <string name="phoneText">Phone <font color='red'>*</font> </string>
+    <string name="err_image">Choose image</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!--Relatives-->
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+    <string name="tittle_manage_relatives">Information of relatives</string>
     <string name="title_activity_add_edit_task">AddEditTaskActivity</string>
 
     <!-- Reminder -->

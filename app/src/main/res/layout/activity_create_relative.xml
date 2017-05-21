@@ -8,7 +8,7 @@
     tools:context="mobi.devteam.demofalldetector.activity.CreateRelativeActivity">
 
     <ImageView
-        android:id="@+id/imgCreateCategory"
+        android:id="@+id/imgCreateRelative"
         android:layout_width="@dimen/size_200"
         android:layout_height="@dimen/size_200"
         android:layout_gravity="center"
