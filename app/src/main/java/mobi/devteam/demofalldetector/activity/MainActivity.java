@@ -86,8 +86,11 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_home :
                 fragmentTransaction.replace(R.id.frame_container, HomeFragment.newInstance());
                 fragmentTransaction.commit();
-
                 break;
+            case R.id.nav_relatives:
+//                fragmentTransaction.remove(
+//                        R.id.frame_container,
+//                )
             case R.id.nav_test_faling :
                 Intent intent = new Intent(MainActivity.this,TestActivity.class);
                 startActivity(intent);
