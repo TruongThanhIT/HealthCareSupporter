@@ -8,6 +8,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 import mobi.devteam.demofalldetector.R;
 import mobi.devteam.demofalldetector.model.Reminder;
 
@@ -55,10 +57,28 @@ public class AddEditReminderActivity extends AppCompatActivity {
 
     }
 
-    @OnClick(R.id.txtStart) void pickStartDate(){
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(AddEditReminderActivity.this,R.layout.reminder_pick_date_diaglog);
+    @OnClick(R.id.txtStart) void pickStartDate(boolean is_start){
+        View inflate = getLayoutInflater().inflate(R.layout.reminder_pick_date_diaglog, null, false);
+        ButterKnife.bind(inflate);
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(AddEditReminderActivity.this);
+        alertDialog.setView(inflate);
+        alertDialog.show();
+
+    }
+
+    @OnClick(R.id.txtEnd) void pickEndDate(){
+        View inflate = getLayoutInflater().inflate(R.layout.reminder_pick_date_diaglog, null, false);
+        ButterKnife.bind(inflate);
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(AddEditReminderActivity.this);
+        alertDialog.setView(inflate);
         alertDialog.show();
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home)
+            finish();
 
+        return super.onOptionsItemSelected(item);
+    }
 }
