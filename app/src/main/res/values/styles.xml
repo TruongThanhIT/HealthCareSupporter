@@ -23,7 +23,9 @@
         <item name="android:inputType">textFilter</item>
         <item name="android:textColor">#000</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:textSize">@dimen/size_text_20</item>
+        <item name="android:textSize">@dimen/size_text_15</item>
+        <item name="android:layout_marginTop">@dimen/size_15</item>
+
 
     </style>
   
