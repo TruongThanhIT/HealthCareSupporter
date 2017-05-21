@@ -4,14 +4,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import java.lang.reflect.InvocationTargetException;
 
+import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 import mobi.devteam.demofalldetector.R;
 import mobi.devteam.demofalldetector.activity.AddEditReminderActivity;
 
@@ -21,7 +25,10 @@ public class HomeFragment extends Fragment {
 
     private final int ADD_REMINDER_REQUEST = 123;
 
-     public HomeFragment() {
+    private View mView;
+    private Unbinder bind;
+
+    public HomeFragment() {
 
     }
 
@@ -44,7 +51,9 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_home, container, false);
+        mView = inflater.inflate(R.layout.fragment_home, container, false);
+        bind = ButterKnife.bind(this,mView);
+        return mView;
     }
 
     @OnClick(R.id.fab_add) void fab_onclick(){
@@ -59,5 +68,12 @@ public class HomeFragment extends Fragment {
         if (requestCode == ADD_REMINDER_REQUEST && resultCode == RESULT_OK && data != null){
             //TODO: handler added data here
         }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        bind.unbind();
+        bind = null;
     }
 }
