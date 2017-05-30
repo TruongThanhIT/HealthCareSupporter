@@ -57,7 +57,7 @@ public class AddEditReminderActivity extends AppCompatActivity {
 
     }
 
-    @OnClick(R.id.txtStart) void pickStartDate(boolean is_start){
+    @OnClick(R.id.txtStart) void pickStartDate(){
         View inflate = getLayoutInflater().inflate(R.layout.reminder_pick_date_diaglog, null, false);
         ButterKnife.bind(inflate);
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(AddEditReminderActivity.this);
