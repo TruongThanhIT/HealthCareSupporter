@@ -18,7 +18,8 @@
     <string name="hintYourEmail">Your email</string>
     <string name="userName">User name</string>
     <string name="password">Password</string>
-    <string name="login">Login with Gmail</string>
+    <string name="login">Login</string>
+    <string name="signup">Sign Up</string>
     <string name="err_login">User name or password invalid!!!</string>
 
     <!--Create information of relative-->
