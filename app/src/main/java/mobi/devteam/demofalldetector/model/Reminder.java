@@ -5,20 +5,30 @@ package mobi.devteam.demofalldetector.model;
  */
 
 public class Reminder {
+    public static String FIREBASE_KEY = "reminder";
+
     private int id;
     private String name;
     private double start; //time in ms
     private double end;
-    private RepeatType repeat;
+    private int repeat_type;
     private String note;
 
-    public Reminder(int id, String name, double start, double end, RepeatType repeat, String note) {
+    public Reminder(int id, String name, double start, double end, int repeat_type, String note) {
         this.id = id;
         this.name = name;
         this.start = start;
         this.end = end;
-        this.repeat = repeat;
+        this.repeat_type = repeat_type;
         this.note = note;
+    }
+
+    public static String getFirebaseKey() {
+        return FIREBASE_KEY;
+    }
+
+    public static void setFirebaseKey(String firebaseKey) {
+        FIREBASE_KEY = firebaseKey;
     }
 
     public int getId() {
@@ -53,12 +63,12 @@ public class Reminder {
         this.end = end;
     }
 
-    public RepeatType getRepeat() {
-        return repeat;
+    public int getRepeat_type() {
+        return repeat_type;
     }
 
-    public void setRepeat(RepeatType repeat) {
-        this.repeat = repeat;
+    public void setRepeat_type(int repeat_type) {
+        this.repeat_type = repeat_type;
     }
 
     public String getNote() {
@@ -69,3 +79,4 @@ public class Reminder {
         this.note = note;
     }
 }
+

@@ -47,5 +47,13 @@
 
     <string name="my_web_client_id">828026602604-bp4fq1gj71lh7h5po9gnotblq8sia4to.apps.googleusercontent.com	</string>
     <string name="err_email_password_null">Email or password is empty</string>
+    <string name="ae_reminder_hint">What you need to reminder?</string>
+
+    <string-array name="repeat_array">
+        <item>Daily</item>
+        <item>Weekly</item>
+        <item>Monthly</item>
+        <item>Yearly</item>
+    </string-array>
 
 </resources>

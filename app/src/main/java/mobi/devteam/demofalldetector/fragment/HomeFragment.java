@@ -11,6 +11,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.lang.reflect.InvocationTargetException;
 
 import butterknife.ButterKnife;
@@ -18,6 +21,7 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 import mobi.devteam.demofalldetector.R;
 import mobi.devteam.demofalldetector.activity.AddEditReminderActivity;
+import mobi.devteam.demofalldetector.model.Reminder;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -27,6 +31,7 @@ public class HomeFragment extends Fragment {
 
     private View mView;
     private Unbinder bind;
+    private DatabaseReference mDatabase;
 
     public HomeFragment() {
 
@@ -53,7 +58,16 @@ public class HomeFragment extends Fragment {
         // Inflate the layout for this fragment
         mView = inflater.inflate(R.layout.fragment_home, container, false);
         bind = ButterKnife.bind(this,mView);
+
+        initData();
+
         return mView;
+    }
+
+    private void initData() {
+        // Write a message to the database
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+
     }
 
     @OnClick(R.id.fab_add) void fab_onclick(){
@@ -74,6 +88,5 @@ public class HomeFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         bind.unbind();
-        bind = null;
     }
 }

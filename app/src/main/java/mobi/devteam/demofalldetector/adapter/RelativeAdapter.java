@@ -50,18 +50,12 @@ public class RelativeAdapter extends RecyclerView.Adapter<RelativeAdapter.Relati
         // Convert bytes data into a Bitmap
         holder.imgRelatives.setImageBitmap(Tools.convertByteArrayToBitmap(relative.getAvatar()));
         holder.txtName.setText(relative.getName());
-        holder.imgMenu.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showPopupMenu(holder.imgRelatives);
-            }
-        });
 //        Set default relative name
     }
     /**
      * Showing popup menu when tapping on 3 dots
      */
-    private void showPopupMenu(ImageView imgRelative) {
+    private void showPopupMenu(ImageView imgRelative,int position) {
         // inflate menu
         PopupMenu popup = new PopupMenu(mActivity, imgRelative);
         MenuInflater inflater = popup.getMenuInflater();
@@ -107,6 +101,13 @@ public class RelativeAdapter extends RecyclerView.Adapter<RelativeAdapter.Relati
         public RelativeHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+
+            imgMenu.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showPopupMenu(imgRelatives,getAdapterPosition());
+                }
+            });
         }
     }
 }

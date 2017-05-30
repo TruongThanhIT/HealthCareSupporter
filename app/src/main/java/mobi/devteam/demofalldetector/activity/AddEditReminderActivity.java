@@ -5,14 +5,19 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -28,7 +33,7 @@ public class AddEditReminderActivity extends AppCompatActivity {
     private boolean is_add_mode = true;
     private Reminder reminder;
 
-    @BindView(R.id.txtReminder) TextView txtReminder;
+    @BindView(R.id.edtReminder) TextView edtReminder;
     @BindView(R.id.txtStart) TextView txtStart;
     @BindView(R.id.txtEnd) TextView txtEnd;
     @BindView(R.id.spinReminderRepeat) Spinner spinReminderRepeat;
@@ -54,6 +59,15 @@ public class AddEditReminderActivity extends AppCompatActivity {
             Log.e("REQUIRED_INTENT_EXTRA",EXTRA_IS_ADD_MODE);
             finish();
         }
+
+        initData();
+
+    }
+
+    private void initData() {
+        String[] reminderArrayList = getResources().getStringArray(R.array.repeat_array);
+        spinReminderRepeat.setAdapter(new ArrayAdapter<>(this,android.R.layout.simple_list_item_1,reminderArrayList));
+        spinReminderRepeat.setSelection(0);
 
     }
 
