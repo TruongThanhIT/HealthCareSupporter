@@ -16,10 +16,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import butterknife.BindView;
 import com.google.firebase.auth.FirebaseAuth;
 
 import mobi.devteam.demofalldetector.R;
 import mobi.devteam.demofalldetector.fragment.HomeFragment;
+import mobi.devteam.demofalldetector.fragment.RelativeListFragment;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -87,17 +89,18 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
 
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        switch (item.getItemId()){
-            case R.id.nav_home :
+        switch (item.getItemId()) {
+            case R.id.nav_home:
                 fragmentTransaction.replace(R.id.frame_container, HomeFragment.newInstance());
                 fragmentTransaction.commit();
                 break;
             case R.id.nav_relatives:
-//                fragmentTransaction.remove(
-//                        R.id.frame_container,
-//                )
-            case R.id.nav_test_faling :
-                Intent intent = new Intent(MainActivity.this,TestActivity.class);
+                fragmentTransaction.replace(R.id.frame_container, RelativeListFragment.
+                        newInstance());
+                fragmentTransaction.commit();
+                break;
+            case R.id.nav_test_faling:
+                Intent intent = new Intent(MainActivity.this, TestActivity.class);
                 startActivity(intent);
                 break;
             case R.id.nav_logout :
