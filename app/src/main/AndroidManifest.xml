@@ -23,13 +23,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.CreateRelativeActivity" />
-        <activity android:name=".activity.UpdateRelativeActivity">
-        </activity>
-        <activity android:name=".activity.CreateRelativeActivity" />
-        <activity android:name=".activity.UpdateRelativeActivity">
 
-        </activity>
+        <activity android:name=".activity.CreateRelativeActivity" />
+        <activity android:name=".activity.UpdateRelativeActivity" />
+
+        <activity android:name=".activity.AddEditReminderActivity" android:theme="@style/AppTheme.NoActionBar"/>
+
     </application>
 
 </manifest>
