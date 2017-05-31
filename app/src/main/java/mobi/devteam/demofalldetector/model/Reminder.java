@@ -5,37 +5,33 @@ package mobi.devteam.demofalldetector.model;
  */
 
 public class Reminder {
-    public static String FIREBASE_KEY = "reminder";
 
-    private int id;
+    private long id;
     private String name;
-    private double start; //time in ms
-    private double end;
+    private long start; //time in ms
+    private long end;
     private int repeat_type;
     private String note;
+    private String thumb;
 
-    public Reminder(int id, String name, double start, double end, int repeat_type, String note) {
+    public Reminder() {
+    }
+
+    public Reminder(long id, String name, long start, long end, int repeat_type, String note, String thumb) {
         this.id = id;
         this.name = name;
         this.start = start;
         this.end = end;
         this.repeat_type = repeat_type;
         this.note = note;
+        this.thumb = thumb;
     }
 
-    public static String getFirebaseKey() {
-        return FIREBASE_KEY;
-    }
-
-    public static void setFirebaseKey(String firebaseKey) {
-        FIREBASE_KEY = firebaseKey;
-    }
-
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -47,19 +43,19 @@ public class Reminder {
         this.name = name;
     }
 
-    public double getStart() {
+    public long getStart() {
         return start;
     }
 
-    public void setStart(double start) {
+    public void setStart(long start) {
         this.start = start;
     }
 
-    public double getEnd() {
+    public long getEnd() {
         return end;
     }
 
-    public void setEnd(double end) {
+    public void setEnd(long end) {
         this.end = end;
     }
 
@@ -77,6 +73,14 @@ public class Reminder {
 
     public void setNote(String note) {
         this.note = note;
+    }
+
+    public String getThumb() {
+        return thumb;
+    }
+
+    public void setThumb(String thumb) {
+        this.thumb = thumb;
     }
 }
 
