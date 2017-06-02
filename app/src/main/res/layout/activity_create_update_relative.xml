@@ -5,9 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="mobi.devteam.demofalldetector.activity.UpdateRelativeActivity">
+    tools:context="mobi.devteam.demofalldetector.activity.CreateUpdateRelativeActivity">
+
     <ImageView
-        android:id="@+id/imgUpdateCategory"
+        android:id="@+id/imgCreateRelative"
         android:layout_width="@dimen/size_200"
         android:layout_height="@dimen/size_200"
         android:layout_gravity="center"
@@ -28,7 +29,7 @@
             android:text="@string/nameText" />
 
         <EditText
-            android:id="@+id/edtUpdateRelativeName"
+            android:id="@+id/edtCreateRelativeName"
             style="@style/editText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -49,7 +50,7 @@
             android:text="@string/phoneText" />
 
         <EditText
-            android:id="@+id/edtUpdateRelativePhone"
+            android:id="@+id/edtCreateRelativePhone"
             style="@style/editText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

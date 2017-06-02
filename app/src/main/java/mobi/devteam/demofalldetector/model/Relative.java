@@ -7,14 +7,53 @@ import android.os.Parcelable;
  * Created by DELL on 5/21/2017.
  */
 
-public class Relative implements Parcelable {
+public class Relative implements Parcelable{
     private long id;
     private String name;
-    private byte[] avatar;
     private String phone;
+    private String thumb;
 
     public Relative() {
     }
+
+    public Relative(long id, String name, String phone, String thumb) {
+        this.id = id;
+        this.name = name;
+        this.phone = phone;
+        this.thumb = thumb;
+    }
+
+    protected Relative(Parcel in) {
+        id = in.readLong();
+        name = in.readString();
+        phone = in.readString();
+        thumb = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(id);
+        dest.writeString(name);
+        dest.writeString(phone);
+        dest.writeString(thumb);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<Relative> CREATOR = new Creator<Relative>() {
+        @Override
+        public Relative createFromParcel(Parcel in) {
+            return new Relative(in);
+        }
+
+        @Override
+        public Relative[] newArray(int size) {
+            return new Relative[size];
+        }
+    };
 
     public long getId() {
         return id;
@@ -32,14 +71,6 @@ public class Relative implements Parcelable {
         this.name = name;
     }
 
-    public byte[] getAvatar() {
-        return avatar;
-    }
-
-    public void setAvatar(byte[] avatar) {
-        this.avatar = avatar;
-    }
-
     public String getPhone() {
         return phone;
     }
@@ -48,43 +79,11 @@ public class Relative implements Parcelable {
         this.phone = phone;
     }
 
-    @Override
-    public String toString() {
-        return "Relative{" +
-                "name='" + name + '\'' +
-                ", phone='" + phone + '\'' +
-                '}';
+    public String getThumb() {
+        return thumb;
     }
 
-    protected Relative(Parcel in) {
-        id = in.readLong();
-        name = in.readString();
-        avatar = in.createByteArray();
-        phone = in.readString();
-    }
-
-    public static final Creator<Relative> CREATOR = new Creator<Relative>() {
-        @Override
-        public Relative createFromParcel(Parcel in) {
-            return new Relative(in);
-        }
-
-        @Override
-        public Relative[] newArray(int size) {
-            return new Relative[size];
-        }
-    };
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeLong(id);
-        dest.writeString(name);
-        dest.writeByteArray(avatar);
-        dest.writeString(phone);
+    public void setThumb(String thumb) {
+        this.thumb = thumb;
     }
 }

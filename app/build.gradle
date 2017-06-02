@@ -40,6 +40,7 @@ dependencies {
     compile 'com.google.firebase:firebase-database:10.2.6'
     compile 'com.google.android.gms:play-services-auth:10.2.6'
     compile 'de.hdodenhof:circleimageview:2.1.0'
+    compile 'com.squareup.picasso:picasso:2.5.2'
 
     testCompile 'junit:junit:4.12'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.6.0'

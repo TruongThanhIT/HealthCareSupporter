@@ -10,13 +10,17 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.TestActivity" />
+        <activity
+            android:name=".activity.TestActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activity.MainActivity"
             android:label="@string/title_activity_main"
-
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".activity.LoginActivity">
+        <activity
+            android:name=".activity.LoginActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -24,10 +28,14 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".activity.CreateRelativeActivity" />
-        <activity android:name=".activity.UpdateRelativeActivity" />
+        <activity
+            android:name=".activity.CreateUpdateRelativeActivity"
+            android:screenOrientation="portrait" />
 
-        <activity android:name=".activity.AddEditReminderActivity" android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".activity.AddEditReminderActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
 
     </application>
 

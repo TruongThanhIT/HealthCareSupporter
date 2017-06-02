@@ -179,7 +179,6 @@ public class AddEditReminderActivity extends AppCompatActivity {
                     child.child(reminder.getId()+"").setValue(reminder);
                 }
 
-                setResult(RESULT_OK);
                 finish();
 
                 break;

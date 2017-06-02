@@ -21,8 +21,6 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -36,7 +34,7 @@ import mobi.devteam.demofalldetector.myInterface.OnRecyclerItemClickListener;
 
 import static android.app.Activity.RESULT_OK;
 
-public class HomeFragment extends Fragment implements OnRecyclerItemClickListener{
+public class HomeFragment extends Fragment implements OnRecyclerItemClickListener {
 
     private final int ADD_REMINDER_REQUEST = 123;
 
@@ -48,7 +46,8 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
     private ArrayList<Reminder> reminderArrayList;
     private ReminderAdapter reminderAdapter;
 
-    @BindView(R.id.rcv_reminders) RecyclerView rcv_reminders;
+    @BindView(R.id.rcv_reminders)
+    RecyclerView rcv_reminders;
 
     public HomeFragment() {
 
@@ -74,9 +73,9 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         mView = inflater.inflate(R.layout.fragment_home, container, false);
-        bind = ButterKnife.bind(this,mView);
+        bind = ButterKnife.bind(this, mView);
 
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(),LinearLayoutManager.VERTICAL,false);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         rcv_reminders.setLayoutManager(linearLayoutManager);
 
         initData();
@@ -86,7 +85,7 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
 
     private void initData() {
         reminderArrayList = new ArrayList<>();
-        reminderAdapter = new ReminderAdapter(getActivity(),reminderArrayList,this);
+        reminderAdapter = new ReminderAdapter(getActivity(), reminderArrayList, this);
         rcv_reminders.setAdapter(reminderAdapter);
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -97,40 +96,37 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
         load_firebase_data();
     }
 
-    private void load_firebase_data(){
+    private void load_firebase_data() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         DatabaseReference child = reminder_data.child(currentUser.getUid());
 
         child.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                GenericTypeIndicator<HashMap<String,Reminder>> t = new GenericTypeIndicator<HashMap<String,Reminder>>() {};
+                GenericTypeIndicator<HashMap<String, Reminder>> t = new GenericTypeIndicator<HashMap<String, Reminder>>() {};
 
-                HashMap<String,Reminder> value = dataSnapshot.getValue(t);
+                HashMap<String, Reminder> value = dataSnapshot.getValue(t);
+
                 reminderArrayList.clear();
-                reminderArrayList.addAll(value.values());
+                if (value!=null) {
+                    reminderArrayList.addAll(value.values());
+                }
+
                 reminderAdapter.notifyDataSetChanged();
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Toast.makeText(getActivity(), "Error when getting data : "+databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Error when getting data : " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    @OnClick(R.id.fab_add) void fab_onclick(){
+    @OnClick(R.id.fab_add)
+    void fab_onclick() {
         Intent intent = new Intent(getActivity(), AddEditReminderActivity.class);
-        intent.putExtra(AddEditReminderActivity.EXTRA_IS_ADD_MODE,true);
-        startActivityForResult(intent,ADD_REMINDER_REQUEST);
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == ADD_REMINDER_REQUEST && resultCode == RESULT_OK){
-            load_firebase_data();
-        }
+        intent.putExtra(AddEditReminderActivity.EXTRA_IS_ADD_MODE, true);
+        startActivityForResult(intent, ADD_REMINDER_REQUEST);
     }
 
     @Override
