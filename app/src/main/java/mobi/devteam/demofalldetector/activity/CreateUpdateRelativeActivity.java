@@ -2,12 +2,10 @@ package mobi.devteam.demofalldetector.activity;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.SystemClock;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -15,9 +13,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -31,7 +27,7 @@ import com.vansuita.pickimage.bundle.PickSetup;
 import com.vansuita.pickimage.dialog.PickImageDialog;
 import com.vansuita.pickimage.listeners.IPickResult;
 
-import java.util.Calendar;
+import java.io.File;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -157,12 +153,8 @@ public class CreateUpdateRelativeActivity extends AppCompatActivity implements I
     public void onPickResult(PickResult r) {
         if (r.getError() == null) {
             //If you want the Bitmap.
-            Picasso.with(this)
-                    .load(r.getUri())
-                    .resize(300,300)
-                    .centerCrop()
-                    .into(imgCreateRelative);
-
+            Bitmap scaledBitmap = Bitmap.createScaledBitmap(r.getBitmap(), 300, 300, true);
+            imgCreateRelative.setImageBitmap(scaledBitmap);
             //Image path
             //r.getPath();
         } else {

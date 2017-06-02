@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -28,6 +29,11 @@ import com.google.firebase.database.ServerValue;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
+import com.vansuita.pickimage.bean.PickResult;
+import com.vansuita.pickimage.bundle.PickSetup;
+import com.vansuita.pickimage.dialog.PickImageDialog;
+import com.vansuita.pickimage.listeners.IPickResult;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -40,7 +46,7 @@ import mobi.devteam.demofalldetector.R;
 import mobi.devteam.demofalldetector.model.Reminder;
 import mobi.devteam.demofalldetector.utils.Tools;
 
-public class AddEditReminderActivity extends AppCompatActivity {
+public class AddEditReminderActivity extends AppCompatActivity implements IPickResult {
 
     public static final String EXTRA_IS_ADD_MODE = "is_add_mode";
     public static final String EXTRA_REMINDER_DATA = "reminder_data";
@@ -117,6 +123,10 @@ public class AddEditReminderActivity extends AppCompatActivity {
     private String get_calendar_date(Calendar calendar){
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         return sdf.format(calendar.getTime());
+    }
+
+    @OnClick(R.id.imgThumb) void pickImage(){
+        PickImageDialog.build(new PickSetup()).show(this);
     }
 
     @OnClick(R.id.txtStart) void pickStartDate(){
@@ -240,5 +250,19 @@ public class AddEditReminderActivity extends AppCompatActivity {
                 break;
         }
         return type;
+    }
+
+    @Override
+    public void onPickResult(PickResult r) {
+        if (r.getError() == null) {
+            Bitmap scaledBitmap = Bitmap.createScaledBitmap(r.getBitmap(), 300, 300, true);
+            imgThumb.setImageBitmap(scaledBitmap);
+
+            //Image path
+            //r.getPath();
+        } else {
+            //Handle possible errors
+            Toast.makeText(this, r.getError().getMessage(), Toast.LENGTH_LONG).show();
+        }
     }
 }
