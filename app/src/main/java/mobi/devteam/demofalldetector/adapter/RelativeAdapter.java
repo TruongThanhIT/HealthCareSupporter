@@ -111,7 +111,8 @@ public class RelativeAdapter extends RecyclerView.Adapter<RelativeAdapter.Relati
                     Intent intent = new Intent(context, CreateUpdateRelativeActivity.class);
                     intent.putExtra(CreateUpdateRelativeActivity.EXTRA_RELATIVE_DATA,mRelative);
                     intent.putExtra(CreateUpdateRelativeActivity.EXTRA_IS_ADD_MODE,false);
-                    Toast.makeText(context, context.getString(R.string.edit), Toast.LENGTH_SHORT).show();
+
+                    context.startActivity(intent);
                     return true;
 
                 case R.id.mnuDelete:

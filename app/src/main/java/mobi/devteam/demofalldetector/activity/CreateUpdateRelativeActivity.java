@@ -55,7 +55,7 @@ public class CreateUpdateRelativeActivity extends AppCompatActivity {
             Intent intent = getIntent();
 
             is_add_mode = intent.getBooleanExtra(EXTRA_IS_ADD_MODE, true);
-            relative_data = intent.getParcelableExtra(EXTRA_RELATIVE_DATA);
+            relative = intent.getParcelableExtra(EXTRA_RELATIVE_DATA);
         }
 
         initdata();
