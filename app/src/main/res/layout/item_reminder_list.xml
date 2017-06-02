@@ -12,7 +12,8 @@
         android:layout_marginLeft="8dp"
         android:src="@drawable/ic_people_black_48dp"
         app:civ_border_color="#FF000000"
-        app:civ_border_width="2dp"
+        app:civ_border_width="0dp"
+
         app:layout_constraintLeft_toLeftOf="parent"
         android:layout_marginStart="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -26,6 +27,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Reminder"
+        android:textStyle="bold"
         app:layout_constraintLeft_toRightOf="@+id/imgThumb"
         android:layout_marginLeft="8dp"
         android:layout_marginBottom="4dp"

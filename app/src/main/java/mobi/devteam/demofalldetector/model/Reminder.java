@@ -1,10 +1,13 @@
 package mobi.devteam.demofalldetector.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by Administrator on 5/21/2017.
  */
 
-public class Reminder {
+public class Reminder implements Parcelable{
 
     private long id;
     private String name;
@@ -26,6 +29,44 @@ public class Reminder {
         this.note = note;
         this.thumb = thumb;
     }
+
+    protected Reminder(Parcel in) {
+        id = in.readLong();
+        name = in.readString();
+        start = in.readLong();
+        end = in.readLong();
+        repeat_type = in.readInt();
+        note = in.readString();
+        thumb = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(id);
+        dest.writeString(name);
+        dest.writeLong(start);
+        dest.writeLong(end);
+        dest.writeInt(repeat_type);
+        dest.writeString(note);
+        dest.writeString(thumb);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<Reminder> CREATOR = new Creator<Reminder>() {
+        @Override
+        public Reminder createFromParcel(Parcel in) {
+            return new Reminder(in);
+        }
+
+        @Override
+        public Reminder[] newArray(int size) {
+            return new Reminder[size];
+        }
+    };
 
     public long getId() {
         return id;

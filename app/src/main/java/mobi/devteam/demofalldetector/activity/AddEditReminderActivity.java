@@ -3,6 +3,8 @@ package mobi.devteam.demofalldetector.activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -12,15 +14,26 @@ import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
+import com.vansuita.pickimage.bean.PickResult;
+import com.vansuita.pickimage.bundle.PickSetup;
+import com.vansuita.pickimage.dialog.PickImageDialog;
+import com.vansuita.pickimage.listeners.IPickResult;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -31,14 +44,16 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import mobi.devteam.demofalldetector.R;
 import mobi.devteam.demofalldetector.model.Reminder;
+import mobi.devteam.demofalldetector.utils.Tools;
 
-public class AddEditReminderActivity extends AppCompatActivity {
+public class AddEditReminderActivity extends AppCompatActivity implements IPickResult {
 
     public static final String EXTRA_IS_ADD_MODE = "is_add_mode";
     public static final String EXTRA_REMINDER_DATA = "reminder_data";
     private boolean is_add_mode = true;
     private Reminder reminder;
 
+    @BindView(R.id.imgThumb) ImageView imgThumb;
     @BindView(R.id.edtReminder) TextView edtReminder;
     @BindView(R.id.txtStart) TextView txtStart;
     @BindView(R.id.txtEnd) TextView txtEnd;
@@ -51,6 +66,7 @@ public class AddEditReminderActivity extends AppCompatActivity {
 
     FirebaseAuth mAuth;
     DatabaseReference reminder_data;
+    private StorageReference mStorageRef;
 
 
     @Override
@@ -91,6 +107,7 @@ public class AddEditReminderActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         reminder_data = database.getReference("reminders");
+        mStorageRef = FirebaseStorage.getInstance().getReference();
 
         String[] reminderArrayList = getResources().getStringArray(R.array.repeat_array);
         spinReminderRepeat.setAdapter(new ArrayAdapter<>(this,android.R.layout.simple_list_item_1,reminderArrayList));
@@ -106,6 +123,10 @@ public class AddEditReminderActivity extends AppCompatActivity {
     private String get_calendar_date(Calendar calendar){
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         return sdf.format(calendar.getTime());
+    }
+
+    @OnClick(R.id.imgThumb) void pickImage(){
+        PickImageDialog.build(new PickSetup()).show(this);
     }
 
     @OnClick(R.id.txtStart) void pickStartDate(){
@@ -157,7 +178,9 @@ public class AddEditReminderActivity extends AppCompatActivity {
                 break;
             case R.id.menu_add_reminder:
                 FirebaseUser currentUser = mAuth.getCurrentUser();
-                DatabaseReference child = reminder_data.child(currentUser.getUid());
+                final DatabaseReference child = reminder_data.child(currentUser.getUid());
+                final StorageReference reminders_images = mStorageRef.child("reminders_images").child(currentUser.getUid());
+
                 long tsLong = System.currentTimeMillis();
 
                 if (reminder == null)
@@ -179,7 +202,23 @@ public class AddEditReminderActivity extends AppCompatActivity {
                     child.child(reminder.getId()+"").setValue(reminder);
                 }
 
-                setResult(RESULT_OK);
+
+                try{
+                    Bitmap bitmapAvatar = Tools.convertImageViewToBitmap(imgThumb);
+                    byte[] bytes = Tools.convertBitmapToByteAray(bitmapAvatar);
+                    reminders_images.child(reminder.getId()+"").putBytes(bytes)
+                            .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                @Override
+                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                    @SuppressWarnings("VisibleForTests")
+                                    Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                                    child.child(reminder.getId()+"").child("thumb").setValue(downloadUrl.toString());
+                                }
+                            });
+                }catch (NullPointerException e){
+
+                }
+
                 finish();
 
                 break;
@@ -211,5 +250,17 @@ public class AddEditReminderActivity extends AppCompatActivity {
                 break;
         }
         return type;
+    }
+
+    @Override
+    public void onPickResult(PickResult r) {
+        if (r.getError() == null) {
+            Bitmap scaledBitmap = Tools.scaleCenterCrop(r.getBitmap(), 300, 300);
+            imgThumb.setImageBitmap(scaledBitmap);
+
+
+        } else {
+            Toast.makeText(this, r.getError().getMessage(), Toast.LENGTH_LONG).show();
+        }
     }
 }

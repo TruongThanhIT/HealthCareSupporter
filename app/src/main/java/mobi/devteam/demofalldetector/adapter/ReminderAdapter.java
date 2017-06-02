@@ -7,6 +7,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.amulyakhare.textdrawable.TextDrawable;
+import com.amulyakhare.textdrawable.util.ColorGenerator;
+import com.squareup.picasso.Picasso;
+
 import java.util.ArrayList;
 
 import butterknife.BindView;
@@ -22,6 +26,7 @@ import mobi.devteam.demofalldetector.myInterface.OnRecyclerItemClickListener;
 
 public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.ReminderViewHolder>{
 
+    private final ColorGenerator generator;
     private Context context;
     private ArrayList<Reminder> reminderArrayList;
     private OnRecyclerItemClickListener mListener;
@@ -30,6 +35,7 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.Remind
         this.context = context;
         this.reminderArrayList = reminderArrayList;
         this.mListener = listener;
+        generator = ColorGenerator.MATERIAL;
     }
 
     @Override
@@ -45,6 +51,22 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.Remind
             holder.txtReminder.setText(reminder.getName());
             holder.txtRepeat.setText(reminder.getRepeat_type()+"");
             holder.txtTime.setText(reminder.getStart()+"");
+
+            TextDrawable textDrawable = TextDrawable.builder()
+                    .beginConfig()
+                    .width(100)
+                    .height(100)
+                    .endConfig()
+                    .buildRound( reminder.getName().substring(0,1).toUpperCase(), generator.getRandomColor());
+            if (reminder.getThumb() == null){
+                holder.imgThumb.setImageDrawable(textDrawable);
+            }else{
+                Picasso.with(context)
+                        .load(reminder.getThumb())
+                        .resize(100,100)
+                        .placeholder(textDrawable)
+                        .into(holder.imgThumb);
+            }
         }
     }
 
