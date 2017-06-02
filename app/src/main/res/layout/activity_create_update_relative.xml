@@ -13,6 +13,7 @@
         android:layout_width="@dimen/size_200"
         android:layout_height="@dimen/size_200"
         android:layout_gravity="center"
+        android:scaleType="centerCrop"
         android:adjustViewBounds="true"
         android:background="@drawable/img_camera_new" />
 

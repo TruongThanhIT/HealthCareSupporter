@@ -255,13 +255,11 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
     @Override
     public void onPickResult(PickResult r) {
         if (r.getError() == null) {
-            Bitmap scaledBitmap = Bitmap.createScaledBitmap(r.getBitmap(), 300, 300, true);
+            Bitmap scaledBitmap = Tools.scaleCenterCrop(r.getBitmap(), 300, 300);
             imgThumb.setImageBitmap(scaledBitmap);
 
-            //Image path
-            //r.getPath();
+
         } else {
-            //Handle possible errors
             Toast.makeText(this, r.getError().getMessage(), Toast.LENGTH_LONG).show();
         }
     }

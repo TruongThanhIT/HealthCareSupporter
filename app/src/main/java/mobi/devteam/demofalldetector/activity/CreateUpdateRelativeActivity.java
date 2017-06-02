@@ -152,13 +152,11 @@ public class CreateUpdateRelativeActivity extends AppCompatActivity implements I
     @Override
     public void onPickResult(PickResult r) {
         if (r.getError() == null) {
-            //If you want the Bitmap.
-            Bitmap scaledBitmap = Bitmap.createScaledBitmap(r.getBitmap(), 300, 300, true);
+
+            Bitmap scaledBitmap = Tools.scaleCenterCrop(r.getBitmap(), 300, 300);
             imgCreateRelative.setImageBitmap(scaledBitmap);
-            //Image path
-            //r.getPath();
+
         } else {
-            //Handle possible errors
             Toast.makeText(this, r.getError().getMessage(), Toast.LENGTH_LONG).show();
         }
     }
