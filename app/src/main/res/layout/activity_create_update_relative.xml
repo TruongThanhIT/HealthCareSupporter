@@ -8,6 +8,7 @@
     tools:context="mobi.devteam.demofalldetector.activity.CreateUpdateRelativeActivity">
 
     <ImageView
+        android:layout_marginTop="20dp"
         android:id="@+id/imgCreateRelative"
         android:layout_width="@dimen/size_200"
         android:layout_height="@dimen/size_200"

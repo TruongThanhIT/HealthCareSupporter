@@ -16,14 +16,14 @@ public class Tools {
     public static final Bitmap convertImageViewToBitmap(ImageView imgStudent) {
         BitmapDrawable drawable = (BitmapDrawable) imgStudent.getDrawable();
         Bitmap bitmap = drawable.getBitmap();
-        Bitmap resized = Bitmap.createScaledBitmap(bitmap, 500, 500, true);
+        Bitmap resized = Bitmap.createScaledBitmap(bitmap, 300, 300, true);
         return resized;
     }
 
     public static final byte[] convertBitmapToByteAray(Bitmap bitmap) {
-        Bitmap resized = Bitmap.createScaledBitmap(bitmap, 500, 500, true);
+        Bitmap resized = Bitmap.createScaledBitmap(bitmap, 300, 300, true);
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        resized.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        resized.compress(Bitmap.CompressFormat.JPEG, 90, stream);
         byte[] byteArray = stream.toByteArray();
         return byteArray;
     }
