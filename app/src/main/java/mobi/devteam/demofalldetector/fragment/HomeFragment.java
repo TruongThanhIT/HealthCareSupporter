@@ -5,7 +5,9 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -32,8 +34,6 @@ import mobi.devteam.demofalldetector.adapter.ReminderAdapter;
 import mobi.devteam.demofalldetector.model.Reminder;
 import mobi.devteam.demofalldetector.myInterface.OnRecyclerItemClickListener;
 
-import static android.app.Activity.RESULT_OK;
-
 public class HomeFragment extends Fragment implements OnRecyclerItemClickListener {
 
     private final int ADD_REMINDER_REQUEST = 123;
@@ -48,6 +48,7 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
 
     @BindView(R.id.rcv_reminders)
     RecyclerView rcv_reminders;
+    private int mLong_click_selected;
 
     public HomeFragment() {
 
@@ -94,6 +95,8 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
         reminder_data = database.getReference("reminders");
 
         load_firebase_data();
+
+        rcv_reminders.setOnCreateContextMenuListener(this);
     }
 
     private void load_firebase_data() {
@@ -103,12 +106,13 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
         child.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                GenericTypeIndicator<HashMap<String, Reminder>> t = new GenericTypeIndicator<HashMap<String, Reminder>>() {};
+                GenericTypeIndicator<HashMap<String, Reminder>> t = new GenericTypeIndicator<HashMap<String, Reminder>>() {
+                };
 
                 HashMap<String, Reminder> value = dataSnapshot.getValue(t);
 
                 reminderArrayList.clear();
-                if (value!=null) {
+                if (value != null) {
                     reminderArrayList.addAll(value.values());
                 }
 
@@ -142,6 +146,40 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
 
     @Override
     public void onRecyclerItemLongClick(int position) {
+        mLong_click_selected = position;
+    }
 
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        menu.add(0, 0, 0, "Edit");
+        menu.add(0, 1, 1, "Delete");
+
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        if (mLong_click_selected == -1)
+            return true;
+
+        Reminder selected_reminder = reminderArrayList.get(mLong_click_selected);
+
+        switch (item.getItemId()) {
+            case 0:
+                Intent intent = new Intent(getActivity(), AddEditReminderActivity.class);
+                intent.putExtra(AddEditReminderActivity.EXTRA_IS_ADD_MODE, false);
+                intent.putExtra(AddEditReminderActivity.EXTRA_REMINDER_DATA, selected_reminder);
+                startActivityForResult(intent, ADD_REMINDER_REQUEST);
+                break;
+            case 1:
+                FirebaseUser currentUser = mAuth.getCurrentUser();
+                DatabaseReference child = reminder_data.child(currentUser.getUid());
+                DatabaseReference remind = child.child(selected_reminder.getId() + "");
+                remind.removeValue();
+                break;
+        }
+
+        mLong_click_selected = -1;
+        return true;
     }
 }
