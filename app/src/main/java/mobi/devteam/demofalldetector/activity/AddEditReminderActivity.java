@@ -9,8 +9,10 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -101,6 +103,7 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
 
 
         txtTime.setText(get_calendar_time(now));
+
     }
 
     private void initData() {
@@ -177,47 +180,7 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
                 finish();
                 break;
             case R.id.menu_add_reminder:
-                FirebaseUser currentUser = mAuth.getCurrentUser();
-                final DatabaseReference child = reminder_data.child(currentUser.getUid());
-                final StorageReference reminders_images = mStorageRef.child("reminders_images").child(currentUser.getUid());
-
-                long tsLong = System.currentTimeMillis();
-
-                if (reminder == null)
-                    reminder = new Reminder();
-
-                reminder.setStart(start.getTimeInMillis());
-                reminder.setEnd(start.getTimeInMillis());
-                reminder.setName(edtReminder.getText().toString());
-                reminder.setNote(edtNote.getText().toString());
-
-                reminder.setRepeat_type(get_repeat_type(spinReminderRepeat.getSelectedItem().toString()));
-
-                if (is_add_mode){
-                    reminder.setId(tsLong);
-
-                    child.child(tsLong+"").setValue(reminder);
-                }else{
-                    //update
-                    child.child(reminder.getId()+"").setValue(reminder);
-                }
-
-
-                try{
-                    Bitmap bitmapAvatar = Tools.convertImageViewToBitmap(imgThumb);
-                    byte[] bytes = Tools.convertBitmapToByteAray(bitmapAvatar);
-                    reminders_images.child(reminder.getId()+"").putBytes(bytes)
-                            .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                                @Override
-                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                    @SuppressWarnings("VisibleForTests")
-                                    Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                                    child.child(reminder.getId()+"").child("thumb").setValue(downloadUrl.toString());
-                                }
-                            });
-                }catch (NullPointerException e){
-
-                }
+                save_reminder();
 
                 finish();
 
@@ -225,6 +188,50 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void save_reminder() {
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        final DatabaseReference child = reminder_data.child(currentUser.getUid());
+        final StorageReference reminders_images = mStorageRef.child("reminders_images").child(currentUser.getUid());
+
+        long tsLong = System.currentTimeMillis();
+
+        if (reminder == null)
+            reminder = new Reminder();
+
+        reminder.setStart(start.getTimeInMillis());
+        reminder.setEnd(start.getTimeInMillis());
+        reminder.setName(edtReminder.getText().toString());
+        reminder.setNote(edtNote.getText().toString());
+
+        reminder.setRepeat_type(get_repeat_type(spinReminderRepeat.getSelectedItem().toString()));
+
+        if (is_add_mode){
+            reminder.setId(tsLong);
+
+            child.child(tsLong+"").setValue(reminder);
+        }else{
+            //update
+            child.child(reminder.getId()+"").setValue(reminder);
+        }
+
+
+        try{
+            Bitmap bitmapAvatar = Tools.convertImageViewToBitmap(imgThumb);
+            byte[] bytes = Tools.convertBitmapToByteAray(bitmapAvatar);
+            reminders_images.child(reminder.getId()+"").putBytes(bytes)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            @SuppressWarnings("VisibleForTests")
+                            Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                            child.child(reminder.getId()+"").child("thumb").setValue(downloadUrl.toString());
+                        }
+                    });
+        }catch (NullPointerException e){
+
+        }
     }
 
     @Override

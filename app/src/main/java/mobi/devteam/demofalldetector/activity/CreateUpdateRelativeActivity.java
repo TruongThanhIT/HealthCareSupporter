@@ -109,44 +109,48 @@ public class CreateUpdateRelativeActivity extends AppCompatActivity implements I
                 return true;
             case R.id.mnuSave:
 
-                FirebaseUser currentUser = mAuth.getCurrentUser();
-                final DatabaseReference child = relative_data.child(currentUser.getUid());
-                final StorageReference relatives_images = mStorageRef.child("relatives_images").child(currentUser.getUid());
-
-                long tsLong = System.currentTimeMillis();
-
-                if (relative == null)
-                    relative = new Relative();
-
-                relative.setName(edtRelativeName.getText().toString());
-                relative.setPhone(edtRelativePhone.getText().toString());
-
-                if (is_add_mode){
-                    relative.setId(tsLong);
-                    child.child(tsLong+"").setValue(relative);
-                }else{
-                    child.child(relative.getId()+"").setValue(relative);
-                }
-
-                try{
-                    Bitmap bitmapAvatar = Tools.convertImageViewToBitmap(imgCreateRelative);
-                    byte[] bytes = Tools.convertBitmapToByteAray(bitmapAvatar);
-                    relatives_images.child(relative.getId()+"").putBytes(bytes)
-                            .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                                @Override
-                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                    @SuppressWarnings("VisibleForTests")
-                                    Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                                    child.child(relative.getId()+"").child("thumb").setValue(downloadUrl.toString());
-                                }
-                            });
-                }catch (NullPointerException e){
-
-                }
+                save_relative();
 
                 finish();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void save_relative() {
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        final DatabaseReference child = relative_data.child(currentUser.getUid());
+        final StorageReference relatives_images = mStorageRef.child("relatives_images").child(currentUser.getUid());
+
+        long tsLong = System.currentTimeMillis();
+
+        if (relative == null)
+            relative = new Relative();
+
+        relative.setName(edtRelativeName.getText().toString());
+        relative.setPhone(edtRelativePhone.getText().toString());
+
+        if (is_add_mode){
+            relative.setId(tsLong);
+            child.child(tsLong+"").setValue(relative);
+        }else{
+            child.child(relative.getId()+"").setValue(relative);
+        }
+
+        try{
+            Bitmap bitmapAvatar = Tools.convertImageViewToBitmap(imgCreateRelative);
+            byte[] bytes = Tools.convertBitmapToByteAray(bitmapAvatar);
+            relatives_images.child(relative.getId()+"").putBytes(bytes)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            @SuppressWarnings("VisibleForTests")
+                            Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                            child.child(relative.getId()+"").child("thumb").setValue(downloadUrl.toString());
+                        }
+                    });
+        }catch (NullPointerException e){
+
+        }
     }
 
     @Override
