@@ -17,6 +17,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.squareup.picasso.Picasso;
 
 import java.util.Calendar;
 
@@ -48,14 +49,22 @@ public class CreateUpdateRelativeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_update_relative);
 
-        mAuth = FirebaseAuth.getInstance();
-        relative_data = FirebaseDatabase.getInstance().getReference("relatives");
+
 
         if (getIntent().hasExtra(EXTRA_IS_ADD_MODE)) {
             Intent intent = getIntent();
 
             is_add_mode = intent.getBooleanExtra(EXTRA_IS_ADD_MODE, true);
             relative = intent.getParcelableExtra(EXTRA_RELATIVE_DATA);
+
+            if (relative!=null) {
+                edtRelativeName.setText(relative.getName());
+                edtRelativePhone.setText(relative.getPhone());
+
+                Picasso.with(this)
+                        .load(relative.getThumb())
+                        .into(imgCreateRelative);
+            }
         }
 
         initdata();
@@ -63,7 +72,8 @@ public class CreateUpdateRelativeActivity extends AppCompatActivity {
     }
 
     private void initdata() {
-
+        mAuth = FirebaseAuth.getInstance();
+        relative_data = FirebaseDatabase.getInstance().getReference("relatives");
     }
 
     @Override
@@ -93,6 +103,7 @@ public class CreateUpdateRelativeActivity extends AppCompatActivity {
 
                 FirebaseUser currentUser = mAuth.getCurrentUser();
                 DatabaseReference child = relative_data.child(currentUser.getUid());
+
                 long tsLong = System.currentTimeMillis();
 
                 if (relative == null)
