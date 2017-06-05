@@ -1,7 +1,6 @@
 package mobi.devteam.demofalldetector.fragment;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -51,7 +50,8 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
     @BindView(R.id.rcv_reminders)
     RecyclerView rcv_reminders;
 
-    @BindView(R.id.progressBarReminder) ProgressBar progressBarReminder;
+    @BindView(R.id.progressBarReminder)
+    ProgressBar progressBarReminder;
 
     private int mLong_click_selected;
 
@@ -96,12 +96,11 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         mAuth = FirebaseAuth.getInstance();
-
         reminder_data = database.getReference("reminders");
+        rcv_reminders.setOnCreateContextMenuListener(this);
 
         load_firebase_data();
 
-        rcv_reminders.setOnCreateContextMenuListener(this);
     }
 
     private void load_firebase_data() {
