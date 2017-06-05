@@ -1,10 +1,9 @@
 package mobi.devteam.demofalldetector.activity;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -21,9 +20,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -33,7 +30,6 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.OnItemClick;
 import mobi.devteam.demofalldetector.R;
 
 public class LoginActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
@@ -48,13 +44,17 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     @BindView(R.id.txtPassword)
     EditText edtPassword;
 
-    @BindView(R.id.txtForgetPassword) TextView txtForgetPassword;
+    @BindView(R.id.txtForgetPassword)
+    TextView txtForgetPassword;
 
-    @BindView(R.id.btnSignUp) Button btnSignUp;
+    @BindView(R.id.btnSignUp)
+    Button btnSignUp;
 
-    @BindView(R.id.btnSignInWithGoogle) SignInButton btnSignInWithGoogle;
+    @BindView(R.id.btnSignInWithGoogle)
+    SignInButton btnSignInWithGoogle;
 
-    @BindView(R.id.progressBar) ProgressBar progressBar;
+    @BindView(R.id.progressBar)
+    ProgressBar progressBar;
 
     private GoogleApiClient mGoogleApiClient;
 
@@ -82,30 +82,30 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         progressBar.setVisibility(View.GONE);
 
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser != null){
+        if (currentUser != null) {
             goto_main_activity();
         }
     }
 
-    private void goto_main_activity(){
-        Intent intent = new Intent(LoginActivity.this,MainActivity.class);
+    private void goto_main_activity() {
+        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
         startActivity(intent);
         finish();
     }
 
     @OnClick(R.id.btnSignUp)
-    void sign_up(){
+    void sign_up() {
         final String email = edtUserName.getText().toString();
         final String password = edtPassword.getText().toString();
 
-        if (email.length() == 0 || password.length() == 0){
+        if (email.length() == 0 || password.length() == 0) {
             Toast.makeText(this, getString(R.string.err_email_password_null), Toast.LENGTH_SHORT).show();
             return;
         }
 
         progressBar.setVisibility(View.VISIBLE);
 
-        mAuth.createUserWithEmailAndPassword(email,password)
+        mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
@@ -114,7 +114,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                         if (!task.isSuccessful()) {
                             Toast.makeText(LoginActivity.this, task.getException().getMessage(),
                                     Toast.LENGTH_SHORT).show();
-                        }else{
+                        } else {
                             goto_main_activity();
                         }
                         progressBar.setVisibility(View.GONE);
@@ -126,7 +126,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     void sign_in() {
         final String email = edtUserName.getText().toString();
         final String password = edtPassword.getText().toString();
-        if (email.length() == 0 || password.length() == 0){
+        if (email.length() == 0 || password.length() == 0) {
             Toast.makeText(this, getString(R.string.err_email_password_null), Toast.LENGTH_SHORT).show();
             return;
         }
@@ -144,7 +144,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                             Log.w(TAG, "signInWithEmail:failed", task.getException());
                             Toast.makeText(LoginActivity.this, task.getException().getMessage(),
                                     Toast.LENGTH_SHORT).show();
-                        }else{
+                        } else {
                             goto_main_activity();
                         }
 
@@ -172,7 +172,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             } else {
                 // Google Sign In failed, update UI appropriately
                 // ...
-                Log.e(TAG,result.getStatus().toString());
+                Log.e(TAG, result.getStatus().toString());
                 Toast.makeText(this, getString(R.string.err_login), Toast.LENGTH_SHORT).show();
             }
         }
@@ -180,7 +180,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Log.e(TAG,connectionResult.getErrorMessage());
+        Log.e(TAG, connectionResult.getErrorMessage());
         Toast.makeText(this, connectionResult.getErrorMessage(), Toast.LENGTH_SHORT).show();
     }
 

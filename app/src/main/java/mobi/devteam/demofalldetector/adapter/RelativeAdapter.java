@@ -27,6 +27,7 @@ import butterknife.ButterKnife;
 import mobi.devteam.demofalldetector.R;
 import mobi.devteam.demofalldetector.activity.CreateUpdateRelativeActivity;
 import mobi.devteam.demofalldetector.model.Relative;
+import mobi.devteam.demofalldetector.myInterface.OnRecyclerItemClickListener;
 
 /**
  * Created by DELL on 5/21/2017.
@@ -34,13 +35,14 @@ import mobi.devteam.demofalldetector.model.Relative;
 
 public class RelativeAdapter extends RecyclerView.Adapter<RelativeAdapter.RelativeHolder> {
     private Context context;
-    private RecyclerView mRecyclerView;
-    ArrayList<Relative> relatives;
 
-    public RelativeAdapter(Context context, RecyclerView mRecyclerView, ArrayList<Relative> relatives) {
+    private ArrayList<Relative> relatives;
+    private OnRecyclerItemClickListener listener;
+
+    public RelativeAdapter(Context context, ArrayList<Relative> relatives,OnRecyclerItemClickListener onRecyclerItemClickListener) {
         this.context = context;
-        this.mRecyclerView = mRecyclerView;
         this.relatives = relatives;
+        this.listener = onRecyclerItemClickListener;
     }
 
     @Override
@@ -109,8 +111,8 @@ public class RelativeAdapter extends RecyclerView.Adapter<RelativeAdapter.Relati
             switch (menuItem.getItemId()) {
                 case R.id.mnuEdit:
                     Intent intent = new Intent(context, CreateUpdateRelativeActivity.class);
-                    intent.putExtra(CreateUpdateRelativeActivity.EXTRA_RELATIVE_DATA,mRelative);
-                    intent.putExtra(CreateUpdateRelativeActivity.EXTRA_IS_ADD_MODE,false);
+                    intent.putExtra(CreateUpdateRelativeActivity.EXTRA_RELATIVE_DATA, mRelative);
+                    intent.putExtra(CreateUpdateRelativeActivity.EXTRA_IS_ADD_MODE, false);
 
                     context.startActivity(intent);
                     return true;
@@ -150,6 +152,15 @@ public class RelativeAdapter extends RecyclerView.Adapter<RelativeAdapter.Relati
                 @Override
                 public void onClick(View v) {
                     showPopupMenu(imgRelatives, getAdapterPosition());
+                }
+            });
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (listener != null){
+                        listener.onRecyclerItemClick(getAdapterPosition());
+                    }
                 }
             });
         }

@@ -46,6 +46,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import mobi.devteam.demofalldetector.R;
 import mobi.devteam.demofalldetector.model.Reminder;
+import mobi.devteam.demofalldetector.utils.ReminderType;
 import mobi.devteam.demofalldetector.utils.Tools;
 
 public class AddEditReminderActivity extends AppCompatActivity implements IPickResult {
@@ -69,6 +70,7 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
     FirebaseAuth mAuth;
     DatabaseReference reminder_data;
     private StorageReference mStorageRef;
+    private String[] reminderArrayList;
 
 
     @Override
@@ -112,7 +114,7 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
         reminder_data = database.getReference("reminders");
         mStorageRef = FirebaseStorage.getInstance().getReference();
 
-        String[] reminderArrayList = getResources().getStringArray(R.array.repeat_array);
+        reminderArrayList = getResources().getStringArray(R.array.repeat_array);
         spinReminderRepeat.setAdapter(new ArrayAdapter<>(this,android.R.layout.simple_list_item_1,reminderArrayList));
         spinReminderRepeat.setSelection(0);
 
@@ -241,22 +243,18 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
     }
 
     private int get_repeat_type(String text){
-        int type = 0;
-        switch (text){
-            case "Daily" :
-                type = 0;
-                break;
-            case "Weekly" :
-                type = 1;
-                break;
-            case "Monthly" :
-                type = 2;
-                break;
-            case "Yearly" :
-                type = 3;
-                break;
+
+        reminderArrayList = getResources().getStringArray(R.array.repeat_array);
+        if (text.equals(reminderArrayList[0])){
+            return ReminderType.TYPE_DAILY; //Daily
+        }else if (text.equals(reminderArrayList[1])){
+            return ReminderType.TYPE_WEEKLY; //Weekly
+        }else if (text.equals(reminderArrayList[2])){
+            return ReminderType.TYPE_MONTHLY; //Monthly
+        }else {
+            return ReminderType.TYPE_YEARLY; //Yearly
         }
-        return type;
+
     }
 
     @Override
