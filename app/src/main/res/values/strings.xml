@@ -51,6 +51,7 @@
     <string name="ae_reminder_note_hint">Type your note detail here</string>
     <string name="ae_reminder_picktime">Reminder Time:</string>
 
+    <!-- Do not change position -->
     <string-array name="repeat_array">
         <item>Daily</item>
         <item>Weekly</item>

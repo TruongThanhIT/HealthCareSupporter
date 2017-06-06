@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -48,6 +49,10 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
 
     @BindView(R.id.rcv_reminders)
     RecyclerView rcv_reminders;
+
+    @BindView(R.id.progressBarReminder)
+    ProgressBar progressBarReminder;
+
     private int mLong_click_selected;
 
     public HomeFragment() {
@@ -91,17 +96,18 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         mAuth = FirebaseAuth.getInstance();
-
         reminder_data = database.getReference("reminders");
+        rcv_reminders.setOnCreateContextMenuListener(this);
 
         load_firebase_data();
 
-        rcv_reminders.setOnCreateContextMenuListener(this);
     }
 
     private void load_firebase_data() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         DatabaseReference child = reminder_data.child(currentUser.getUid());
+
+        progressBarReminder.setVisibility(View.VISIBLE);
 
         child.addValueEventListener(new ValueEventListener() {
             @Override
@@ -114,16 +120,23 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
                 reminderArrayList.clear();
                 if (value != null) {
                     reminderArrayList.addAll(value.values());
+                    handler_empty_list();
                 }
 
                 reminderAdapter.notifyDataSetChanged();
+                progressBarReminder.setVisibility(View.GONE);
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 Toast.makeText(getActivity(), "Error when getting data : " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                progressBarReminder.setVisibility(View.GONE);
             }
         });
+    }
+
+    private void handler_empty_list() {
+        //TODO: handle empty list
     }
 
     @OnClick(R.id.fab_add)
@@ -182,4 +195,6 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
         mLong_click_selected = -1;
         return true;
     }
+
+
 }

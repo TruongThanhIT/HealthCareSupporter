@@ -64,6 +64,14 @@ public class CreateUpdateRelativeActivity extends AppCompatActivity implements I
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
+        initdata();
+    }
+
+    private void initdata() {
+        mAuth = FirebaseAuth.getInstance();
+        relative_data = FirebaseDatabase.getInstance().getReference("relatives");
+        mStorageRef = FirebaseStorage.getInstance().getReference();
+
         if (getIntent().hasExtra(EXTRA_IS_ADD_MODE)) {
             Intent intent = getIntent();
 
@@ -79,14 +87,6 @@ public class CreateUpdateRelativeActivity extends AppCompatActivity implements I
                         .into(imgCreateRelative);
             }
         }
-
-        initdata();
-    }
-
-    private void initdata() {
-        mAuth = FirebaseAuth.getInstance();
-        relative_data = FirebaseDatabase.getInstance().getReference("relatives");
-        mStorageRef = FirebaseStorage.getInstance().getReference();
     }
 
     @OnClick(R.id.imgCreateRelative) void select_image(){

@@ -46,7 +46,9 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import mobi.devteam.demofalldetector.R;
 import mobi.devteam.demofalldetector.model.Reminder;
+import mobi.devteam.demofalldetector.utils.ReminderType;
 import mobi.devteam.demofalldetector.utils.Tools;
+import mobi.devteam.demofalldetector.utils.Utils;
 
 public class AddEditReminderActivity extends AppCompatActivity implements IPickResult {
 
@@ -94,16 +96,6 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
 
         initData();
 
-        now = Calendar.getInstance();
-        start = Calendar.getInstance();
-        end = Calendar.getInstance();
-
-        txtStart.setText(get_calendar_date(now));
-        txtEnd.setText(get_calendar_date(now));
-
-
-        txtTime.setText(get_calendar_time(now));
-
     }
 
     private void initData() {
@@ -112,20 +104,41 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
         reminder_data = database.getReference("reminders");
         mStorageRef = FirebaseStorage.getInstance().getReference();
 
-        String[] reminderArrayList = getResources().getStringArray(R.array.repeat_array);
-        spinReminderRepeat.setAdapter(new ArrayAdapter<>(this,android.R.layout.simple_list_item_1,reminderArrayList));
+        
+        spinReminderRepeat.setAdapter(new ArrayAdapter<>(this,android.R.layout.simple_list_item_1,MyApplication.reminder_types));
         spinReminderRepeat.setSelection(0);
 
-    }
+        now = Calendar.getInstance();
+        start = Calendar.getInstance();
+        end = Calendar.getInstance();
 
-    private String get_calendar_time(Calendar calendar){
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:MM:ss");
-        return simpleDateFormat.format(calendar.getTime());
-    }
+        if ( ! is_add_mode){
 
-    private String get_calendar_date(Calendar calendar){
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        return sdf.format(calendar.getTime());
+            Picasso.with(this)
+                .load(reminder.getThumb())
+                .resize(300,300)
+                .into(imgThumb);
+
+            start.setTimeInMillis(reminder.getStart());
+            end.setTimeInMillis(reminder.getEnd());
+
+            edtReminder.setText(reminder.getName());
+            edtNote.setText(reminder.getNote());
+            txtStart.setText(Utils.get_calendar_time(now));
+            txtEnd.setText(Utils.get_calendar_time(end));
+
+            Calendar alrm = Calendar.getInstance();
+            alrm.setTimeInMillis(reminder.getHour_alarm());
+            txtTime.setText(Utils.get_calendar_time(alrm));
+
+            spinReminderRepeat.setSelection(reminder.getRepeat_type());
+
+        }else{
+
+            txtStart.setText(Utils.get_calendar_time(now));
+            txtEnd.setText(Utils.get_calendar_time(now));
+            txtTime.setText(Utils.get_calendar_time(now));
+        }
     }
 
     @OnClick(R.id.imgThumb) void pickImage(){
@@ -138,7 +151,7 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                         start.set(year,month,dayOfMonth);
-                        txtStart.setText(get_calendar_date(start));
+                        txtStart.setText(Utils.get_calendar_time(start));
                     }
                 }, now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DATE));
         dialog.getDatePicker().setMinDate(now.getTimeInMillis());
@@ -152,7 +165,7 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                         end.set(year,month,dayOfMonth);
-                        txtEnd.setText(get_calendar_date(end));
+                        txtEnd.setText(Utils.get_calendar_time(end));
                     }
                 }, start.get(Calendar.YEAR), start.get(Calendar.MONTH), start.get(Calendar.DATE));
         dialog.getDatePicker().setMinDate(start.getTimeInMillis());
@@ -167,7 +180,7 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
                 start.set(Calendar.HOUR_OF_DAY,hourOfDay);
                 start.set(Calendar.MINUTE,minute);
 
-                txtTime.setText(get_calendar_time(now));
+                txtTime.setText(Utils.get_calendar_time(now));
             }
         },now.get(Calendar.HOUR_OF_DAY),now.get(Calendar.MINUTE),true);
         timePickerDialog.show();
@@ -205,7 +218,7 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
         reminder.setName(edtReminder.getText().toString());
         reminder.setNote(edtNote.getText().toString());
 
-        reminder.setRepeat_type(get_repeat_type(spinReminderRepeat.getSelectedItem().toString()));
+        reminder.setRepeat_type(reminder.get_repeat_type(spinReminderRepeat.getSelectedItem().toString()));
 
         if (is_add_mode){
             reminder.setId(tsLong);
@@ -240,24 +253,7 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
         return super.onCreateOptionsMenu(menu);
     }
 
-    private int get_repeat_type(String text){
-        int type = 0;
-        switch (text){
-            case "Daily" :
-                type = 0;
-                break;
-            case "Weekly" :
-                type = 1;
-                break;
-            case "Monthly" :
-                type = 2;
-                break;
-            case "Yearly" :
-                type = 3;
-                break;
-        }
-        return type;
-    }
+
 
     @Override
     public void onPickResult(PickResult r) {
