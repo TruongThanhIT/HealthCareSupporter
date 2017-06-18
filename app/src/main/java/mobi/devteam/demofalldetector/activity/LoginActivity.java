@@ -33,26 +33,21 @@ import butterknife.OnClick;
 import mobi.devteam.demofalldetector.R;
 
 public class LoginActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
-
     private final String TAG = "LoginActivity";
-
     private static final int RC_SIGN_IN = 243;
+
     @BindView(R.id.btnSignIn)
     Button btnSignIn;
     @BindView(R.id.txtUserName)
     EditText edtUserName;
     @BindView(R.id.txtPassword)
     EditText edtPassword;
-
     @BindView(R.id.txtForgetPassword)
     TextView txtForgetPassword;
-
     @BindView(R.id.btnSignUp)
     Button btnSignUp;
-
     @BindView(R.id.btnSignInWithGoogle)
     SignInButton btnSignInWithGoogle;
-
     @BindView(R.id.progressBar)
     ProgressBar progressBar;
 
@@ -202,9 +197,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                             Log.e(TAG, "signInWithCredential:failure", task.getException());
                             Toast.makeText(LoginActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
-
                         }
-
                         progressBar.setVisibility(View.GONE);
                     }
                 });

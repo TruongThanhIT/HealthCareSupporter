@@ -21,10 +21,6 @@ import mobi.devteam.demofalldetector.R;
 import mobi.devteam.demofalldetector.model.Reminder;
 import mobi.devteam.demofalldetector.myInterface.OnRecyclerItemClickListener;
 
-/**
- * Created by Administrator on 5/30/2017.
- */
-
 public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.ReminderViewHolder>{
 
     private final ColorGenerator generator;

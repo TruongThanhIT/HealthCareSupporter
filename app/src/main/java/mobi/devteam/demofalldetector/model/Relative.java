@@ -3,10 +3,6 @@ package mobi.devteam.demofalldetector.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-/**
- * Created by DELL on 5/21/2017.
- */
-
 public class Relative implements Parcelable{
     private long id;
     private String name;
