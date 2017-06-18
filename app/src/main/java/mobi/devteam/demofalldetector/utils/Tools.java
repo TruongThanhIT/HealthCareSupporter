@@ -8,10 +8,8 @@ import android.graphics.drawable.BitmapDrawable;
 import android.widget.ImageView;
 
 import java.io.ByteArrayOutputStream;
-
-/**
- * Created by DELL on 5/21/2017.
- */
+import java.util.Calendar;
+import java.util.Random;
 
 public class Tools {
     // Category tools
@@ -65,5 +63,15 @@ public class Tools {
         canvas.drawBitmap(source, null, targetRect, null);
 
         return dest;
+    }
+
+    public static int getRandomInt() {
+        Random random = new Random();
+        return random.nextInt();
+    }
+    public static Calendar convertLongToCalendar(long date){
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(date);
+        return calendar;
     }
 }

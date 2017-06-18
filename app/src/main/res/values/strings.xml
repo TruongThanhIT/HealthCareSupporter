@@ -43,6 +43,7 @@
     <string name="ae_reminder_end">End date</string>
     <string name="ae_reminder_repeat">Repeat:</string>
     <string name="ae_reminder_note">Notes:</string>
+    <string name="snoozeAlert">Snooze after 10 minutes</string>
 
 
     <string name="my_web_client_id">828026602604-bp4fq1gj71lh7h5po9gnotblq8sia4to.apps.googleusercontent.com	</string>

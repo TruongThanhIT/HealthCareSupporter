@@ -3,13 +3,8 @@ package mobi.devteam.demofalldetector.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import mobi.devteam.demofalldetector.R;
 import mobi.devteam.demofalldetector.activity.MyApplication;
 import mobi.devteam.demofalldetector.utils.ReminderType;
-
-/**
- * Created by Administrator on 5/21/2017.
- */
 
 public class Reminder implements Parcelable{
 
@@ -21,11 +16,12 @@ public class Reminder implements Parcelable{
     private int repeat_type;
     private String note;
     private String thumb;
+    private int pendingId;
 
     public Reminder() {
     }
 
-    public Reminder(long id, String name, long start, long end, long hour_alarm, int repeat_type, String note, String thumb) {
+    public Reminder(long id, String name, long start, long end, long hour_alarm, int repeat_type, String note, String thumb, int pendingId) {
         this.id = id;
         this.name = name;
         this.start = start;
@@ -34,6 +30,7 @@ public class Reminder implements Parcelable{
         this.repeat_type = repeat_type;
         this.note = note;
         this.thumb = thumb;
+        this.pendingId = pendingId;
     }
 
     public int get_repeat_type(String text){
@@ -58,6 +55,7 @@ public class Reminder implements Parcelable{
         repeat_type = in.readInt();
         note = in.readString();
         thumb = in.readString();
+        pendingId = in.readInt();
     }
 
     @Override
@@ -70,6 +68,7 @@ public class Reminder implements Parcelable{
         dest.writeInt(repeat_type);
         dest.writeString(note);
         dest.writeString(thumb);
+        dest.writeInt(pendingId);
     }
 
     @Override
@@ -153,5 +152,12 @@ public class Reminder implements Parcelable{
         this.thumb = thumb;
     }
 
+    public int getPendingId() {
+        return pendingId;
+    }
+
+    public void setPendingId(int pendingId) {
+        this.pendingId = pendingId;
+    }
 }
 

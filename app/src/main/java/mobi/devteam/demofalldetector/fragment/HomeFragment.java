@@ -80,10 +80,9 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
         // Inflate the layout for this fragment
         mView = inflater.inflate(R.layout.fragment_home, container, false);
         bind = ButterKnife.bind(this, mView);
-
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(),
+                LinearLayoutManager.VERTICAL, false);
         rcv_reminders.setLayoutManager(linearLayoutManager);
-
         initData();
 
         return mView;

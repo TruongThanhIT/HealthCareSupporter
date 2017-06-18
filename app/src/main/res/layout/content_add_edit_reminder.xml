@@ -180,8 +180,9 @@
             android:layout_marginTop="0dp"
             app:layout_constraintBottom_toBottomOf="@+id/textView3"
             android:layout_marginBottom="0dp"
-            android:layout_marginLeft="0dp"
-            app:layout_constraintLeft_toLeftOf="@+id/txtEnd" />
+            android:layout_marginLeft="-5dp"
+            app:layout_constraintLeft_toLeftOf="@+id/txtEnd"
+            app:layout_constraintVertical_bias="1.0" />
     </android.support.constraint.ConstraintLayout>
 
 </android.support.v4.widget.NestedScrollView>

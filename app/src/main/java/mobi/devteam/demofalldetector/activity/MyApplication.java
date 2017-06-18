@@ -7,10 +7,6 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import mobi.devteam.demofalldetector.R;
 
-/**
- * Created by Administrator on 5/20/2017.
- */
-
 public class MyApplication extends Application {
     public static String[] reminder_types;
 

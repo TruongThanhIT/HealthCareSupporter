@@ -53,7 +53,14 @@
             android:name=".activity.AddEditReminderActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-
+        <service
+            android:name=".utils.ReminderService"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name=".utils.ReminderService" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>
