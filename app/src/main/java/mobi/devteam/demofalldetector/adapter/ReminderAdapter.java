@@ -49,20 +49,22 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.Remind
             holder.txtRepeat.setText(reminder.getRepeat_type()+"");
             holder.txtTime.setText(reminder.getStart()+"");
 
-            TextDrawable textDrawable = TextDrawable.builder()
-                    .beginConfig()
-                    .width(100)
-                    .height(100)
-                    .endConfig()
-                    .buildRound( reminder.getName().substring(0,1).toUpperCase(), generator.getRandomColor());
-            if (reminder.getThumb() == null){
-                holder.imgThumb.setImageDrawable(textDrawable);
-            }else{
-                Picasso.with(context)
-                        .load(reminder.getThumb())
-                        .resize(100,100)
-                        .placeholder(textDrawable)
-                        .into(holder.imgThumb);
+            if(reminder.getName().length() > 0){
+                TextDrawable textDrawable = TextDrawable.builder()
+                        .beginConfig()
+                        .width(100)
+                        .height(100)
+                        .endConfig()
+                        .buildRound( reminder.getName().substring(0,1).toUpperCase(), generator.getRandomColor());
+                if (reminder.getThumb() == null){
+                    holder.imgThumb.setImageDrawable(textDrawable);
+                }else{
+                    Picasso.with(context)
+                            .load(reminder.getThumb())
+                            .resize(100,100)
+                            .placeholder(textDrawable)
+                            .into(holder.imgThumb);
+                }
             }
         }
     }

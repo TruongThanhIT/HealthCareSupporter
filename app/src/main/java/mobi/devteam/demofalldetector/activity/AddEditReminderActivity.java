@@ -127,8 +127,8 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
 
             edtReminder.setText(reminder.getName());
             edtNote.setText(reminder.getNote());
-            txtStart.setText(Utils.get_calendar_time(now));
-            txtEnd.setText(Utils.get_calendar_time(end));
+            txtStart.setText(Utils.get_calendar_date(now));
+            txtEnd.setText(Utils.get_calendar_date(end));
 
             alarm.setTimeInMillis(reminder.getHour_alarm());
             txtTime.setText(Utils.get_calendar_time(alarm));
@@ -136,9 +136,8 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
             spinReminderRepeat.setSelection(reminder.getRepeat_type());
 
         } else {
-
-            txtStart.setText(Utils.get_calendar_time(now));
-            txtEnd.setText(Utils.get_calendar_time(now));
+            txtStart.setText(Utils.get_calendar_date(now));
+            txtEnd.setText(Utils.get_calendar_date(now));
             txtTime.setText(Utils.get_calendar_time(now));
         }
     }
@@ -155,7 +154,7 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                         start.set(year, month, dayOfMonth);
-                        txtStart.setText(Utils.get_calendar_time(start));
+                        txtStart.setText(Utils.get_calendar_date(start));
                     }
                 }, now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DATE));
         dialog.getDatePicker().setMinDate(now.getTimeInMillis());
@@ -170,7 +169,7 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                         end.set(year, month, dayOfMonth);
-                        txtEnd.setText(Utils.get_calendar_time(end));
+                        txtEnd.setText(Utils.get_calendar_date(end));
                     }
                 }, start.get(Calendar.YEAR), start.get(Calendar.MONTH), start.get(Calendar.DATE));
         dialog.getDatePicker().setMinDate(start.getTimeInMillis());
@@ -186,7 +185,7 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
                 start.set(Calendar.HOUR_OF_DAY, hourOfDay);
                 start.set(Calendar.MINUTE, minute);
 
-                txtTime.setText(Utils.get_calendar_time(now));
+                txtTime.setText(Utils.get_calendar_time(start));
             }
         }, now.get(Calendar.HOUR_OF_DAY), now.get(Calendar.MINUTE), true);
         timePickerDialog.show();
