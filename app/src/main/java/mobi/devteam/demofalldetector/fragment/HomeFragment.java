@@ -111,6 +111,9 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
         child.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                if (!isAdded())
+                    return;
+
                 GenericTypeIndicator<HashMap<String, Reminder>> t = new GenericTypeIndicator<HashMap<String, Reminder>>() {
                 };
 
