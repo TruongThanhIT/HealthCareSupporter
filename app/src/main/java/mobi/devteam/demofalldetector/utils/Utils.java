@@ -14,7 +14,7 @@ import mobi.devteam.demofalldetector.model.Reminder;
 public class Utils {
 
     public static String get_calendar_time(Calendar calendar){
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:MM:ss");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
         return simpleDateFormat.format(calendar.getTime());
     }
 

@@ -20,6 +20,8 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.github.jjobes.slidedaytimepicker.SlideDayTimeListener;
+import com.github.jjobes.slidedaytimepicker.SlideDayTimePicker;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -33,13 +35,15 @@ import com.vansuita.pickimage.bean.PickResult;
 import com.vansuita.pickimage.bundle.PickSetup;
 import com.vansuita.pickimage.dialog.PickImageDialog;
 import com.vansuita.pickimage.listeners.IPickResult;
+
 import java.util.Calendar;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-
 import mobi.devteam.demofalldetector.R;
 import mobi.devteam.demofalldetector.model.Reminder;
+import mobi.devteam.demofalldetector.utils.ReminderType;
 import mobi.devteam.demofalldetector.utils.Tools;
 import mobi.devteam.demofalldetector.utils.Utils;
 
@@ -155,6 +159,10 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                         start.set(year, month, dayOfMonth);
                         txtStart.setText(Utils.get_calendar_date(start));
+                        if (start.compareTo(end) > 0) {
+                            end = start;
+                            txtEnd.setText(Utils.get_calendar_date(end));
+                        }
                     }
                 }, now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DATE));
         dialog.getDatePicker().setMinDate(now.getTimeInMillis());
@@ -179,16 +187,34 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
 
     @OnClick(R.id.txtTime)
     void pickTime() {
-        TimePickerDialog timePickerDialog = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
-            @Override
-            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                start.set(Calendar.HOUR_OF_DAY, hourOfDay);
-                start.set(Calendar.MINUTE, minute);
+        int selected_reminder = get_selected_reminder();
+        if (selected_reminder == ReminderType.TYPE_DAILY) {
+            TimePickerDialog timePickerDialog = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
+                @Override
+                public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                    start.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                    start.set(Calendar.MINUTE, minute);
 
-                txtTime.setText(Utils.get_calendar_time(start));
-            }
-        }, now.get(Calendar.HOUR_OF_DAY), now.get(Calendar.MINUTE), true);
-        timePickerDialog.show();
+                    txtTime.setText(Utils.get_calendar_time(start));
+                }
+            }, now.get(Calendar.HOUR_OF_DAY), now.get(Calendar.MINUTE), true);
+            timePickerDialog.show();
+        } else if (selected_reminder == ReminderType.TYPE_WEEKLY) {
+            new SlideDayTimePicker.Builder(getSupportFragmentManager())
+                    .setListener(new SlideDayTimeListener() {
+                        @Override
+                        public void onDayTimeSet(int day, int hour, int minute) {
+
+                        }
+                    })
+                    .setInitialDay(now.get(Calendar.DAY_OF_WEEK))
+                    .setInitialHour(now.get(Calendar.HOUR_OF_DAY))
+                    .setInitialMinute(now.get(Calendar.MINUTE))
+                    .setIs24HourTime(true)
+                    .build()
+                    .show();
+        }
+
     }
 
     @Override
@@ -226,7 +252,7 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
         // Using for alarm
         reminder.setPendingId(Utils.getRandomPendingId());
         reminder.setHour_alarm(alarm.getTimeInMillis());
-        reminder.setRepeat_type(reminder.get_repeat_type(spinReminderRepeat.getSelectedItem().toString()));
+        reminder.setRepeat_type(get_selected_reminder());
 
         if (is_add_mode) {
             reminder.setId(tsLong);
@@ -252,6 +278,10 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
         } catch (NullPointerException e) {
 
         }
+    }
+
+    private int get_selected_reminder() {
+        return ReminderType.get_repeat_type(spinReminderRepeat.getSelectedItem().toString());
     }
 
     @Override

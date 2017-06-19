@@ -133,6 +133,9 @@ public class RelativeListFragment extends Fragment implements OnRecyclerItemClic
         relative_data.child(currentUser.getUid()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                if (!isAdded())
+                    return;
+
                 GenericTypeIndicator<HashMap<String, Relative>> t = new GenericTypeIndicator<HashMap<String, Relative>>() {
                 };
                 HashMap<String, Relative> value = dataSnapshot.getValue(t);
