@@ -155,6 +155,10 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                         start.set(year, month, dayOfMonth);
                         txtStart.setText(Utils.get_calendar_date(start));
+                        if (start.compareTo(end) > 0){
+                            end = start;
+                            txtEnd.setText(Utils.get_calendar_date(end));
+                        }
                     }
                 }, now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DATE));
         dialog.getDatePicker().setMinDate(now.getTimeInMillis());
