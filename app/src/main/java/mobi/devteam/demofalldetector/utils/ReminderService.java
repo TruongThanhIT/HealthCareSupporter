@@ -118,7 +118,8 @@ public class ReminderService extends Service {
         Notification notification = new NotificationCompat.Builder(this)
                 .setContentTitle(reminder.getName())
                 .setTicker(reminder.getName())
-                .setSubText(Utils.get_calendar_date(Tools.convertLongToCalendar(reminder.getStart())))
+                .setSubText(Utils.get_calendar_date(Tools.convertLongToCalendar(reminder.getStart()))) //TODO: viet lai logic cho nay
+                //TODO: logic cho nay se lay gia tri calendar cua ngay hom nay sau do set time lai neu la daily
                 .setContentText(reminder.getNote())
                 .setSmallIcon(R.drawable.ic_alarm)
 //                .setLargeIcon(Bitmap.createScaledBitmap(icon, 128, 128, false))

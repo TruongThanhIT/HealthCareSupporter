@@ -6,13 +6,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.storage.FirebaseStorage;
-
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -20,23 +13,24 @@ import mobi.devteam.demofalldetector.model.Reminder;
 
 public class Utils {
 
-    public static String get_calendar_time(Calendar calendar){
+    public static String get_calendar_time(Calendar calendar) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
         return simpleDateFormat.format(calendar.getTime());
     }
 
-    public static String get_calendar_date(Calendar calendar){
+    public static String get_calendar_date(Calendar calendar) {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         return sdf.format(calendar.getTime());
     }
 
-    public static int getRandomPendingId() {
+    public static int getRandomPendingId() { // ko ko Nen de kieu int, vi id trong alam chi chiu kieu int
         int id;
         do {
             id = Tools.getRandomInt();
         } while (checkPendingIdExist(id));
         return id;
     }
+
     private static boolean checkPendingIdExist(int id) {
         // Checking exist
 //        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -44,6 +38,7 @@ public class Utils {
 //        DatabaseReference databaseReference = database.getReference("reminders").child(currentUser.getUid()+"");
         return false;
     }
+
     public static void scheduleNotification(Activity activity, Reminder reminder) {
         Intent service = new Intent(activity, ReminderService.class);
         service.setAction(Constants.ACTION.START_SERVICE);
@@ -53,7 +48,35 @@ public class Utils {
                 getSystemService(Context.ALARM_SERVICE);
 
 //        alarmManager.cancel(sender);
-        alarmManager.set(AlarmManager.RTC_WAKEUP, reminder.getHour_alarm(), sender);
+        //alarmManager.set(AlarmManager.RTC_WAKEUP, reminder.getHour_alarm(), sender);
+
+        Calendar rem = Calendar.getInstance();
+        Calendar temp = Calendar.getInstance();
+        temp.setTimeInMillis(reminder.getHour_alarm());
+
+        if (reminder.getRepeat_type() == ReminderType.TYPE_DAILY) {
+
+            if (rem.get(Calendar.HOUR_OF_DAY) > temp.get(Calendar.HOUR_OF_DAY)) {
+                //Miss that hour , shedule for next day
+                rem.add(Calendar.DAY_OF_MONTH, 1);
+            }
+
+            rem.set(Calendar.HOUR_OF_DAY, temp.get(Calendar.HOUR_OF_DAY));
+            rem.set(Calendar.MINUTE, temp.get(Calendar.MINUTE));
+            alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, rem.getTimeInMillis(), AlarmManager.INTERVAL_DAY, sender);
+            //Nhan duoc reminder se set tiep reminder
+        } else {
+            //SHEDULE FOR WEEKLY
+            if (rem.get(Calendar.DAY_OF_WEEK) > temp.get(Calendar.DAY_OF_WEEK)){
+                //SHEDULE FOR NEXT WEEK
+                rem.add(Calendar.DAY_OF_WEEK,1);
+            }
+
+            rem.set(Calendar.HOUR_OF_DAY, temp.get(Calendar.HOUR_OF_DAY));
+            rem.set(Calendar.MINUTE, temp.get(Calendar.MINUTE));
+
+            alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, rem.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, sender);
+        }
 
     }
 }
