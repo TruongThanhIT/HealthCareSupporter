@@ -64,3 +64,6 @@ Thumbs.db
 
 # Signing files
 .signing/
+
+# Firebase 
+google-services.json

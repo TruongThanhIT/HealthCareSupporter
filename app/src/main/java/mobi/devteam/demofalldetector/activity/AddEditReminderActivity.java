@@ -249,8 +249,11 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
         reminder.setEnd(end.getTimeInMillis()); // start -> end
         reminder.setName(edtReminder.getText().toString());
         reminder.setNote(edtNote.getText().toString());
+
         // Using for alarm
-        reminder.setPendingId(Utils.getRandomPendingId());
+        if (is_add_mode)
+            reminder.setPendingId(Utils.getRandomPendingId()); //problem here
+
         reminder.setHour_alarm(alarm.getTimeInMillis());
         reminder.setRepeat_type(get_selected_reminder());
 
