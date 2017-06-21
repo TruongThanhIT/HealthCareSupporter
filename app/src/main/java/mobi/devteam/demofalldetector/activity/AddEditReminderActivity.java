@@ -192,10 +192,10 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
             TimePickerDialog timePickerDialog = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
                 @Override
                 public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                    start.set(Calendar.HOUR_OF_DAY, hourOfDay);
-                    start.set(Calendar.MINUTE, minute);
+                    alarm.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                    alarm.set(Calendar.MINUTE, minute);
 
-                    txtTime.setText(Utils.get_calendar_time(start));
+                    txtTime.setText(Utils.get_calendar_time(alarm));
                 }
             }, now.get(Calendar.HOUR_OF_DAY), now.get(Calendar.MINUTE), true);
             timePickerDialog.show();
@@ -204,12 +204,17 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
                     .setListener(new SlideDayTimeListener() {
                         @Override
                         public void onDayTimeSet(int day, int hour, int minute) {
+                            alarm.set(Calendar.DAY_OF_WEEK, day);
+                            alarm.set(Calendar.HOUR_OF_DAY, hour);
+                            alarm.set(Calendar.MINUTE, minute);
+                            String[] dayOfWeek = getResources().getStringArray(R.array.days_array);
 
+                            txtTime.setText(dayOfWeek[day] + ", " + hour + ":" + minute);
                         }
                     })
-                    .setInitialDay(now.get(Calendar.DAY_OF_WEEK))
-                    .setInitialHour(now.get(Calendar.HOUR_OF_DAY))
-                    .setInitialMinute(now.get(Calendar.MINUTE))
+                    .setInitialDay(alarm.get(Calendar.DAY_OF_WEEK))
+                    .setInitialHour(alarm.get(Calendar.HOUR_OF_DAY))
+                    .setInitialMinute(alarm.get(Calendar.MINUTE))
                     .setIs24HourTime(true)
                     .build()
                     .show();
