@@ -62,6 +62,12 @@ public class ReminderService extends Service {
         return START_NOT_STICKY;
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        stopSelf();
+    }
+
     private void showNotificationReminder(int repeatType) {
         //Content Intent
         Intent notificationIntent = new Intent(this, AddEditReminderActivity.class);
