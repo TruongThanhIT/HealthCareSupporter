@@ -1,0 +1,61 @@
+<resources>
+    <string name="app_name">Healthcare Supporter</string>
+    <string name="title_activity_main">Healthcare Supporter</string>
+
+    <!-- Navigation -->
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_feedback">Feedback</string>
+    <string name="nav_share">Share</string>
+    <string name="nav_rate">Rate</string>
+    <string name="nav_home">Home</string>
+    <string name="nav_relatives_list">Relatives</string>
+    <string name="nav_setting">Settings</string>
+    <string name="nav_logout">Logout</string>
+
+    <!--Login-->
+    <string name="hintYourPassword">Your password</string>
+    <string name="hintYourEmail">Your email</string>
+    <string name="userName">User name</string>
+    <string name="password">Password</string>
+    <string name="login">Login With Password</string>
+    <string name="signup">Sign Up</string>
+    <string name="forget_password">Can\'t remember your password?</string>
+    <string name="err_login">User name or password invalid!!!</string>
+
+    <!--Create information of relative-->
+    <string name="nameText">Name <font color='red'>*</font> </string>
+    <string name="phoneText">Phone <font color='red'>*</font> </string>
+    <string name="err_image">Choose image</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!--Relatives-->
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+    <string name="tittle_manage_relatives">Information of relatives</string>
+    <string name="title_activity_add_edit_task">AddEditTaskActivity</string>
+
+    <!-- Reminder -->
+    <string name="ae_reminder_name">Reminder short:</string>
+    <string name="ae_reminder_start">Start date:</string>
+    <string name="ae_reminder_end">End date</string>
+    <string name="ae_reminder_repeat">Repeat:</string>
+    <string name="ae_reminder_note">Notes:</string>
+    <string name="snoozeAlert">Snooze after 10 minutes</string>
+
+
+    <string name="my_web_client_id">828026602604-bp4fq1gj71lh7h5po9gnotblq8sia4to.apps.googleusercontent.com	</string>
+    <string name="err_email_password_null">Email or password is empty</string>
+    <string name="ae_reminder_hint">What you need to reminder?</string>
+    <string name="ae_reminder_note_hint">Type your note detail here</string>
+    <string name="ae_reminder_picktime">Reminder Time:</string>
+
+    <!-- Do not change position -->
+    <string-array name="repeat_array">
+        <item>Daily</item>
+        <item>Weekly</item>
+    </string-array>
+
+</resources>

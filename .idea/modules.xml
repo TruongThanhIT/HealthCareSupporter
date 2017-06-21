@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/HealthCareSupporter.iml" filepath="$PROJECT_DIR$/HealthCareSupporter.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/slideDayTimePicker/slideDayTimePicker.iml" filepath="$PROJECT_DIR$/slideDayTimePicker/slideDayTimePicker.iml" />
+    </modules>
+  </component>
+</project>

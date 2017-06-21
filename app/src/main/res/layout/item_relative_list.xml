@@ -1,0 +1,56 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/size_5"
+    android:background="@drawable/bg_item">
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/card_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_margin="@dimen/size_1"
+        android:elevation="@dimen/size_3"
+        card_view:cardCornerRadius="@dimen/size_0">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="?attr/selectableItemBackgroundBorderless">
+
+            <ImageView
+                android:id="@+id/imgRelatives"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/size_150"
+                android:padding="@dimen/size_7"
+                android:scaleType="fitXY" />
+
+            <TextView
+                android:id="@+id/txtRelativesName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/imgRelatives"
+                android:layout_marginTop="@dimen/size_10"
+                android:maxLength="@integer/size_15"
+                android:paddingBottom="@dimen/size_5"
+                android:paddingLeft="@dimen/size_10"
+                android:paddingRight="@dimen/size_10"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="@dimen/size_text_15" />
+
+            <ImageView
+                android:id="@+id/imgMenu"
+                android:layout_width="@dimen/size_20"
+                android:layout_height="@dimen/size_30"
+                android:layout_alignParentRight="true"
+                android:layout_below="@id/imgRelatives"
+                android:layout_marginTop="@dimen/size_10"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_dots" />
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
+
+</LinearLayout>
