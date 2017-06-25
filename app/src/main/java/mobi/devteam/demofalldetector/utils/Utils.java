@@ -46,14 +46,11 @@ public class Utils {
         PendingIntent sender = PendingIntent.getService(activity, reminder.getPendingId(), service, 0);
         AlarmManager alarmManager = (AlarmManager) activity.getBaseContext().
                 getSystemService(Context.ALARM_SERVICE);
-
-//        alarmManager.cancel(sender);
-        //alarmManager.set(AlarmManager.RTC_WAKEUP, reminder.getHour_alarm(), sender);
-
         Calendar rem = Calendar.getInstance();
+        rem.set(Calendar.SECOND, 0);
+        rem.set(Calendar.MILLISECOND, 0);
         Calendar temp = Calendar.getInstance();
         temp.setTimeInMillis(reminder.getHour_alarm());
-
         if (reminder.getRepeat_type() == ReminderType.TYPE_DAILY) {
 
             if (rem.get(Calendar.HOUR_OF_DAY) > temp.get(Calendar.HOUR_OF_DAY)) {
@@ -74,6 +71,8 @@ public class Utils {
 
             rem.set(Calendar.HOUR_OF_DAY, temp.get(Calendar.HOUR_OF_DAY));
             rem.set(Calendar.MINUTE, temp.get(Calendar.MINUTE));
+            rem.set(Calendar.SECOND, 0);
+            rem.set(Calendar.MILLISECOND, 0);
 
             alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, rem.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, sender);
         }
