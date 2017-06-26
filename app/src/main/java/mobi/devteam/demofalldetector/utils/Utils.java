@@ -66,16 +66,16 @@ public class Utils {
             //SHEDULE FOR WEEKLY
             if (rem.get(Calendar.DAY_OF_WEEK) > temp.get(Calendar.DAY_OF_WEEK)){
                 //SHEDULE FOR NEXT WEEK
-                rem.add(Calendar.DAY_OF_WEEK,1);
+//                rem.add(Calendar.DAY_OF_WEEK,1);
+                rem.add(Calendar.DAY_OF_MONTH, 1);
             }
 
             rem.set(Calendar.HOUR_OF_DAY, temp.get(Calendar.HOUR_OF_DAY));
             rem.set(Calendar.MINUTE, temp.get(Calendar.MINUTE));
-            rem.set(Calendar.SECOND, 0);
-            rem.set(Calendar.MILLISECOND, 0);
 
-            alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, rem.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, sender);
+            alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, rem.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 365, sender);
         }
+
 
     }
 }
