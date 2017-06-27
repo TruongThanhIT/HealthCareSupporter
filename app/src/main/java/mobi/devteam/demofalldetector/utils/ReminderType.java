@@ -18,6 +18,5 @@ public class ReminderType {
         } else {
             return ReminderType.TYPE_YEARLY; //Yearly
         }
-
     }
 }

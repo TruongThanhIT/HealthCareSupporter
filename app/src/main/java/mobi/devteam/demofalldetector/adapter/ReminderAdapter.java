@@ -13,13 +13,18 @@ import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 import mobi.devteam.demofalldetector.R;
+import mobi.devteam.demofalldetector.activity.MyApplication;
 import mobi.devteam.demofalldetector.model.Reminder;
 import mobi.devteam.demofalldetector.myInterface.OnRecyclerItemClickListener;
+import mobi.devteam.demofalldetector.utils.ReminderType;
+import mobi.devteam.demofalldetector.utils.Tools;
+import mobi.devteam.demofalldetector.utils.Utils;
 
 public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.ReminderViewHolder>{
 
@@ -46,9 +51,22 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.Remind
         Reminder reminder = reminderArrayList.get(position);
         if (reminder!=null){
             holder.txtReminder.setText(reminder.getName());
-            holder.txtRepeat.setText(reminder.getRepeat_type()+"");
-            holder.txtTime.setText(reminder.getStart()+"");
+            if(reminder.getRepeat_type() == ReminderType.TYPE_DAILY){
+                holder.txtRepeat.setText(MyApplication.reminder_types[0]);
+            }
+            else if(reminder.getRepeat_type() == ReminderType.TYPE_WEEKLY){
+                holder.txtRepeat.setText(MyApplication.reminder_types[1]);
+            }
+            else if(reminder.getRepeat_type() == ReminderType.TYPE_MONTHLY){
+                holder.txtRepeat.setText(MyApplication.reminder_types[2]);
 
+            }
+            else {
+                holder.txtRepeat.setText(MyApplication.reminder_types[3]);
+
+            }
+            Calendar dateTime = Tools.convertLongToCalendar(reminder.getStart());
+            holder.txtTime.setText(Utils.get_calendar_date(dateTime) + ", " + Utils.get_calendar_time(dateTime));
             if(reminder.getName().length() > 0){
                 TextDrawable textDrawable = TextDrawable.builder()
                         .beginConfig()
