@@ -57,5 +57,8 @@
         <item>Daily</item>
         <item>Weekly</item>
     </string-array>
+    <string name="title_activity_confirm_falling">ConfirmFallingActivity</string>
+    <string name="confirm_label_confirm">Are you fallen down?</string>
+    <string name="confirm_get_assistant">Confirm fallen to get assistant</string>
 
 </resources>
