@@ -23,7 +23,7 @@ public class Utils {
         return sdf.format(calendar.getTime());
     }
 
-    public static int getRandomPendingId() { // ko ko Nen de kieu int, vi id trong alam chi chiu kieu int
+    public static int getRandomPendingId() {
         int id;
         do {
             id = Tools.getRandomInt();

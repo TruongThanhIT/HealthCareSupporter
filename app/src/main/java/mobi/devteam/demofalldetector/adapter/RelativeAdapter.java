@@ -61,14 +61,14 @@ public class RelativeAdapter extends RecyclerView.Adapter<RelativeAdapter.Relati
         if (relative != null) {
             if (relative.getThumb() == null) {
                 Picasso.with(context)
-                        .load(R.drawable.image_user_login)
+                        .load(R.drawable.image_family)
                         .into(holder.imgRelatives);
             } else {
                 Picasso.with(context)
                         .load(relative.getThumb())
                         .resize(200, 200)
                         .centerCrop()
-                        .placeholder(R.drawable.image_user_login)
+                        .placeholder(R.drawable.image_family)
                         .into(holder.imgRelatives);
             }
 
