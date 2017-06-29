@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Healthcare Supporter</string>
+    <string name="app_name">Health care</string>
     <string name="title_activity_main">Healthcare Supporter</string>
 
     <!-- Navigation -->
@@ -24,8 +24,8 @@
     <string name="err_login">User name or password invalid!!!</string>
 
     <!--Create information of relative-->
-    <string name="nameText">Name <font color='red'>*</font> </string>
-    <string name="phoneText">Phone <font color='red'>*</font> </string>
+    <string name="nameText">Name: </string>
+    <string name="phoneText">Phone: </string>
     <string name="err_image">Choose image</string>
 
     <!-- TODO: Remove or change this placeholder text -->

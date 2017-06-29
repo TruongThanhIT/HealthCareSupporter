@@ -16,7 +16,6 @@
     <style name="buttonColorRed">
         <item name="android:layout_height">@dimen/size_10</item>
         <item name="android:layout_marginTop">@dimen/size_20</item>
-        <item name="android:textColor">@color/color_red</item>
 
     </style>
 
