@@ -13,7 +13,7 @@ import mobi.devteam.demofalldetector.myBroadcasts.SmsReceiver;
  * Created by Administrator on 6/25/2017.
  */
 
-public class GetLocationServices extends Service {
+public class GetLocationService extends Service {
 
     private SmsReceiver mSmsReceiver;
     private IntentFilter mIntentFilter;

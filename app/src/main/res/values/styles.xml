@@ -55,4 +55,11 @@
     <style name="MyCustomSpinner" parent="Widget.AppCompat.Spinner">
         <item name="android:paddingLeft">0dp</item>
     </style>
+
+    <style name="FullScreen" parent="AppTheme">
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
 </resources>
