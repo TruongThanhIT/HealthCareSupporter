@@ -3,9 +3,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="mobi.devteam.demofalldetector">
 
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.CALL_PHONE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
+
     <uses-permission android:name="android.permission.READ_SMS" />
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
 
@@ -17,7 +24,6 @@
         android:roundIcon="@drawable/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="${applicationId}.com.vansuita.pickimage.provider"
@@ -46,15 +52,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".activity.CreateUpdateRelativeActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".activity.AddEditReminderActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
+
         <service
             android:name=".utils.ReminderService"
             android:enabled="true"
@@ -63,8 +68,14 @@
                 <action android:name=".utils.ReminderService" />
             </intent-filter>
         </service>
+        <service android:name=".myServices.GetLocationService" />
 
-        <service android:name=".myServices.GetLocationServices"/>
+        <activity
+            android:name=".activity.ConfirmFallActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/FullScreen" />
+
+        <receiver android:name=".myBroadcasts.SmsReceiver"/>
     </application>
 
 </manifest>

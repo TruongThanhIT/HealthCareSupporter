@@ -17,7 +17,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import mobi.devteam.demofalldetector.R;
 import mobi.devteam.demofalldetector.fragment.HomeFragment;
 import mobi.devteam.demofalldetector.fragment.RelativeListFragment;
-import mobi.devteam.demofalldetector.myServices.GetLocationServices;
+import mobi.devteam.demofalldetector.myServices.GetLocationService;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity
         onNavigationItemSelected(navigationView.getMenu().getItem(0));// select home for default
 
         //TODO: HANDLE THING HERE
-        startService(new Intent(this, GetLocationServices.class));
+        startService(new Intent(this, GetLocationService.class));
     }
 
     private void initData() {
