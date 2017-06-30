@@ -46,7 +46,7 @@
     <string name="snoozeAlert">Snooze after 10 minutes</string>
 
 
-    <string name="my_web_client_id">828026602604-bp4fq1gj71lh7h5po9gnotblq8sia4to.apps.googleusercontent.com	</string>
+    <string name="my_web_client_id">828026602604-bp4fq1gj71lh7h5po9gnotblq8sia4to.apps.googleusercontent.com</string>
     <string name="err_email_password_null">Email or password is empty</string>
     <string name="ae_reminder_hint">What you need to reminder?</string>
     <string name="ae_reminder_note_hint">Type your note detail here</string>
@@ -60,5 +60,9 @@
     <string name="title_activity_confirm_falling">ConfirmFallingActivity</string>
     <string name="confirm_label_confirm">Are you fallen down?</string>
     <string name="confirm_get_assistant">Confirm fallen to get assistant</string>
+    <string name="confirm_calling">Hold on ,\n I\'m finding assistant for you</string>
+    <string name="calling_someone">Calling ... %1$s</string>
+    <string name="calling_out_of_bound">We can\'t reach your relatives</string>
+    <string name="calling_emergency_service">Calling emergency service</string>
 
 </resources>
