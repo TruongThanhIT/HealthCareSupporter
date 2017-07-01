@@ -10,7 +10,9 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.ProgressBar;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -31,9 +33,13 @@ import butterknife.OnClick;
 import butterknife.Unbinder;
 import mobi.devteam.demofalldetector.R;
 import mobi.devteam.demofalldetector.activity.AddEditReminderActivity;
+import mobi.devteam.demofalldetector.activity.MainActivity;
 import mobi.devteam.demofalldetector.adapter.ReminderAdapter;
+import mobi.devteam.demofalldetector.model.Profile;
 import mobi.devteam.demofalldetector.model.Reminder;
 import mobi.devteam.demofalldetector.myInterface.OnRecyclerItemClickListener;
+import mobi.devteam.demofalldetector.myServices.DetectFallService;
+import mobi.devteam.demofalldetector.myServices.GetLocationService;
 
 public class HomeFragment extends Fragment implements OnRecyclerItemClickListener {
 
@@ -53,7 +59,15 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
     @BindView(R.id.progressBarReminder)
     ProgressBar progressBarReminder;
 
+    @BindView(R.id.sw_allow_find)
+    Switch sw_allow_find;
+
+    @BindView(R.id.sw_fall_detect)
+    Switch sw_fall_detect;
+
     private int mLong_click_selected;
+    private DatabaseReference profile_data;
+    private Profile mProfile;
 
     public HomeFragment() {
 
@@ -84,8 +98,83 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
                 LinearLayoutManager.VERTICAL, false);
         rcv_reminders.setLayoutManager(linearLayoutManager);
         initData();
+        addEvents();
 
         return mView;
+    }
+
+    private void addEvents() {
+        profile_data = FirebaseDatabase.getInstance().getReference().child("profile").child(mAuth.getCurrentUser().getUid());
+        profile_data.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                mProfile = dataSnapshot.getValue(Profile.class);
+
+                if (mProfile == null)
+                    return;
+
+                sw_fall_detect.setChecked(mProfile.isDetect_fall());
+                sw_allow_find.setChecked(mProfile.isAllow_find());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        sw_fall_detect.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (mProfile == null) {
+                    goto_profile_page();
+                    return;
+                }
+
+                mProfile.setAllow_find(isChecked);
+                profile_data.setValue(mProfile);
+
+                Intent intent = new Intent(getActivity(), DetectFallService.class);
+                if (isChecked) {
+                    getActivity().startService(intent);
+                } else {
+                    //cancel service
+                    getActivity().stopService(intent);
+                }
+            }
+        });
+
+        sw_allow_find.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (mProfile == null) {
+                    goto_profile_page();
+                    return;
+                }
+
+                mProfile.setAllow_find(isChecked);
+                profile_data.setValue(mProfile);
+
+                Intent intent = new Intent(getActivity(), GetLocationService.class);
+                if (isChecked) {
+                    getActivity().startService(intent);
+                } else {
+                    //cancel service
+                    getActivity().stopService(intent);
+                }
+            }
+        });
+    }
+
+    private void goto_profile_page() {
+        Toast.makeText(getActivity(), getString(R.string.home_require_profile_config), Toast.LENGTH_SHORT).show();
+
+        MainActivity activity = (MainActivity) getActivity();
+        android.support.v4.app.FragmentManager supportFragmentManager = activity.getSupportFragmentManager();
+
+        android.support.v4.app.FragmentTransaction fragmentTransaction = supportFragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.frame_container, ProfileFragment.newInstance());
+        fragmentTransaction.commit();
     }
 
     private void initData() {
@@ -131,7 +220,10 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                progressBarReminder.setVisibility(View.GONE);
+                Toast.makeText(getActivity(), "Error when getting data : " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+
+                if (isAdded())
+                    progressBarReminder.setVisibility(View.GONE);
             }
         });
     }

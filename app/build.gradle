@@ -44,10 +44,8 @@ dependencies {
     compile 'com.ebanx:swipe-button:0.5.2'
     testCompile 'junit:junit:4.12'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.6.0'
+    compile 'com.github.dmytrodanylyk.android-process-button:library:1.0.4'
+
 }
-
-
-
-
 
 apply plugin: 'com.google.gms.google-services'

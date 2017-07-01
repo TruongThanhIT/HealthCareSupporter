@@ -10,7 +10,7 @@
     <string name="nav_rate">Rate</string>
     <string name="nav_home">Home</string>
     <string name="nav_relatives_list">Relatives</string>
-    <string name="nav_setting">Settings</string>
+    <string name="nav_profile">Profile</string>
     <string name="nav_logout">Logout</string>
 
     <!--Login-->
@@ -66,5 +66,16 @@
     <string name="calling_someone">Calling … %1$s</string>
     <string name="calling_out_of_bound">We can\'t reach your relatives</string>
     <string name="calling_emergency_service">Calling emergency service</string>
+    <string name="home_enable_fall_detect">Enable fall detect</string>
+    <string name="home_allow_tracking">Allow relatives find me</string>
+    <string name="profile_height">Height (m)</string>
+    <string name="profile_weight">Weight (kg)</string>
+    <string name="profile_is_male">Male</string>
+    <string name="profile_is_female">Female</string>
+    <string name="profile_gender">Gender</string>
+    <string name="profile_update">Update</string>
+    <string name="label_complete">Success</string>
+    <string name="label_loading">Loading</string>
+    <string name="home_require_profile_config">Please update your profile to continue</string>
 
 </resources>
