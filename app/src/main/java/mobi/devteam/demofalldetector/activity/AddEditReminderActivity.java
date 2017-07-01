@@ -122,7 +122,7 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
         if (!is_add_mode) {
 
             Picasso.with(this)
-                    .load(reminder.getThumb())
+                    .load(R.drawable.image_camera)
                     .resize(300, 300)
                     .into(imgThumb);
 
