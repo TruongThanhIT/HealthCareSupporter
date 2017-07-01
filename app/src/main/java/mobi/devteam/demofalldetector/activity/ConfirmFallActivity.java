@@ -98,13 +98,15 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
         if (currentUser == null) {
             Log.e(LOG_TAG, "Can't get current user for auth");
             finish();
+            return;
         }
         relativeArrayList = new ArrayList<>();
+
+        relative_data.keepSynced(true);
 
         relative_data.child(currentUser.getUid()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-
 
                 GenericTypeIndicator<HashMap<String, Relative>> t = new GenericTypeIndicator<HashMap<String, Relative>>() {
                 };
@@ -115,13 +117,13 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
                     relativeArrayList.addAll(value.values());
                 }
 
-                //ok , just get one time
-                relative_data.removeEventListener(this);
+                //ok , just get one time , sync with firebase
+                //relative_data.removeEventListener(this);
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
+                Log.e("test","test");
             }
         });
     }
@@ -202,12 +204,14 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
         Relative relative = relativeArrayList.get(current_call_position);
 
         //TODO: test here
+        String first_letter = relative.getName().length() > 0?relative.getName().substring(0,1).toUpperCase():"R";
+
         TextDrawable textDrawable = TextDrawable.builder()
                 .beginConfig()
-                .width(100)
-                .height(100)
+                .width(200)
+                .height(200)
                 .endConfig()
-                .buildRound( relative.getName().substring(0,1).toUpperCase(), ColorGenerator.MATERIAL.getRandomColor());
+                .buildRound( first_letter, ColorGenerator.MATERIAL.getRandomColor());
 
         Picasso.with(this)
                 .load(relative.getThumb())
@@ -218,6 +222,7 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
     }
 
     private void call_to_number(String tel) {
+        Log.e(LOG_TAG,tel);
         Intent intent = new Intent(Intent.ACTION_CALL);
 
         intent.setData(Uri.parse("tel:" + tel));
@@ -261,16 +266,20 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
                     Toast.makeText(context, "Phone state Idle", Toast.LENGTH_LONG).show();
                     break;
                 case TelephonyManager.CALL_STATE_OFFHOOK:
+                    Log.e("off","off");
                     //TODO: handle offhook then try to get connect with someone else
                     //when Off hook i.e in call
                     //Make intent and start your service here
 
+                    /*
                     current_call_position += 1;
                     make_a_call_to_list();
+                    */
 
                     Toast.makeText(context, "Phone state Off hook", Toast.LENGTH_LONG).show();
                     break;
                 case TelephonyManager.CALL_STATE_RINGING:
+                    Log.e("Ringing","Ringing");
                     //when Ringing
                     Toast.makeText(context, "Phone state Ringing", Toast.LENGTH_LONG).show();
                     break;
