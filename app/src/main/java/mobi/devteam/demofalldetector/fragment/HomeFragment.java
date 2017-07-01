@@ -131,7 +131,6 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Toast.makeText(getActivity(), "Error when getting data : " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
                 progressBarReminder.setVisibility(View.GONE);
             }
         });

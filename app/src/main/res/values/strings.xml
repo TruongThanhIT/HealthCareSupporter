@@ -60,8 +60,8 @@
         <item>Yearly</item>
     </string-array>
     <string name="title_activity_confirm_falling">ConfirmFallingActivity</string>
-    <string name="confirm_label_confirm">Are you fallen down?</string>
-    <string name="confirm_get_assistant">Confirm fallen to get assistant</string>
+    <string name="confirm_label_confirm">Confirm if you are ok</string>
+    <string name="confirm_get_status">Are you falling down?</string>
     <string name="confirm_calling">Hold on ,\n I\'m finding assistant for you</string>
     <string name="calling_someone">Calling … %1$s</string>
     <string name="calling_out_of_bound">We can\'t reach your relatives</string>
