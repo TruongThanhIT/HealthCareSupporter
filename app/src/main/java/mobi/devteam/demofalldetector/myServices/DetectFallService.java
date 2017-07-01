@@ -1,6 +1,5 @@
 package mobi.devteam.demofalldetector.myServices;
 
-import android.app.Service;
 import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -18,7 +17,7 @@ import mobi.devteam.demofalldetector.model.Accelerator;
  * Created by Administrator on 6/29/2017.
  */
 
-public class DetectFallService extends Service implements SensorEventListener {
+public class DetectFallService extends RelativeBaseService implements SensorEventListener {
 
     private static final int LIMIT_SIZE_OF_STATE = 30;
     private static final long TIME_PER_STAGE = 120; //ms

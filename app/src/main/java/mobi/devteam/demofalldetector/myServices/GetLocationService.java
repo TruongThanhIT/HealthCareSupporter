@@ -1,6 +1,5 @@
 package mobi.devteam.demofalldetector.myServices;
 
-import android.app.Service;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.IBinder;
@@ -13,7 +12,7 @@ import mobi.devteam.demofalldetector.myBroadcasts.SmsReceiver;
  * Created by Administrator on 6/25/2017.
  */
 
-public class GetLocationService extends Service {
+public class GetLocationService extends RelativeBaseService {
 
     private SmsReceiver mSmsReceiver;
     private IntentFilter mIntentFilter;
@@ -40,6 +39,7 @@ public class GetLocationService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+
         return START_STICKY;
     }
 

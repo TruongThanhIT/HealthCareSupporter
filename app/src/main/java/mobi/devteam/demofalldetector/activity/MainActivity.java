@@ -16,6 +16,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import mobi.devteam.demofalldetector.R;
 import mobi.devteam.demofalldetector.fragment.HomeFragment;
+import mobi.devteam.demofalldetector.fragment.ProfileFragment;
 import mobi.devteam.demofalldetector.fragment.RelativeListFragment;
 import mobi.devteam.demofalldetector.myServices.GetLocationService;
 
@@ -105,6 +106,11 @@ public class MainActivity extends AppCompatActivity
                 mAuth.signOut();
                 startActivity(new Intent(MainActivity.this, LoginActivity.class));
                 finish();
+                break;
+            case R.id.nav_profile:
+                fragmentTransaction.replace(R.id.frame_container, ProfileFragment.newInstance());
+                fragmentTransaction.commit();
+                break;
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
