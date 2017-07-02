@@ -59,13 +59,12 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.Remind
             }
             else if(reminder.getRepeat_type() == ReminderType.TYPE_MONTHLY){
                 holder.txtRepeat.setText(MyApplication.reminder_types[2]);
-
             }
             else {
                 holder.txtRepeat.setText(MyApplication.reminder_types[3]);
 
             }
-            Calendar dateTime = Tools.convertLongToCalendar(reminder.getStart());
+            Calendar dateTime = Tools.convertLongToCalendar(reminder.getHour_alarm());
             holder.txtTime.setText(Utils.get_calendar_date(dateTime) + ", " + Utils.get_calendar_time(dateTime));
             if(reminder.getName().length() > 0){
                 TextDrawable textDrawable = TextDrawable.builder()

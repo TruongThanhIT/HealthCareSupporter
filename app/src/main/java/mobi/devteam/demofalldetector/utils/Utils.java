@@ -43,6 +43,7 @@ public class Utils {
         Intent service = new Intent(activity, ReminderService.class);
         service.setAction(Constants.ACTION.START_SERVICE);
         service.putExtra(Constants.KEY.ITEM_KEY, reminder);
+
         PendingIntent sender = PendingIntent.getService(activity, reminder.getPendingId(), service, 0);
         AlarmManager alarmManager = (AlarmManager) activity.getBaseContext().
                 getSystemService(Context.ALARM_SERVICE);
@@ -60,7 +61,7 @@ public class Utils {
             rem.set(Calendar.MINUTE, temp.get(Calendar.MINUTE));
             rem.set(Calendar.SECOND, 0);
             rem.set(Calendar.MILLISECOND, 0);
-            alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, rem.getTimeInMillis(), AlarmManager.INTERVAL_DAY, sender);
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, rem.getTimeInMillis(), AlarmManager.INTERVAL_DAY, sender);
             //Nhan duoc reminder se set tiep reminder
         } else if(reminder.getRepeat_type() == ReminderType.TYPE_WEEKLY){
             //SHEDULE FOR WEEKLY
@@ -74,7 +75,7 @@ public class Utils {
             rem.set(Calendar.MINUTE, temp.get(Calendar.MINUTE));
             rem.set(Calendar.SECOND, 0);
             rem.set(Calendar.MILLISECOND, 0);
-            alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, rem.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, sender);
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, rem.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, sender);
         }
         else if(reminder.getRepeat_type() == ReminderType.TYPE_MONTHLY){
             if(rem.get(Calendar.DAY_OF_MONTH) > temp.get(Calendar.DAY_OF_MONTH)){
@@ -84,7 +85,7 @@ public class Utils {
             rem.set(Calendar.MINUTE, temp.get(Calendar.MINUTE));
             rem.set(Calendar.SECOND, 0);
             rem.set(Calendar.MILLISECOND, 0);
-            alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, rem.getTimeInMillis(), AlarmManager.INTERVAL_DAY * getDuration(), sender);
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, rem.getTimeInMillis(), AlarmManager.INTERVAL_DAY * getDuration(), sender);
         }
         else{
             if(rem.get(Calendar.DAY_OF_YEAR) > temp.get(Calendar.DAY_OF_YEAR)){
@@ -94,7 +95,7 @@ public class Utils {
             rem.set(Calendar.MINUTE, temp.get(Calendar.MINUTE));
             rem.set(Calendar.SECOND, 0);
             rem.set(Calendar.MILLISECOND, 0);
-            alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, rem.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 365, sender);
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, rem.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 365, sender);
         }
 
 
