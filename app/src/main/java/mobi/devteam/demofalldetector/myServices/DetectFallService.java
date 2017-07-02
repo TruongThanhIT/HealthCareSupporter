@@ -7,15 +7,12 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import java.util.ArrayList;
 
 import mobi.devteam.demofalldetector.activity.ConfirmFallActivity;
 import mobi.devteam.demofalldetector.model.Accelerator;
-
-/**
- * Created by Administrator on 6/29/2017.
- */
 
 public class DetectFallService extends RelativeBaseService implements SensorEventListener {
 
@@ -37,7 +34,7 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
 
     private double threshold_1 = 6f;
     private double threshold_2 = 5f;
-    private double threshold_3 = 10f;
+    private double threshold_3 = 70f;
 
     @Override
     public void onCreate() {
@@ -47,8 +44,8 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
         recoveryArrayList = new ArrayList<>();
 
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-        Sensor mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+
+        Log.e("DETECT_FALL_SERVICE", "RUNNING");
     }
 
     @Override
@@ -84,9 +81,9 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
         if (acceleratorArrayList.size() >= LIMIT_SIZE_OF_STATE) {
             acceleratorArrayList.remove(0);
 
-            if (!waiting_for_recovery)
+            if (!waiting_for_recovery) {
                 detect_fall();
-            else {
+            } else {
                 recoveryArrayList.add(current_accelerator);
                 detect_recovery();
             }
@@ -96,7 +93,7 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
 
     private void detect_fall() {
         double svm_current = calculate_svm(current_accelerator);
-
+        Log.e("WAITING_FALL", svm_current + "");
         if (svm_current >= threshold_1) { //Threshold 1
             if (current_accelerator.getX() > threshold_2 || current_accelerator.getY() > threshold_2 || current_accelerator.getZ() > threshold_2) { //Threshold 2
                 //is falling ? saving stage
@@ -120,8 +117,10 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
                 sum_y += Math.abs(accelerator.getY());
                 sum_z += Math.abs(accelerator.getZ());
             }
+            Log.e("WAITING_RECOVERY", sum_x+" - "+sum_y+" - "+sum_z);
 
-            if (sum_x > threshold_3 || sum_y > threshold_3 || sum_z > threshold_3){ //Threshold 3
+
+            if (sum_x > threshold_3 || sum_y > threshold_3 || sum_z > threshold_3) { //Threshold 3
                 waiting_for_recovery = false; // ok i'm recovery :)),
                 recoveryArrayList.clear(); // clear recovery stages
             }
@@ -145,11 +144,8 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
         int i_y = y > 0 ? 1 : -1;
         int i_z = z > 0 ? 1 : -1;
 
-        try {
-            return Math.sqrt(i_x * (x * x) + i_y * (y * y) + i_z * (z * z));
-        } catch (Exception ignored) {
-            return 0;
-        }
+        double value = i_x * (x * x) + i_y * (y * y) + i_z * (z * z);
+        return value > 0 ? Math.sqrt(value) : 0;
     }
 
     @Override
@@ -159,6 +155,9 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Sensor mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        Log.e("onstartcommand", "onstart");
         return START_STICKY;
     }
 

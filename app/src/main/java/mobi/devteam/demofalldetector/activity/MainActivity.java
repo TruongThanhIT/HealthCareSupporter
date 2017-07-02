@@ -86,9 +86,13 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
+        navItemSelected(item.getItemId());
+        return true;
+    }
 
+    public void navItemSelected(int id){
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        switch (item.getItemId()) {
+        switch (id) {
             case R.id.nav_home:
                 fragmentTransaction.replace(R.id.frame_container, HomeFragment.newInstance());
                 fragmentTransaction.commit();
@@ -112,10 +116,7 @@ public class MainActivity extends AppCompatActivity
                 fragmentTransaction.commit();
                 break;
         }
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
-        return true;
     }
-
 }

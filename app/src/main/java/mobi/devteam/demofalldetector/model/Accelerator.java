@@ -1,9 +1,5 @@
 package mobi.devteam.demofalldetector.model;
 
-/**
- * Created by Administrator on 6/29/2017.
- */
-
 public class Accelerator {
     private double x;
     private double y;
