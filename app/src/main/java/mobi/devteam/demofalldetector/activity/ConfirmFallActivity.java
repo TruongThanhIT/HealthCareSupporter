@@ -13,6 +13,8 @@ import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Vibrator;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.PhoneStateListener;
@@ -21,6 +23,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
+import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,12 +43,15 @@ import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
+import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import mobi.devteam.demofalldetector.R;
 import mobi.devteam.demofalldetector.model.Relative;
+import mobi.devteam.demofalldetector.utils.Common;
 
 public class ConfirmFallActivity extends AppCompatActivity implements OnStateChangeListener {
 
@@ -71,12 +77,23 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
     };
     private ArrayList<Relative> relativeArrayList;
     private int current_call_position;
+    private double time_key;
+    private FirebaseUser mCurrentUser;
+    private FirebaseDatabase mDatabase;
+    private Vibrator vibrator;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_confirm_fall);
         ButterKnife.bind(this);
+
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        mCurrentUser = mAuth.getCurrentUser();
+        mDatabase = FirebaseDatabase.getInstance();
+
+        time_key = getIntent().getDoubleExtra("time", Calendar.getInstance().getTimeInMillis());
 
         RotateAnimation rotateAnimation = new RotateAnimation(0, -60f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
         rotateAnimation.setDuration(1000);
@@ -90,8 +107,8 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
 
         registerReceiver(broadcastReceiver, intentFilter);
 
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        final DatabaseReference relative_data = FirebaseDatabase.getInstance().getReference("relatives");
+
+        final DatabaseReference relative_data = mDatabase.getReference("relatives");
 
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
@@ -101,8 +118,7 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
             return;
         }
         relativeArrayList = new ArrayList<>();
-
-        relative_data.keepSynced(true);
+        relative_data.keepSynced(false);
 
         relative_data.child(currentUser.getUid()).addValueEventListener(new ValueEventListener() {
             @Override
@@ -123,23 +139,57 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Log.e("test","test");
+
             }
         });
+
+        vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        long[] pattern = { 0, 200, 0 }; //0 to start now, 200 to vibrate 200 ms, 0 to sleep for 0 ms.
+        vibrator.vibrate(pattern,0);
+
+        Handler handler = new Handler();
+        handler.postDelayed(new TimerTask() {
+            @Override
+            public void run() {
+                confirm_timeout();
+            }
+        }, Common.WAITING_FOR_CONFIRM);
     }
 
     @Override
     public void onStateChange(boolean active) {
         if (active) {
-            //cancel animation
+            vibrator.cancel();
+            mDatabase.getReference("fall_detection_logs").child(mCurrentUser.getUid()).child("confirm_ok").setValue(true);
+
             imgFall.clearAnimation();
 
-            //turn on speaker
-            AudioManager audioManager = (AudioManager) getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
-            audioManager.setMode(AudioManager.MODE_IN_CALL);
-            audioManager.setSpeakerphoneOn(true);
+            imgFall.setImageResource(R.drawable.smile);
 
-            ObjectAnimator hideSwipe = ObjectAnimator.ofFloat(swipe_btn, "alpha", 1f, 0f).setDuration(1000);
+            ScaleAnimation scaleAnimation = new ScaleAnimation(0,0,0,0,Animation.RELATIVE_TO_SELF,0.5f,Animation.RELATIVE_TO_SELF,0.5f);
+            scaleAnimation.setDuration(2000);
+            scaleAnimation.setRepeatCount(2);
+            scaleAnimation.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    //TODO: finish
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+
+                }
+            });
+
+            imgFall.startAnimation(scaleAnimation);
+
+            swipe_btn.setClickable(false);
+            ObjectAnimator hideSwipe = ObjectAnimator.ofFloat(swipe_btn, "alpha", 1f, 0f).setDuration(500);
             hideSwipe.addListener(new Animator.AnimatorListener() {
                 @Override
                 public void onAnimationStart(Animator animation) {
@@ -151,9 +201,8 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
                     swipe_btn.setVisibility(View.GONE);
                     txtHoldOn.setVisibility(View.VISIBLE);
 
-                    ObjectAnimator.ofFloat(txtHoldOn, "alpha", 0f, 1f).setDuration(2000).start();
-                    current_call_position = 0;
-                    make_a_call_to_list();
+                    ObjectAnimator.ofFloat(txtHoldOn, "alpha", 0f, 1f).setDuration(1000).start();
+                    txtHoldOn.setText(getString(R.string.confirm_you_are_ok));
                 }
 
                 @Override
@@ -169,6 +218,49 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
 
             hideSwipe.start();
         }
+    }
+
+    private void confirm_timeout() {
+        vibrator.cancel();
+
+        //cancel animation
+        imgFall.clearAnimation();
+
+        //turn on speaker
+        AudioManager audioManager = (AudioManager) getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
+        audioManager.setMode(AudioManager.MODE_IN_CALL);
+        audioManager.setSpeakerphoneOn(true);
+
+        swipe_btn.setClickable(false);
+        ObjectAnimator hideSwipe = ObjectAnimator.ofFloat(swipe_btn, "alpha", 1f, 0f).setDuration(1000);
+        hideSwipe.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                swipe_btn.setVisibility(View.GONE);
+                txtHoldOn.setVisibility(View.VISIBLE);
+
+                ObjectAnimator.ofFloat(txtHoldOn, "alpha", 0f, 1f).setDuration(2000).start();
+                current_call_position = 0;
+                make_a_call_to_list();
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
+
+        hideSwipe.start();
     }
 
     private void make_a_call_to_list() {
@@ -204,14 +296,14 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
         Relative relative = relativeArrayList.get(current_call_position);
 
         //TODO: test here
-        String first_letter = relative.getName().length() > 0?relative.getName().substring(0,1).toUpperCase():"R";
+        String first_letter = relative.getName().length() > 0 ? relative.getName().substring(0, 1).toUpperCase() : "R";
 
         TextDrawable textDrawable = TextDrawable.builder()
                 .beginConfig()
                 .width(200)
                 .height(200)
                 .endConfig()
-                .buildRound( first_letter, ColorGenerator.MATERIAL.getRandomColor());
+                .buildRound(first_letter, ColorGenerator.MATERIAL.getRandomColor());
 
         Picasso.with(this)
                 .load(relative.getThumb())
@@ -222,7 +314,7 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
     }
 
     private void call_to_number(String tel) {
-        Log.e(LOG_TAG,tel);
+        Log.e(LOG_TAG, tel);
         Intent intent = new Intent(Intent.ACTION_CALL);
 
         intent.setData(Uri.parse("tel:" + tel));
@@ -266,7 +358,7 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
                     Toast.makeText(context, "Phone state Idle", Toast.LENGTH_LONG).show();
                     break;
                 case TelephonyManager.CALL_STATE_OFFHOOK:
-                    Log.e("off","off");
+                    Log.e("off", "off");
                     //TODO: handle offhook then try to get connect with someone else
                     //when Off hook i.e in call
                     //Make intent and start your service here
@@ -279,7 +371,7 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
                     Toast.makeText(context, "Phone state Off hook", Toast.LENGTH_LONG).show();
                     break;
                 case TelephonyManager.CALL_STATE_RINGING:
-                    Log.e("Ringing","Ringing");
+                    Log.e("Ringing", "Ringing");
                     //when Ringing
                     Toast.makeText(context, "Phone state Ringing", Toast.LENGTH_LONG).show();
                     break;
