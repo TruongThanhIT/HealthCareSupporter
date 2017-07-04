@@ -3,11 +3,19 @@ package mobi.devteam.demofalldetector.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import mobi.devteam.demofalldetector.activity.MyApplication;
-import mobi.devteam.demofalldetector.utils.ReminderType;
+public class Reminder implements Parcelable {
 
-public class Reminder implements Parcelable{
+    public static final Creator<Reminder> CREATOR = new Creator<Reminder>() {
+        @Override
+        public Reminder createFromParcel(Parcel in) {
+            return new Reminder(in);
+        }
 
+        @Override
+        public Reminder[] newArray(int size) {
+            return new Reminder[size];
+        }
+    };
     private long id;
     private String name;
     private long start; //time in ms
@@ -62,18 +70,6 @@ public class Reminder implements Parcelable{
     public int describeContents() {
         return 0;
     }
-
-    public static final Creator<Reminder> CREATOR = new Creator<Reminder>() {
-        @Override
-        public Reminder createFromParcel(Parcel in) {
-            return new Reminder(in);
-        }
-
-        @Override
-        public Reminder[] newArray(int size) {
-            return new Reminder[size];
-        }
-    };
 
     public long getId() {
         return id;

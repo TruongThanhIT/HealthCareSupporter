@@ -27,6 +27,7 @@ public class Tools {
         byte[] byteArray = stream.toByteArray();
         return byteArray;
     }
+
     public static final Bitmap convertByteArrayToBitmap(byte[] byteArray) {
         Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
         return bitmap;
@@ -69,7 +70,8 @@ public class Tools {
         Random random = new Random();
         return random.nextInt();
     }
-    public static Calendar convertLongToCalendar(long date){
+
+    public static Calendar convertLongToCalendar(long date) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(date);
         return calendar;

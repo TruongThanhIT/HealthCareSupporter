@@ -7,10 +7,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.Switch;
+import android.widget.Toast;
 
 import com.dd.processbutton.iml.ActionProcessButton;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -29,6 +30,7 @@ import mobi.devteam.demofalldetector.R;
 import mobi.devteam.demofalldetector.model.Profile;
 import mobi.devteam.demofalldetector.myServices.DetectFallService;
 import mobi.devteam.demofalldetector.myServices.GetLocationService;
+import mobi.devteam.demofalldetector.utils.Common;
 
 public class ProfileFragment extends Fragment implements ValueEventListener {
 
@@ -46,14 +48,17 @@ public class ProfileFragment extends Fragment implements ValueEventListener {
     @BindView(R.id.edtWeight)
     EditText edtWeight;
 
-    @BindView(R.id.chk_female)
-    CheckBox chk_female;
+    @BindView(R.id.rdo_female)
+    RadioButton rdo_female;
 
-    @BindView(R.id.chk_male)
-    CheckBox chk_male;
+    @BindView(R.id.rdo_male)
+    RadioButton rdo_male;
 
     @BindView(R.id.btnUpdate)
     ActionProcessButton btnUpdate;
+
+    @BindView(R.id.edtAge)
+    EditText edtAge;
 
     private Profile mProfile;
     private DatabaseReference profile_data;
@@ -102,7 +107,9 @@ public class ProfileFragment extends Fragment implements ValueEventListener {
                     //cancel service
                     getActivity().stopService(intent);
                 }
-                updateOnclick();
+                if (mProfile != null){
+                    profile_data.child("detect_fall").setValue(isChecked);
+                }
             }
         });
 
@@ -116,7 +123,9 @@ public class ProfileFragment extends Fragment implements ValueEventListener {
                     //cancel service
                     getActivity().stopService(intent);
                 }
-                updateOnclick();
+                if (mProfile != null){
+                    profile_data.child("allow_find").setValue(isChecked);
+                }
             }
         });
     }
@@ -139,12 +148,31 @@ public class ProfileFragment extends Fragment implements ValueEventListener {
 
     @OnClick(R.id.btnUpdate)
     void updateOnclick() {
+
+        double weight = 0;
+        double height = 0;
+        try{
+            height = Double.parseDouble(edtHeight.getText().toString());
+            weight = Double.parseDouble(edtWeight.getText().toString());
+        }catch (Exception e){
+            Toast.makeText(getActivity(), getString(R.string.profile_invalid_w_h), Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         Profile profile = new Profile();
         profile.setAllow_find(sw_allow_find.isChecked());
         profile.setDetect_fall(sw_fall_detect.isChecked());
+
         profile.setHeight(Double.parseDouble(edtHeight.getText().toString()));
         profile.setWeight(Double.parseDouble(edtWeight.getText().toString()));
         profile.setMale(chk_male.isChecked());
+        profile.setAge(Integer.parseInt(edtAge.getText().toString()));
+
+        if (mProfile == null){
+            profile.setThresh1(Common.DEFAULT_THRESHOLD_1);
+            profile.setThresh2(Common.DEFAULT_THRESHOLD_2);
+            profile.setThresh3(Common.DEFAULT_THRESHOLD_3);
+        }
 
         btnUpdate.setMode(ActionProcessButton.Mode.PROGRESS);
         profile_data.setValue(profile).addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -175,9 +203,9 @@ public class ProfileFragment extends Fragment implements ValueEventListener {
         edtWeight.setText(mProfile.getWeight() + "");
 
         if (mProfile.isMale()) {
-            chk_male.setChecked(true);
+            rdo_male.setChecked(true);
         } else {
-            chk_male.setChecked(false);
+            rdo_male.setChecked(false);
         }
     }
 

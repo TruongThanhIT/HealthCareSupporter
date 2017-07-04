@@ -11,6 +11,7 @@ import android.graphics.Bitmap;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v7.app.NotificationCompat;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.util.Calendar;
@@ -20,10 +21,9 @@ import mobi.devteam.demofalldetector.activity.AddEditReminderActivity;
 import mobi.devteam.demofalldetector.model.Reminder;
 
 public class ReminderService extends Service {
+    private static final int TIME_SNOOZE = 10 * 60 * 1000;
     private static Reminder reminder;
     private static NotificationManager notificationManager;
-    private static final int TIME_SNOOZE = 10 * 60 * 1000;
-
 
     @Nullable
     @Override
@@ -40,6 +40,11 @@ public class ReminderService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         reminder = intent.getParcelableExtra(Constants.KEY.ITEM_KEY);
+
+        if (reminder == null) {
+            Log.e(getClass().getName(),"Reminder is null");
+        }
+
         notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         switch (intent.getAction()) {
             case Constants.ACTION.START_SERVICE:

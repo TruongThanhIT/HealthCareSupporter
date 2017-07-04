@@ -4,23 +4,21 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import mobi.devteam.demofalldetector.R;
 
 public class TestActivity extends AppCompatActivity implements SensorEventListener {
+    EditText editText;
+    TextView txtDemo, txtMax;
+    double max;
+    int count = 0;
     private float[] gravity = new float[3];
     private float[] linear_acceleration = new float[3];
     private long lastTimestamp = 0;
-
-    EditText editText;
-
-    TextView txtDemo,txtMax;
-    double max;
-    int count = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +37,7 @@ public class TestActivity extends AppCompatActivity implements SensorEventListen
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        if (event.timestamp - lastTimestamp < 200){
+        if (event.timestamp - lastTimestamp < 200) {
             return;
         }
         lastTimestamp = event.timestamp;
@@ -53,7 +51,7 @@ public class TestActivity extends AppCompatActivity implements SensorEventListen
         float alpha = 0;
         try {
             alpha = Float.parseFloat(editText.getText().toString());
-        }catch (Exception e){
+        } catch (Exception e) {
             alpha = 0;
         }
 
@@ -73,7 +71,7 @@ public class TestActivity extends AppCompatActivity implements SensorEventListen
                 max = m;
                 txtMax.setText(String.format("%.2f", m));
             }
-        }else{
+        } else {
             count++;
         }
     }

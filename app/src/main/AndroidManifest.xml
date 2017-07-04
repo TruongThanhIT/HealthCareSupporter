@@ -68,14 +68,16 @@
                 <action android:name=".utils.ReminderService" />
             </intent-filter>
         </service>
-        <service android:name=".myServices.GetLocationService" />
 
         <activity
             android:name=".activity.ConfirmFallActivity"
             android:screenOrientation="portrait"
             android:theme="@style/FullScreen" />
 
-        <receiver android:name=".myBroadcasts.SmsReceiver"/>
+        <receiver android:name=".myBroadcasts.SmsReceiver" />
+
+        <service android:name=".myServices.DetectFallService" />
+        <service android:name=".myServices.GetLocationService" />
     </application>
 
-</manifest>
+</manifest><!-- keo no len , debug-->

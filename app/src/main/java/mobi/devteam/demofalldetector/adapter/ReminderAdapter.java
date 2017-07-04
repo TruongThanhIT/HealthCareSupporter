@@ -9,7 +9,6 @@ import android.widget.TextView;
 
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
-import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -26,7 +25,7 @@ import mobi.devteam.demofalldetector.utils.ReminderType;
 import mobi.devteam.demofalldetector.utils.Tools;
 import mobi.devteam.demofalldetector.utils.Utils;
 
-public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.ReminderViewHolder>{
+public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.ReminderViewHolder> {
 
     private final ColorGenerator generator;
     private Context context;
@@ -49,8 +48,9 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.Remind
     @Override
     public void onBindViewHolder(ReminderViewHolder holder, int position) {
         Reminder reminder = reminderArrayList.get(position);
-        if (reminder!=null){
+        if (reminder != null) {
             holder.txtReminder.setText(reminder.getName());
+
             if(reminder.getRepeat_type() == ReminderType.TYPE_DAILY){
                 holder.txtRepeat.setText(MyApplication.reminder_types[0]);
             }
@@ -59,27 +59,27 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.Remind
             }
             else if(reminder.getRepeat_type() == ReminderType.TYPE_MONTHLY){
                 holder.txtRepeat.setText(MyApplication.reminder_types[2]);
-
             }
             else {
                 holder.txtRepeat.setText(MyApplication.reminder_types[3]);
 
             }
-            Calendar dateTime = Tools.convertLongToCalendar(reminder.getStart());
+            Calendar dateTime = Tools.convertLongToCalendar(reminder.getHour_alarm());
             holder.txtTime.setText(Utils.get_calendar_date(dateTime) + ", " + Utils.get_calendar_time(dateTime));
             if(reminder.getName().length() > 0){
+
                 TextDrawable textDrawable = TextDrawable.builder()
                         .beginConfig()
                         .width(100)
                         .height(100)
                         .endConfig()
-                        .buildRound( reminder.getName().substring(0,1).toUpperCase(), generator.getRandomColor());
-                if (reminder.getThumb() == null){
+                        .buildRound(reminder.getName().substring(0, 1).toUpperCase(), generator.getRandomColor());
+                if (reminder.getThumb() == null) {
                     holder.imgThumb.setImageDrawable(textDrawable);
-                }else{
+                } else {
                     Picasso.with(context)
                             .load(reminder.getThumb())
-                            .resize(100,100)
+                            .resize(100, 100)
                             .placeholder(textDrawable)
                             .into(holder.imgThumb);
                 }
@@ -93,19 +93,23 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.Remind
     }
 
     class ReminderViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.imgThumb) CircleImageView imgThumb;
-        @BindView(R.id.txtReminder) TextView txtReminder;
-        @BindView(R.id.txtTime) TextView txtTime;
-        @BindView(R.id.txtRepeat) TextView txtRepeat;
+        @BindView(R.id.imgThumb)
+        CircleImageView imgThumb;
+        @BindView(R.id.txtReminder)
+        TextView txtReminder;
+        @BindView(R.id.txtTime)
+        TextView txtTime;
+        @BindView(R.id.txtRepeat)
+        TextView txtRepeat;
 
         public ReminderViewHolder(View itemView) {
             super(itemView);
-            ButterKnife.bind(this,itemView);
+            ButterKnife.bind(this, itemView);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (mListener!=null){
+                    if (mListener != null) {
                         mListener.onRecyclerItemClick(getAdapterPosition());
                     }
                 }
@@ -114,7 +118,7 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.Remind
             itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    if (mListener!=null){
+                    if (mListener != null) {
                         mListener.onRecyclerItemLongClick(getAdapterPosition());
                     }
 

@@ -1,9 +1,5 @@
 package mobi.devteam.demofalldetector.model;
 
-/**
- * Created by Administrator on 6/29/2017.
- */
-
 public class Accelerator {
     private double x;
     private double y;
@@ -11,6 +7,7 @@ public class Accelerator {
 
     /**
      * Init by value return by event
+     *
      * @param linear_acceleration
      */
     public Accelerator(double[] linear_acceleration) {
@@ -21,6 +18,7 @@ public class Accelerator {
 
     /**
      * These x,y,z stand for x,y,z accelerator
+     *
      * @param x
      * @param y
      * @param z
