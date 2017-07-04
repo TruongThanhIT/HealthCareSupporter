@@ -118,7 +118,7 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
         if (!is_add_mode) {
 
             Picasso.with(this)
-                    .load(R.drawable.image_camera)
+                    .load(reminder.getThumb())
                     .resize(300, 300)
                     .into(imgThumb);
 
@@ -127,7 +127,7 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
 
             edtReminder.setText(reminder.getName());
             edtNote.setText(reminder.getNote());
-            txtStart.setText(Utils.get_calendar_date(now));
+            txtStart.setText(Utils.get_calendar_date(start));
             txtEnd.setText(Utils.get_calendar_date(end));
 
             alarm.setTimeInMillis(reminder.getHour_alarm());
@@ -163,7 +163,6 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
                 }, now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DATE));
         dialog.getDatePicker().setMinDate(now.getTimeInMillis());
         dialog.show();
-
     }
 
     @OnClick(R.id.txtEnd)
@@ -209,9 +208,7 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
                             alarm.set(Calendar.HOUR_OF_DAY, hour);
                             alarm.set(Calendar.MINUTE, minute);
                             String[] dayOfWeek = getResources().getStringArray(R.array.days_array);
-
                             txtTime.setText(dayOfWeek[day - 1] + ", " + hour + ":" + minute);
-                            //test duoc roi do
                         }
                     })
                     .setInitialDay(alarm.get(Calendar.DAY_OF_WEEK))
@@ -232,9 +229,7 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
                 break;
             case R.id.menu_add_reminder:
                 save_reminder();
-
                 finish();
-
                 break;
         }
 
@@ -259,7 +254,7 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
 
         // Using for alarm
         if (is_add_mode)
-            reminder.setPendingId(Utils.getRandomPendingId()); //problem here
+            reminder.setPendingId(Utils.getRandomPendingId());
 
         reminder.setHour_alarm(alarm.getTimeInMillis());
         reminder.setRepeat_type(get_selected_reminder());

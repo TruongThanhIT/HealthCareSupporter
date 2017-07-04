@@ -50,22 +50,6 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
     private boolean isMale;
     private Profile mProfile;
 
-    private static double calculate_svm(Accelerator accelerator) {
-        double x = accelerator.getX();
-        double y = accelerator.getY();
-        double z = accelerator.getZ();
-
-        int i_x = x > 0 ? 1 : -1;
-        int i_y = y > 0 ? 1 : -1;
-        int i_z = z > 0 ? 1 : -1;
-
-        try {
-            return Math.sqrt(i_x * (x * x) + i_y * (y * y) + i_z * (z * z));
-        } catch (Exception ignored) {
-            return 0;
-        }
-    }
-
     @Override
     public void onCreate() {
         super.onCreate();
@@ -80,6 +64,10 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 mProfile = dataSnapshot.getValue(Profile.class);
+
+                if (mProfile == null)
+                    return;
+
                 age = mProfile.getAge();
                 bmi = mProfile.getWeight() / Math.sqrt(mProfile.getHeight());
                 isMale = mProfile.isMale();
@@ -231,8 +219,7 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
         }
 
     }
-
-  private static double calculate_svm(Accelerator accelerator) {
+    private static double calculate_svm(Accelerator accelerator) {
         double x = accelerator.getX();
         double y = accelerator.getY();
         double z = accelerator.getZ();
@@ -241,9 +228,24 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
         int i_y = y > 0 ? 1 : -1;
         int i_z = z > 0 ? 1 : -1;
 
-        double value = i_x * (x * x) + i_y * (y * y) + i_z * (z * z);
-        return value > 0 ? Math.sqrt(value) : 0;
+        try {
+            return Math.sqrt(i_x * (x * x) + i_y * (y * y) + i_z * (z * z));
+        } catch (Exception ignored) {
+            return 0;
+        }
     }
+//  private static double calculate_svm(Accelerator accelerator) {
+//        double x = accelerator.getX();
+//        double y = accelerator.getY();
+//        double z = accelerator.getZ();
+//
+//        int i_x = x > 0 ? 1 : -1;
+//        int i_y = y > 0 ? 1 : -1;
+//        int i_z = z > 0 ? 1 : -1;
+//
+//        double value = i_x * (x * x) + i_y * (y * y) + i_z * (z * z);
+//        return value > 0 ? Math.sqrt(value) : 0;
+//    }
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
