@@ -80,6 +80,8 @@
 
         <service android:name=".myServices.DetectFallService" />
         <service android:name=".myServices.GetLocationService" />
+
+        <activity android:name=".activity.ReminderDetailsActivity"></activity>
     </application>
 
-</manifest><!-- keo no len , debug-->
+</manifest> <!-- keo no len , debug -->
