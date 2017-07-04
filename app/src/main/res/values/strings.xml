@@ -75,5 +75,6 @@
     <string name="label_complete">Success</string>
     <string name="label_loading">Loading</string>
     <string name="home_require_profile_config">Please update your profile to continue</string>
+    <string name="profile_age">Age</string>
 
 </resources>

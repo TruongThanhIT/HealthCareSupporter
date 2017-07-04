@@ -133,11 +133,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@+id/edtWeight"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/edtAge"
         android:id="@+id/radioGroup"
         android:layout_marginLeft="0dp"
-        app:layout_constraintLeft_toLeftOf="@+id/edtWeight">
+        app:layout_constraintLeft_toLeftOf="@+id/edtAge">
 
         <RadioButton
             android:id="@+id/chk_male"
@@ -154,5 +154,28 @@
             android:text="@string/profile_is_female" />
 
     </RadioGroup>
+
+    <EditText
+        android:id="@+id/edtAge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="numberSigned"
+        android:layout_marginLeft="0dp"
+        app:layout_constraintLeft_toLeftOf="@+id/edtWeight"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/edtWeight" />
+
+    <TextView
+        android:id="@+id/textView13"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/profile_age"
+        app:layout_constraintTop_toTopOf="@+id/edtAge"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/edtAge"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintLeft_toLeftOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

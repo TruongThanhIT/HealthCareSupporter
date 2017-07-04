@@ -44,27 +44,20 @@ import mobi.devteam.demofalldetector.myServices.GetLocationService;
 public class HomeFragment extends Fragment implements OnRecyclerItemClickListener {
 
     private final int ADD_REMINDER_REQUEST = 123;
-
+    @BindView(R.id.rcv_reminders)
+    RecyclerView rcv_reminders;
+    @BindView(R.id.progressBarReminder)
+    ProgressBar progressBarReminder;
+    @BindView(R.id.sw_allow_find)
+    Switch sw_allow_find;
+    @BindView(R.id.sw_fall_detect)
+    Switch sw_fall_detect;
     private View mView;
     private Unbinder bind;
     private FirebaseAuth mAuth;
     private DatabaseReference reminder_data;
-
     private ArrayList<Reminder> reminderArrayList;
     private ReminderAdapter reminderAdapter;
-
-    @BindView(R.id.rcv_reminders)
-    RecyclerView rcv_reminders;
-
-    @BindView(R.id.progressBarReminder)
-    ProgressBar progressBarReminder;
-
-    @BindView(R.id.sw_allow_find)
-    Switch sw_allow_find;
-
-    @BindView(R.id.sw_fall_detect)
-    Switch sw_fall_detect;
-
     private int mLong_click_selected;
     private DatabaseReference profile_data;
     private Profile mProfile;

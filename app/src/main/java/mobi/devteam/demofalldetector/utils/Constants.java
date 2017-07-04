@@ -5,6 +5,7 @@ public class Constants {
     public interface KEY {
         String ITEM_KEY = "mobi.devteam.itemkey";
     }
+
     interface ACTION {
         String DISMISS_ACTION = "action.dismiss";
         String SNOOZE_ACTION = "action.snooze";

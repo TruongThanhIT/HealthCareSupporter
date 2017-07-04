@@ -8,10 +8,17 @@ import android.hardware.SensorManager;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
 
 import mobi.devteam.demofalldetector.activity.ConfirmFallActivity;
 import mobi.devteam.demofalldetector.model.Accelerator;
+import mobi.devteam.demofalldetector.model.Profile;
+import mobi.devteam.demofalldetector.utils.Common;
 
 /**
  * Created by Administrator on 6/29/2017.
@@ -35,9 +42,32 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
     private Accelerator current_accelerator;
     private boolean waiting_for_recovery = false;
 
-    private double threshold_1 = 6f;
-    private double threshold_2 = 5f;
-    private double threshold_3 = 10f;
+    private double threshold_1 = Common.DEFAULT_THRESHOLD_1; //default
+    private double threshold_2 = Common.DEFAULT_THRESHOLD_2; //default
+    private double threshold_3 = Common.DEFAULT_THRESHOLD_3; //default
+
+    private DatabaseReference profile_data;
+
+    private int age;
+    private double bmi;
+    private boolean isMale;
+    private Profile mProfile;
+
+    private static double calculate_svm(Accelerator accelerator) {
+        double x = accelerator.getX();
+        double y = accelerator.getY();
+        double z = accelerator.getZ();
+
+        int i_x = x > 0 ? 1 : -1;
+        int i_y = y > 0 ? 1 : -1;
+        int i_z = z > 0 ? 1 : -1;
+
+        try {
+            return Math.sqrt(i_x * (x * x) + i_y * (y * y) + i_z * (z * z));
+        } catch (Exception ignored) {
+            return 0;
+        }
+    }
 
     @Override
     public void onCreate() {
@@ -46,9 +76,74 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
         acceleratorArrayList = new ArrayList<>();
         recoveryArrayList = new ArrayList<>();
 
+        profile_data = mDatabase.child(currentUser.getUid());
+        profile_data.keepSynced(false);
+
+        profile_data.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                mProfile = dataSnapshot.getValue(Profile.class);
+                age = mProfile.getAge();
+                bmi = mProfile.getWeight() / Math.sqrt(mProfile.getHeight());
+                isMale = mProfile.isMale();
+                threshold_1 = mProfile.getThresh1();
+                threshold_2 = mProfile.getThresh2();
+                threshold_3 = mProfile.getThresh3();
+
+                add_threshold_value();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         Sensor mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+    }
+
+    /**
+     * The void bellow will compare and add to threshold
+     */
+    private void add_threshold_value() {
+        if (age <= 60) {
+            threshold_1 += Common.T1_AGE_LT_60;
+            threshold_2 += Common.T2_AGE_LT_60;
+            threshold_3 += Common.T3_AGE_LT_60;
+        } else {
+            threshold_1 += Common.T1_AGE_GT_60;
+            threshold_2 += Common.T2_AGE_GT_60;
+            threshold_3 += Common.T3_AGE_GT_60;
+        }
+
+        if (isMale) {
+            threshold_1 += Common.T1_IS_MALE;
+            threshold_2 += Common.T2_IS_MALE;
+            threshold_3 += Common.T3_IS_MALE;
+        } else {
+            threshold_1 += Common.T1_IS_FEMALE;
+            threshold_2 += Common.T2_IS_FEMALE;
+            threshold_3 += Common.T3_IS_FEMALE;
+        }
+
+        if (bmi < 18.5f) {
+            threshold_1 += Common.T1_BMI_18;
+            threshold_2 += Common.T2_BMI_18;
+            threshold_3 += Common.T3_BMI_18;
+        } else if (bmi < 25f) {
+
+        } else if (bmi < 30) {
+            threshold_1 += Common.T1_BMI_25_30;
+            threshold_2 += Common.T2_BMI_25_30;
+            threshold_3 += Common.T3_BMI_25_30;
+        } else {
+            threshold_1 += Common.T1_BMI_30;
+            threshold_2 += Common.T2_BMI_30;
+            threshold_3 += Common.T3_BMI_30;
+        }
+
     }
 
     @Override
@@ -59,6 +154,10 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
 
     @Override
     public void onSensorChanged(SensorEvent event) {
+        if (mProfile == null) {
+            return;
+        }
+
         if (event.timestamp - lastTimestamp < TIME_PER_STAGE) {
             return;
         }
@@ -93,7 +192,6 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
         }
     }
 
-
     private void detect_fall() {
         double svm_current = calculate_svm(current_accelerator);
 
@@ -121,7 +219,7 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
                 sum_z += Math.abs(accelerator.getZ());
             }
 
-            if (sum_x > threshold_3 || sum_y > threshold_3 || sum_z > threshold_3){ //Threshold 3
+            if (sum_x > threshold_3 || sum_y > threshold_3 || sum_z > threshold_3) { //Threshold 3
                 waiting_for_recovery = false; // ok i'm recovery :)),
                 recoveryArrayList.clear(); // clear recovery stages
             }
@@ -134,22 +232,6 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
             startActivity(dialogIntent);
         }
 
-    }
-
-    private static double calculate_svm(Accelerator accelerator) {
-        double x = accelerator.getX();
-        double y = accelerator.getY();
-        double z = accelerator.getZ();
-
-        int i_x = x > 0 ? 1 : -1;
-        int i_y = y > 0 ? 1 : -1;
-        int i_z = z > 0 ? 1 : -1;
-
-        try {
-            return Math.sqrt(i_x * (x * x) + i_y * (y * y) + i_z * (z * z));
-        } catch (Exception ignored) {
-            return 0;
-        }
     }
 
     @Override

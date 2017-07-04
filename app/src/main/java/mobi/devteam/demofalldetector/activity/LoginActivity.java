@@ -33,9 +33,8 @@ import butterknife.OnClick;
 import mobi.devteam.demofalldetector.R;
 
 public class LoginActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
-    private final String TAG = "LoginActivity";
     private static final int RC_SIGN_IN = 243;
-
+    private final String TAG = "LoginActivity";
     @BindView(R.id.btnSignIn)
     Button btnSignIn;
     @BindView(R.id.txtUserName)

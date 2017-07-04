@@ -7,6 +7,7 @@ package mobi.devteam.demofalldetector.model;
 public class Profile {
     private double height;
     private double weight;
+    private int age;
     private boolean male;
 
     private boolean detect_fall;
@@ -19,9 +20,10 @@ public class Profile {
     public Profile() {
     }
 
-    public Profile(double height, double weight, boolean male, boolean detect_fall, boolean allow_find, double thresh1, double thresh2, double thresh3) {
+    public Profile(double height, double weight, int age, boolean male, boolean detect_fall, boolean allow_find, double thresh1, double thresh2, double thresh3) {
         this.height = height;
         this.weight = weight;
+        this.age = age;
         this.male = male;
         this.detect_fall = detect_fall;
         this.allow_find = allow_find;
@@ -92,5 +94,13 @@ public class Profile {
 
     public void setThresh3(double thresh3) {
         this.thresh3 = thresh3;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
     }
 }

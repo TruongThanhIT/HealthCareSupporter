@@ -39,7 +39,7 @@ public class RelativeAdapter extends RecyclerView.Adapter<RelativeAdapter.Relati
     private ArrayList<Relative> relatives;
     private OnRecyclerItemClickListener listener;
 
-    public RelativeAdapter(Context context, ArrayList<Relative> relatives,OnRecyclerItemClickListener onRecyclerItemClickListener) {
+    public RelativeAdapter(Context context, ArrayList<Relative> relatives, OnRecyclerItemClickListener onRecyclerItemClickListener) {
         this.context = context;
         this.relatives = relatives;
         this.listener = onRecyclerItemClickListener;
@@ -89,6 +89,11 @@ public class RelativeAdapter extends RecyclerView.Adapter<RelativeAdapter.Relati
         popup.show();
     }
 
+    @Override
+    public int getItemCount() {
+        return relatives.size();
+    }
+
     /**
      * Click listener for popup menu items
      */
@@ -131,11 +136,6 @@ public class RelativeAdapter extends RecyclerView.Adapter<RelativeAdapter.Relati
         }
     }
 
-    @Override
-    public int getItemCount() {
-        return relatives.size();
-    }
-
     public class RelativeHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.imgRelatives)
         ImageView imgRelatives;
@@ -158,7 +158,7 @@ public class RelativeAdapter extends RecyclerView.Adapter<RelativeAdapter.Relati
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (listener != null){
+                    if (listener != null) {
                         listener.onRecyclerItemClick(getAdapterPosition());
                     }
                 }

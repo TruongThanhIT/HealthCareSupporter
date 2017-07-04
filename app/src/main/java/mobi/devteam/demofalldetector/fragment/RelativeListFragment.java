@@ -106,7 +106,7 @@ public class RelativeListFragment extends Fragment implements OnRecyclerItemClic
             public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
                 super.onSelectedChanged(viewHolder, actionState);
 
-                if (actionState == ItemTouchHelper.ACTION_STATE_DRAG){
+                if (actionState == ItemTouchHelper.ACTION_STATE_DRAG) {
 
                 }
             }

@@ -3,7 +3,18 @@ package mobi.devteam.demofalldetector.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class Relative implements Parcelable{
+public class Relative implements Parcelable {
+    public static final Creator<Relative> CREATOR = new Creator<Relative>() {
+        @Override
+        public Relative createFromParcel(Parcel in) {
+            return new Relative(in);
+        }
+
+        @Override
+        public Relative[] newArray(int size) {
+            return new Relative[size];
+        }
+    };
     private long id;
     private String name;
     private String phone;
@@ -38,18 +49,6 @@ public class Relative implements Parcelable{
     public int describeContents() {
         return 0;
     }
-
-    public static final Creator<Relative> CREATOR = new Creator<Relative>() {
-        @Override
-        public Relative createFromParcel(Parcel in) {
-            return new Relative(in);
-        }
-
-        @Override
-        public Relative[] newArray(int size) {
-            return new Relative[size];
-        }
-    };
 
     public long getId() {
         return id;

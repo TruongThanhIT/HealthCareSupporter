@@ -207,7 +207,7 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
                 .width(100)
                 .height(100)
                 .endConfig()
-                .buildRound( relative.getName().substring(0,1).toUpperCase(), ColorGenerator.MATERIAL.getRandomColor());
+                .buildRound(relative.getName().substring(0, 1).toUpperCase(), ColorGenerator.MATERIAL.getRandomColor());
 
         Picasso.with(this)
                 .load(relative.getThumb())
