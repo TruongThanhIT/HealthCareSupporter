@@ -165,7 +165,7 @@ public class ProfileFragment extends Fragment implements ValueEventListener {
 
         profile.setHeight(Double.parseDouble(edtHeight.getText().toString()));
         profile.setWeight(Double.parseDouble(edtWeight.getText().toString()));
-        profile.setMale(chk_male.isChecked());
+        profile.setMale(rdo_male.isChecked());
         profile.setAge(Integer.parseInt(edtAge.getText().toString()));
 
         if (mProfile == null){
