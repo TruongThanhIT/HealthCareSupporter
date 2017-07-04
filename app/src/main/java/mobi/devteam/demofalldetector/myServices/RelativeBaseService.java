@@ -8,22 +8,20 @@ import android.util.Log;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class RelativeBaseService extends Service {
 
 
     protected FirebaseUser currentUser;
-    protected DatabaseReference mDatabase;
-
+    protected FirebaseDatabase mDatabase;
 
     @Override
     public void onCreate() {
         super.onCreate();
 
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        mDatabase = FirebaseDatabase.getInstance().getReference();
+        mDatabase = FirebaseDatabase.getInstance();
         currentUser = mAuth.getCurrentUser();
 
         if (currentUser == null) {
