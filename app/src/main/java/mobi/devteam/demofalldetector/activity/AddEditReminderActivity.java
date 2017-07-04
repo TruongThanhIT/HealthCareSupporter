@@ -50,9 +50,6 @@ import mobi.devteam.demofalldetector.utils.Utils;
 public class AddEditReminderActivity extends AppCompatActivity implements IPickResult {
     public static final String EXTRA_IS_ADD_MODE = "is_add_mode";
     public static final String EXTRA_REMINDER_DATA = "reminder_data";
-    private boolean is_add_mode = true;
-    private Reminder reminder;
-
     @BindView(R.id.imgThumb)
     ImageView imgThumb;
     @BindView(R.id.edtReminder)
@@ -67,15 +64,14 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
     EditText edtNote;
     @BindView(R.id.txtTime)
     TextView txtTime;
-
+    FirebaseAuth mAuth;
+    DatabaseReference reminder_data;
+    private boolean is_add_mode = true;
+    private Reminder reminder;
     private Calendar now;
     private Calendar start;
     private Calendar end;
     private Calendar alarm;
-
-
-    FirebaseAuth mAuth;
-    DatabaseReference reminder_data;
     private StorageReference mStorageRef;
 
 

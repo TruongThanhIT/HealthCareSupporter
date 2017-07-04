@@ -30,6 +30,7 @@ import mobi.devteam.demofalldetector.R;
 import mobi.devteam.demofalldetector.model.Profile;
 import mobi.devteam.demofalldetector.myServices.DetectFallService;
 import mobi.devteam.demofalldetector.myServices.GetLocationService;
+import mobi.devteam.demofalldetector.utils.Common;
 
 public class ProfileFragment extends Fragment implements ValueEventListener {
 
@@ -55,6 +56,9 @@ public class ProfileFragment extends Fragment implements ValueEventListener {
 
     @BindView(R.id.btnUpdate)
     ActionProcessButton btnUpdate;
+
+    @BindView(R.id.edtAge)
+    EditText edtAge;
 
     private Profile mProfile;
     private DatabaseReference profile_data;
@@ -158,9 +162,17 @@ public class ProfileFragment extends Fragment implements ValueEventListener {
         Profile profile = new Profile();
         profile.setAllow_find(sw_allow_find.isChecked());
         profile.setDetect_fall(sw_fall_detect.isChecked());
-        profile.setHeight(height);
-        profile.setWeight(weight);
-        profile.setMale(rdo_male.isChecked());
+
+        profile.setHeight(Double.parseDouble(edtHeight.getText().toString()));
+        profile.setWeight(Double.parseDouble(edtWeight.getText().toString()));
+        profile.setMale(chk_male.isChecked());
+        profile.setAge(Integer.parseInt(edtAge.getText().toString()));
+
+        if (mProfile == null){
+            profile.setThresh1(Common.DEFAULT_THRESHOLD_1);
+            profile.setThresh2(Common.DEFAULT_THRESHOLD_2);
+            profile.setThresh3(Common.DEFAULT_THRESHOLD_3);
+        }
 
         btnUpdate.setMode(ActionProcessButton.Mode.PROGRESS);
         profile_data.setValue(profile).addOnSuccessListener(new OnSuccessListener<Void>() {

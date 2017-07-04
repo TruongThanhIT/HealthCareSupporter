@@ -7,6 +7,7 @@ public class Accelerator {
 
     /**
      * Init by value return by event
+     *
      * @param linear_acceleration
      */
     public Accelerator(double[] linear_acceleration) {
@@ -17,6 +18,7 @@ public class Accelerator {
 
     /**
      * These x,y,z stand for x,y,z accelerator
+     *
      * @param x
      * @param y
      * @param z

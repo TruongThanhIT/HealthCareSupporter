@@ -21,10 +21,9 @@ import mobi.devteam.demofalldetector.activity.AddEditReminderActivity;
 import mobi.devteam.demofalldetector.model.Reminder;
 
 public class ReminderService extends Service {
+    private static final int TIME_SNOOZE = 10 * 60 * 1000;
     private static Reminder reminder;
     private static NotificationManager notificationManager;
-    private static final int TIME_SNOOZE = 10 * 60 * 1000;
-
 
     @Nullable
     @Override

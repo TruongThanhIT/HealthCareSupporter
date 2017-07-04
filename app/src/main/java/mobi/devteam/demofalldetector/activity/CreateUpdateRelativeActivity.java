@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -27,8 +26,6 @@ import com.vansuita.pickimage.bundle.PickSetup;
 import com.vansuita.pickimage.dialog.PickImageDialog;
 import com.vansuita.pickimage.listeners.IPickResult;
 
-import java.io.File;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -40,16 +37,14 @@ public class CreateUpdateRelativeActivity extends AppCompatActivity implements I
     public static final String EXTRA_IS_ADD_MODE = "is_add_mode";
     public static final String EXTRA_RELATIVE_DATA = "relative_data";
     ;
-    private boolean is_add_mode = true;
-    private Relative relative;
-
     @BindView(R.id.edtCreateRelativeName)
     EditText edtRelativeName;
     @BindView(R.id.edtCreateRelativePhone)
     EditText edtRelativePhone;
     @BindView(R.id.imgCreateRelative)
     ImageView imgCreateRelative;
-
+    private boolean is_add_mode = true;
+    private Relative relative;
     private FirebaseAuth mAuth;
     private DatabaseReference relative_data;
     private StorageReference mStorageRef;
@@ -78,7 +73,7 @@ public class CreateUpdateRelativeActivity extends AppCompatActivity implements I
             is_add_mode = intent.getBooleanExtra(EXTRA_IS_ADD_MODE, true);
             relative = intent.getParcelableExtra(EXTRA_RELATIVE_DATA);
 
-            if (relative!=null) {
+            if (relative != null) {
                 edtRelativeName.setText(relative.getName());
                 edtRelativePhone.setText(relative.getPhone());
 
@@ -89,7 +84,8 @@ public class CreateUpdateRelativeActivity extends AppCompatActivity implements I
         }
     }
 
-    @OnClick(R.id.imgCreateRelative) void select_image(){
+    @OnClick(R.id.imgCreateRelative)
+    void select_image() {
         PickImageDialog.build(new PickSetup()).show(this);
 
     }
@@ -129,26 +125,26 @@ public class CreateUpdateRelativeActivity extends AppCompatActivity implements I
         relative.setName(edtRelativeName.getText().toString());
         relative.setPhone(edtRelativePhone.getText().toString());
 
-        if (is_add_mode){
+        if (is_add_mode) {
             relative.setId(tsLong);
-            child.child(tsLong+"").setValue(relative);
-        }else{
-            child.child(relative.getId()+"").setValue(relative);
+            child.child(tsLong + "").setValue(relative);
+        } else {
+            child.child(relative.getId() + "").setValue(relative);
         }
 
-        try{
+        try {
             Bitmap bitmapAvatar = Tools.convertImageViewToBitmap(imgCreateRelative);
             byte[] bytes = Tools.convertBitmapToByteAray(bitmapAvatar);
-            relatives_images.child(relative.getId()+"").putBytes(bytes)
+            relatives_images.child(relative.getId() + "").putBytes(bytes)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                             @SuppressWarnings("VisibleForTests")
                             Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                            child.child(relative.getId()+"").child("thumb").setValue(downloadUrl.toString());
+                            child.child(relative.getId() + "").child("thumb").setValue(downloadUrl.toString());
                         }
                     });
-        }catch (NullPointerException e){
+        } catch (NullPointerException e) {
 
         }
     }
