@@ -8,10 +8,6 @@ import android.util.Log;
 
 import mobi.devteam.demofalldetector.myBroadcasts.SmsReceiver;
 
-/**
- * Created by Administrator on 6/25/2017.
- */
-
 public class GetLocationService extends RelativeBaseService {
 
     private SmsReceiver mSmsReceiver;
@@ -21,13 +17,10 @@ public class GetLocationService extends RelativeBaseService {
     public void onCreate() {
         super.onCreate();
 
-        Log.e("create_service", "sv");
-
         //SMS event receiver
         mSmsReceiver = new SmsReceiver();
         mIntentFilter = new IntentFilter();
         mIntentFilter.addAction("android.provider.Telephony.SMS_RECEIVED");
-        registerReceiver(mSmsReceiver, mIntentFilter);
     }
 
     @Override
@@ -39,7 +32,8 @@ public class GetLocationService extends RelativeBaseService {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-
+        Log.e("GET_LOCATION_SERVICE", "GET_LOCATION_SERVICE");
+        registerReceiver(mSmsReceiver, mIntentFilter);
         return START_STICKY;
     }
 

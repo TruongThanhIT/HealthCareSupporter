@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Healthcare Supporter</string>
+    <string name="app_name">Health care</string>
     <string name="title_activity_main">Healthcare Supporter</string>
 
     <!-- Navigation -->
@@ -24,8 +24,8 @@
     <string name="err_login">User name or password invalid!!!</string>
 
     <!--Create information of relative-->
-    <string name="nameText">Name <font color='red'>*</font> </string>
-    <string name="phoneText">Phone <font color='red'>*</font> </string>
+    <string name="nameText">Name: </string>
+    <string name="phoneText">Phone: </string>
     <string name="err_image">Choose image</string>
 
     <!-- TODO: Remove or change this placeholder text -->
@@ -56,12 +56,14 @@
     <string-array name="repeat_array">
         <item>Daily</item>
         <item>Weekly</item>
+        <item>Monthly</item>
+        <item>Yearly</item>
     </string-array>
     <string name="title_activity_confirm_falling">ConfirmFallingActivity</string>
-    <string name="confirm_label_confirm">Are you fallen down?</string>
-    <string name="confirm_get_assistant">Confirm fallen to get assistant</string>
+    <string name="confirm_label_confirm">Confirm if you are ok</string>
+    <string name="confirm_get_status">Are you falling down?</string>
     <string name="confirm_calling">Hold on ,\n I\'m finding assistant for you</string>
-    <string name="calling_someone">Calling ... %1$s</string>
+    <string name="calling_someone">Calling … %1$s</string>
     <string name="calling_out_of_bound">We can\'t reach your relatives</string>
     <string name="calling_emergency_service">Calling emergency service</string>
     <string name="home_enable_fall_detect">Enable fall detect</string>
@@ -75,6 +77,8 @@
     <string name="label_complete">Success</string>
     <string name="label_loading">Loading</string>
     <string name="home_require_profile_config">Please update your profile to continue</string>
+  
     <string name="profile_age">Age</string>
+    <string name="profile_invalid_w_h">Please type a valid weight, height</string>
 
 </resources>

@@ -1,8 +1,10 @@
 package mobi.devteam.demofalldetector.fragment;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.ContextMenu;
@@ -106,6 +108,9 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
                 if (mProfile == null)
                     return;
 
+                if (!isAdded())
+                    return;
+
                 sw_fall_detect.setChecked(mProfile.isDetect_fall());
                 sw_allow_find.setChecked(mProfile.isAllow_find());
             }
@@ -124,9 +129,9 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
                     return;
                 }
 
-                mProfile.setAllow_find(isChecked);
-                profile_data.setValue(mProfile);
 
+                mProfile.setDetect_fall(isChecked);
+                profile_data.setValue(mProfile);
                 Intent intent = new Intent(getActivity(), DetectFallService.class);
                 if (isChecked) {
                     getActivity().startService(intent);
@@ -160,14 +165,23 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
     }
 
     private void goto_profile_page() {
-        Toast.makeText(getActivity(), getString(R.string.home_require_profile_config), Toast.LENGTH_SHORT).show();
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle(getString(R.string.home_require_profile_config))
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        MainActivity activity = (MainActivity) getActivity();
+                        activity.navItemSelected(R.id.nav_profile);
+                    }
+                });
+        builder.show();
 
-        MainActivity activity = (MainActivity) getActivity();
-        android.support.v4.app.FragmentManager supportFragmentManager = activity.getSupportFragmentManager();
-
-        android.support.v4.app.FragmentTransaction fragmentTransaction = supportFragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.frame_container, ProfileFragment.newInstance());
-        fragmentTransaction.commit();
+//        MainActivity activity = (MainActivity) getActivity();
+//        android.support.v4.app.FragmentManager supportFragmentManager = activity.getSupportFragmentManager();
+//
+//        android.support.v4.app.FragmentTransaction fragmentTransaction = supportFragmentManager.beginTransaction();
+//        fragmentTransaction.replace(R.id.frame_container, ProfileFragment.newInstance());
+//        fragmentTransaction.commit();
     }
 
     private void initData() {
@@ -213,10 +227,7 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Toast.makeText(getActivity(), "Error when getting data : " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
 
-                if (isAdded())
-                    progressBarReminder.setVisibility(View.GONE);
             }
         });
     }

@@ -118,7 +118,7 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
         if (!is_add_mode) {
 
             Picasso.with(this)
-                    .load(reminder.getThumb())
+                    .load(R.drawable.image_camera)
                     .resize(300, 300)
                     .into(imgThumb);
 
@@ -178,8 +178,13 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
                 }, start.get(Calendar.YEAR), start.get(Calendar.MONTH), start.get(Calendar.DATE));
         dialog.getDatePicker().setMinDate(start.getTimeInMillis());
         dialog.show();
-
     }
+
+    /**
+     * Type : daily -> get hour
+     * Type: week -> get dow & hour
+     *
+     */
 
     @OnClick(R.id.txtTime)
     void pickTime() {
@@ -200,12 +205,13 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
                     .setListener(new SlideDayTimeListener() {
                         @Override
                         public void onDayTimeSet(int day, int hour, int minute) {
-                            alarm.set(Calendar.DAY_OF_WEEK, day);
+                            alarm.set(Calendar.DAY_OF_WEEK, day);//ngay doan nay tui set dow vao
                             alarm.set(Calendar.HOUR_OF_DAY, hour);
                             alarm.set(Calendar.MINUTE, minute);
                             String[] dayOfWeek = getResources().getStringArray(R.array.days_array);
 
-                            txtTime.setText(dayOfWeek[day] + ", " + hour + ":" + minute);
+                            txtTime.setText(dayOfWeek[day - 1] + ", " + hour + ":" + minute);
+                            //test duoc roi do
                         }
                     })
                     .setInitialDay(alarm.get(Calendar.DAY_OF_WEEK))

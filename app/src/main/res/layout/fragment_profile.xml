@@ -140,13 +140,13 @@
         app:layout_constraintLeft_toLeftOf="@+id/edtAge">
 
         <RadioButton
-            android:id="@+id/chk_male"
+            android:id="@+id/rdo_male"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/profile_is_male" />
 
         <RadioButton
-            android:id="@+id/chk_female"
+            android:id="@+id/rdo_female"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"

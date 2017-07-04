@@ -30,8 +30,8 @@
             android:id="@+id/txtReminder"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
-            android:layout_marginLeft="8dp"
+            android:layout_marginBottom="@dimen/size_4"
+            android:layout_marginLeft="@dimen/size_8"
             android:text="Reminder"
             android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@+id/guideline"
@@ -42,17 +42,23 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="0dp"
-            android:layout_marginTop="4dp"
-            android:text="01/05/17, 08:10AM,"
+            android:layout_marginTop="@dimen/size_4"
+            android:text="01/05/17, 08:10AM"
             app:layout_constraintLeft_toLeftOf="@+id/txtReminder"
             app:layout_constraintTop_toTopOf="@+id/guideline" />
-
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/size_0"
+            android:text=", "
+            app:layout_constraintBottom_toBottomOf="@+id/txtTime"
+            app:layout_constraintLeft_toRightOf="@+id/txtTime" />
         <TextView
             android:id="@+id/txtRepeat"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="0dp"
-            android:layout_marginLeft="4dp"
+            android:layout_marginBottom="@dimen/size_0"
+            android:layout_marginLeft="@dimen/size_5"
             android:text="Daily"
             app:layout_constraintBottom_toBottomOf="@+id/txtTime"
             app:layout_constraintLeft_toRightOf="@+id/txtTime" />

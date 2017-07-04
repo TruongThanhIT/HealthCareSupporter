@@ -1,9 +1,5 @@
 package mobi.devteam.demofalldetector.model;
 
-/**
- * Created by Administrator on 7/1/2017.
- */
-
 public class Profile {
     private double height;
     private double weight;

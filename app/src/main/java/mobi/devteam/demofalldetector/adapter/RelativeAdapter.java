@@ -29,10 +29,6 @@ import mobi.devteam.demofalldetector.activity.CreateUpdateRelativeActivity;
 import mobi.devteam.demofalldetector.model.Relative;
 import mobi.devteam.demofalldetector.myInterface.OnRecyclerItemClickListener;
 
-/**
- * Created by DELL on 5/21/2017.
- */
-
 public class RelativeAdapter extends RecyclerView.Adapter<RelativeAdapter.RelativeHolder> {
     private Context context;
 
@@ -61,14 +57,14 @@ public class RelativeAdapter extends RecyclerView.Adapter<RelativeAdapter.Relati
         if (relative != null) {
             if (relative.getThumb() == null) {
                 Picasso.with(context)
-                        .load(R.drawable.image_user_login)
+                        .load(R.drawable.image_family)
                         .into(holder.imgRelatives);
             } else {
                 Picasso.with(context)
                         .load(relative.getThumb())
                         .resize(200, 200)
                         .centerCrop()
-                        .placeholder(R.drawable.image_user_login)
+                        .placeholder(R.drawable.image_family)
                         .into(holder.imgRelatives);
             }
 

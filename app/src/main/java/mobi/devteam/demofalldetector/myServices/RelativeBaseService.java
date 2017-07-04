@@ -11,10 +11,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-/**
- * Created by Administrator on 7/1/2017.
- */
-
 public class RelativeBaseService extends Service {
 
 

@@ -11,20 +11,20 @@
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         tools:layout_editor_absoluteX="0dp"
         tools:layout_editor_absoluteY="0dp">
 
         <ImageView
             android:id="@+id/imgThumb"
-            android:layout_width="180dp"
-            android:layout_height="180dp"
+            android:layout_width="@dimen/size_150"
+            android:layout_height="@dimen/size_150"
             android:layout_marginTop="8dp"
             android:scaleType="centerCrop"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/image_user_login" />
+            app:srcCompat="@drawable/image_camera" />
 
         <TextView
             android:id="@+id/textView6"
@@ -43,17 +43,18 @@
             android:id="@+id/textView7"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="0dp"
             android:layout_marginTop="8dp"
             android:text="@string/ae_reminder_start"
             android:textStyle="bold"
             app:layout_constraintLeft_toLeftOf="@+id/textView6"
-            app:layout_constraintTop_toBottomOf="@+id/textView6" />
+            app:layout_constraintTop_toBottomOf="@+id/edtReminder" />
 
         <TextView
             android:id="@+id/textView8"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="16dp"
             android:text="@string/ae_reminder_end"
             android:textStyle="bold"
             app:layout_constraintLeft_toLeftOf="@+id/textView7"
@@ -63,18 +64,18 @@
             android:id="@+id/textView9"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginLeft="0dp"
+            android:layout_marginTop="16dp"
             android:text="@string/ae_reminder_repeat"
             android:textStyle="bold"
             app:layout_constraintLeft_toLeftOf="@+id/textView3"
-            app:layout_constraintTop_toBottomOf="@+id/textView3"
-            android:layout_marginLeft="0dp" />
+            app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
         <TextView
             android:id="@+id/textView10"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="16dp"
             android:text="@string/ae_reminder_note"
             android:textStyle="bold"
             app:layout_constraintLeft_toLeftOf="@+id/textView9"
@@ -87,6 +88,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="0dp"
             android:layout_marginRight="8dp"
+            android:layout_marginTop="@dimen/size_10"
             app:layout_constraintBottom_toBottomOf="@+id/textView9"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toLeftOf="@+id/txtTime"
@@ -102,9 +104,9 @@
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginStart="4dp"
-            android:text=""
-            android:maxLines="1"
             android:hint="@string/ae_reminder_hint"
+            android:maxLines="1"
+            android:text=""
             app:layout_constraintBottom_toBottomOf="@+id/textView6"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toLeftOf="@+id/guideline2"
@@ -116,13 +118,13 @@
             android:id="@+id/txtStart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="0dp"
             android:text="TextView"
             android:textColor="#000"
             app:layout_constraintBottom_toBottomOf="@+id/textView7"
             app:layout_constraintLeft_toLeftOf="@+id/edtReminder"
             app:layout_constraintTop_toTopOf="@+id/textView7"
-            app:layout_constraintVertical_bias="0.5"
-            android:layout_marginTop="0dp" />
+            app:layout_constraintVertical_bias="0.5" />
 
         <TextView
             android:id="@+id/txtEnd"
@@ -133,22 +135,34 @@
             app:layout_constraintBottom_toBottomOf="@+id/textView8"
             app:layout_constraintLeft_toLeftOf="@+id/txtStart"
             app:layout_constraintTop_toTopOf="@+id/textView8"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintVertical_bias="0.5" />
 
-        <EditText
-            android:id="@+id/edtNote"
+        <android.support.v7.widget.CardView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
+            android:layout_marginRight="12dp"
             android:layout_marginTop="0dp"
-            android:ems="10"
-            android:hint="@string/ae_reminder_note_hint"
-            android:inputType="textMultiLine"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="15dp"
+            app:contentPadding="5dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toLeftOf="@+id/spinReminderRepeat"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/textView10" />
+            app:layout_constraintTop_toTopOf="@+id/textView10">
+
+            <EditText
+                android:id="@+id/edtNote"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:background="@null"
+                android:ems="10"
+                android:hint="@string/ae_reminder_note_hint"
+                android:inputType="textMultiLine" />
+        </android.support.v7.widget.CardView>
 
         <android.support.constraint.Guideline
             android:id="@+id/guideline2"
@@ -163,26 +177,26 @@
             android:id="@+id/textView3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="0dp"
+            android:layout_marginTop="16dp"
             android:text="@string/ae_reminder_picktime"
             android:textStyle="bold"
-            android:layout_marginLeft="0dp"
             app:layout_constraintLeft_toLeftOf="@+id/textView8"
-            android:layout_marginTop="8dp"
             app:layout_constraintTop_toBottomOf="@+id/textView8" />
 
         <TextView
             android:id="@+id/txtTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="0dp"
+            android:layout_marginLeft="0dp"
+            android:layout_marginTop="0dp"
             android:text="TextView"
             android:textColor="#000"
-            app:layout_constraintTop_toTopOf="@+id/textView3"
-            android:layout_marginTop="0dp"
             app:layout_constraintBottom_toBottomOf="@+id/textView3"
-            android:layout_marginBottom="0dp"
-            android:layout_marginLeft="-5dp"
             app:layout_constraintLeft_toLeftOf="@+id/txtEnd"
-            app:layout_constraintVertical_bias="1.0" />
+            app:layout_constraintTop_toTopOf="@+id/textView3"
+            app:layout_constraintVertical_bias="0.5" />
     </android.support.constraint.ConstraintLayout>
 
 </android.support.v4.widget.NestedScrollView>
