@@ -136,7 +136,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                         // signed in user can be handled in the listener.
                         if (!task.isSuccessful()) {
                             Log.w(TAG, "signInWithEmail:failed", task.getException());
-                            Toast.makeText(LoginActivity.this, task.getException().getMessage(),
+                            Toast.makeText(LoginActivity.this, R.string.err_invalid_info_login,
                                     Toast.LENGTH_SHORT).show();
                         } else {
                             goto_main_activity();
@@ -175,7 +175,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Log.e(TAG, connectionResult.getErrorMessage());
-        Toast.makeText(this, connectionResult.getErrorMessage(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, R.string.err_login, Toast.LENGTH_SHORT).show();
     }
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
@@ -194,7 +194,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.e(TAG, "signInWithCredential:failure", task.getException());
-                            Toast.makeText(LoginActivity.this, "Authentication failed.",
+                            Toast.makeText(LoginActivity.this, R.string.signin_fail,
                                     Toast.LENGTH_SHORT).show();
                         }
                         progressBar.setVisibility(View.GONE);
