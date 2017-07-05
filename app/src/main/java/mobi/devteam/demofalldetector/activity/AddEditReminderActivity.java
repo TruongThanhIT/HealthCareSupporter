@@ -48,6 +48,7 @@ import mobi.devteam.demofalldetector.utils.Tools;
 import mobi.devteam.demofalldetector.utils.Utils;
 
 public class AddEditReminderActivity extends AppCompatActivity implements IPickResult {
+    public static final String TAG = "ReminderActivity";
     public static final String EXTRA_IS_ADD_MODE = "is_add_mode";
     public static final String EXTRA_REMINDER_DATA = "reminder_data";
     @BindView(R.id.imgThumb)
@@ -229,7 +230,6 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
                 break;
             case R.id.menu_add_reminder:
                 save_reminder();
-                finish();
                 break;
         }
 
@@ -247,41 +247,46 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
         if (reminder == null)
             reminder = new Reminder();
 
-        reminder.setStart(start.getTimeInMillis());
-        reminder.setEnd(end.getTimeInMillis()); // start -> end
-        reminder.setName(edtReminder.getText().toString());
-        reminder.setNote(edtNote.getText().toString());
+        if(edtReminder.getText().toString().equals("")){
+            Toast.makeText(this, R.string.err_empty_name_reminder, Toast.LENGTH_SHORT).show();
+        }else{
+            reminder.setStart(start.getTimeInMillis());
+            reminder.setEnd(end.getTimeInMillis()); // start -> end
+            reminder.setName(edtReminder.getText().toString());
+            reminder.setNote(edtNote.getText().toString());
 
-        // Using for alarm
-        if (is_add_mode)
-            reminder.setPendingId(Utils.getRandomPendingId());
+            // Using for alarm
+            if (is_add_mode)
+                reminder.setPendingId(Utils.getRandomPendingId());
 
-        reminder.setHour_alarm(alarm.getTimeInMillis());
-        reminder.setRepeat_type(get_selected_reminder());
+            reminder.setHour_alarm(alarm.getTimeInMillis());
+            reminder.setRepeat_type(get_selected_reminder());
 
-        if (is_add_mode) {
-            reminder.setId(tsLong);
-            child.child(tsLong + "").setValue(reminder);
-        } else {
-            //update
-            child.child(reminder.getId() + "").setValue(reminder);
-        }
-        // Add notification
-        Utils.scheduleNotification(this, reminder);
-        try {
-            Bitmap bitmapAvatar = Tools.convertImageViewToBitmap(imgThumb);
-            byte[] bytes = Tools.convertBitmapToByteAray(bitmapAvatar);
-            reminders_images.child(reminder.getId() + "").putBytes(bytes)
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            @SuppressWarnings("VisibleForTests")
-                            Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                            child.child(reminder.getId() + "").child("thumb").setValue(downloadUrl.toString());
-                        }
-                    });
-        } catch (NullPointerException e) {
-
+            if (is_add_mode) {
+                reminder.setId(tsLong);
+                child.child(tsLong + "").setValue(reminder);
+            } else {
+                //update
+                child.child(reminder.getId() + "").setValue(reminder);
+            }
+            // Add notification
+            Utils.scheduleNotification(this, reminder);
+            try {
+                Bitmap bitmapAvatar = Tools.convertImageViewToBitmap(imgThumb);
+                byte[] bytes = Tools.convertBitmapToByteAray(bitmapAvatar);
+                reminders_images.child(reminder.getId() + "").putBytes(bytes)
+                        .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                @SuppressWarnings("VisibleForTests")
+                                Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                                child.child(reminder.getId() + "").child("thumb").setValue(downloadUrl.toString());
+                            }
+                        });
+            } catch (NullPointerException e) {
+                Log.e(TAG, e.toString());
+            }
+            finish();
         }
     }
 
