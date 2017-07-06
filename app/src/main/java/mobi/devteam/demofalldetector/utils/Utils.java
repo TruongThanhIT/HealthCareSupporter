@@ -97,8 +97,6 @@ public class Utils {
             rem.set(Calendar.MILLISECOND, 30);
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, rem.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 365, sender);
         }
-
-
     }
     public static int getDuration(){
         // get todays date
