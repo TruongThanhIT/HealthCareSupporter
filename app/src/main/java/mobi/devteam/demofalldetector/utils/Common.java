@@ -47,4 +47,13 @@ public class Common {
     public static final float T3_BMI_30 = 1f;
 
     public static final long WAITING_FOR_CONFIRM = 30000;
+
+    public static final String SMS_COMMAND_GET_GPS = "HC_LOCATION";
+    public static final String SMS_COMMAND_MAX_SOUND = "HC_MAXSOUND";
+
+    //location update
+    public static final int WAITING_FOR_WIFI_AUTO_CONNECT = 10000;
+    public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 5000;
+    public static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = 3000;
+
 }

@@ -10,14 +10,19 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.media.AudioManager;
 import android.net.Uri;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Vibrator;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.PhoneStateListener;
+import android.telephony.SmsManager;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
@@ -32,6 +37,13 @@ import com.amulyakhare.textdrawable.TextDrawable;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.ebanx.swipebtn.OnStateChangeListener;
 import com.ebanx.swipebtn.SwipeButton;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -52,6 +64,11 @@ import butterknife.ButterKnife;
 import mobi.devteam.demofalldetector.R;
 import mobi.devteam.demofalldetector.model.Relative;
 import mobi.devteam.demofalldetector.utils.Common;
+import mobi.devteam.demofalldetector.utils.Utils;
+
+import static mobi.devteam.demofalldetector.utils.Common.FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS;
+import static mobi.devteam.demofalldetector.utils.Common.UPDATE_INTERVAL_IN_MILLISECONDS;
+import static mobi.devteam.demofalldetector.utils.Common.WAITING_FOR_WIFI_AUTO_CONNECT;
 
 public class ConfirmFallActivity extends AppCompatActivity implements OnStateChangeListener {
 
@@ -82,12 +99,31 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
     private FirebaseDatabase mDatabase;
     private Vibrator vibrator;
 
+    private FusedLocationProviderClient mFusedLocationClient;
+    private LocationCallback mLocationCallback;
+    private LocationRequest mLocationRequest;
+
+    private Location mLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_confirm_fall);
         ButterKnife.bind(this);
+
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        mLocationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                super.onLocationResult(locationResult);
+                mLocation = locationResult.getLastLocation();
+
+                mFusedLocationClient.removeLocationUpdates(this);
+            }
+        };
+
+        request_the_location();
 
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         mCurrentUser = mAuth.getCurrentUser();
@@ -144,13 +180,98 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
         });
 
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-        long[] pattern = { 0, 200, 0 }; //0 to start now, 200 to vibrate 200 ms, 0 to sleep for 0 ms.
-        vibrator.vibrate(pattern,0);
+        long[] pattern = {0, 200, 0}; //0 to start now, 200 to vibrate 200 ms, 0 to sleep for 0 ms.
+        vibrator.vibrate(pattern, 0);
 
+        handle_for_timeout();
+    }
+
+    private void request_the_location() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Log.e("PERMISSION_NOT_GRANT", "COARSE");
+            return;
+        }
+        //request the last location
+        getLastLocation();
+
+        //request update permission
+        if (Utils.isNetworkAvailable(this)) {
+            user_authed_request_location();
+        } else {
+            enable_wifi_and_get_location();
+        }
+    }
+
+    private void send_sms_with_location(String strNumber, Location loc) {
+        SmsManager sms = SmsManager.getDefault();
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            sms.sendTextMessage(strNumber, null, getString(R.string.location_denied), null, null);
+            return;
+        }
+
+        //
+        if (loc == null) {
+            sms.sendTextMessage(strNumber, null, getString(R.string.location_not_found), null, null);
+        } else {
+            long time_span = System.currentTimeMillis() - loc.getTime();
+            long minutes = (time_span / 1000) / 60;
+            float circle_radius = loc.getAccuracy() > 0 ? loc.getAccuracy() / 1000 : 0.1f;
+            String msg = "Last update: " + minutes + " minutes ago . See map at " + " https://www.doogal.co.uk/Circles.php?lat=" + loc.getLatitude() + "&lng=" + loc.getLongitude() + "&dist=" + circle_radius + "&units=kilometres";
+            sms.sendTextMessage(strNumber, null, msg, null, null);
+        }
+    }
+
+    private void user_authed_request_location() {
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(UPDATE_INTERVAL_IN_MILLISECONDS);
+        mLocationRequest.setFastestInterval(FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+        mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
+    }
+
+    private void enable_wifi_and_get_location() {
+
+        WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        wifiManager.setWifiEnabled(true);
+
+        Log.e("TRYING_CONNECT_WIFI", "waiting");
+        new Handler().postDelayed(new TimerTask() {
+            @Override
+            public void run() {
+                if (Utils.isNetworkAvailable(getApplicationContext())) {
+                    user_authed_request_location();
+                }
+            }
+        }, WAITING_FOR_WIFI_AUTO_CONNECT);
+
+    }
+
+    private void getLastLocation() {
+
+        mFusedLocationClient.getLastLocation()
+                .addOnCompleteListener(new OnCompleteListener<Location>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Location> task) {
+                        if (task.isSuccessful() && task.getResult() != null) {
+                            mLocation = task.getResult();
+                        } else {
+                            Log.e(ConfirmFallActivity.this.getClass().getName(), "Failed to get location. - last location");
+                        }
+                    }
+                });
+    }
+
+    private void handle_for_timeout() {
         Handler handler = new Handler();
         handler.postDelayed(new TimerTask() {
             @Override
             public void run() {
+                if (relativeArrayList.size() > 0) {
+                    send_sms_with_location(relativeArrayList.get(0).getPhone(), mLocation);
+                }
                 confirm_timeout();
             }
         }, Common.WAITING_FOR_CONFIRM);
@@ -166,7 +287,7 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
 
             imgFall.setImageResource(R.drawable.smile);
 
-            ScaleAnimation scaleAnimation = new ScaleAnimation(0,0,0,0,Animation.RELATIVE_TO_SELF,0.5f,Animation.RELATIVE_TO_SELF,0.5f);
+            ScaleAnimation scaleAnimation = new ScaleAnimation(0, 0, 0, 0, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
             scaleAnimation.setDuration(2000);
             scaleAnimation.setRepeatCount(2);
             scaleAnimation.setAnimationListener(new Animation.AnimationListener() {
@@ -221,6 +342,7 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
     }
 
     private void confirm_timeout() {
+
         vibrator.cancel();
 
         //cancel animation

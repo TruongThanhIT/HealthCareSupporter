@@ -6,17 +6,24 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.location.LocationManager;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+import android.media.AudioManager;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
 import android.util.Log;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -27,16 +34,18 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.TimerTask;
 
 import mobi.devteam.demofalldetector.R;
 import mobi.devteam.demofalldetector.model.Relative;
+import mobi.devteam.demofalldetector.utils.Common;
+import mobi.devteam.demofalldetector.utils.Utils;
 
-import static android.content.Context.LOCATION_SERVICE;
+import static mobi.devteam.demofalldetector.utils.Common.FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS;
+import static mobi.devteam.demofalldetector.utils.Common.UPDATE_INTERVAL_IN_MILLISECONDS;
+import static mobi.devteam.demofalldetector.utils.Common.WAITING_FOR_WIFI_AUTO_CONNECT;
 
 public class SmsReceiver extends BroadcastReceiver {
     private final String TAG = this.getClass().getSimpleName();
@@ -44,11 +53,30 @@ public class SmsReceiver extends BroadcastReceiver {
     private ArrayList<Relative> relatives = new ArrayList<>();
     private Intent myIntent;
     private Context context;
-    private LocationManager locationManager;
+
     private String strMsgSrc;
+
+    private FusedLocationProviderClient mFusedLocationClient;
+    private LocationCallback mLocationCallback;
+    private LocationRequest mLocationRequest;
+
+    private Location mLocation;
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(context);
+
+        mLocationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                super.onLocationResult(locationResult);
+                mLocation = locationResult.getLastLocation();
+                send_sms_with_location(mLocation);
+
+                mFusedLocationClient.removeLocationUpdates(this);
+            }
+        };
+
         try {
             if (FirebaseApp.getInstance() == null) {
                 FirebaseApp.initializeApp(context);
@@ -62,8 +90,6 @@ public class SmsReceiver extends BroadcastReceiver {
 
         if (currentUser == null)
             return;
-
-        locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
 
         DatabaseReference relative_data = FirebaseDatabase.getInstance().getReference("relatives");
 
@@ -91,7 +117,6 @@ public class SmsReceiver extends BroadcastReceiver {
 
             }
         });
-
     }
 
     private void check_auth() {
@@ -121,62 +146,83 @@ public class SmsReceiver extends BroadcastReceiver {
                     }
                 }
 
-                if (flag) {
-                    Log.e("phone_number_auth", "auth");
-                    try {
-                        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                boolean flag2 = false;
+                if (strMsgBody.compareToIgnoreCase(Common.SMS_COMMAND_GET_GPS) == 0) {
+                    flag2 = true;
+                }
+
+                boolean flag3 = false;
+                if (strMsgBody.compareToIgnoreCase(Common.SMS_COMMAND_MAX_SOUND) == 0) {
+                    flag3 = true;
+                }
+
+                if (flag) {//auth
+                    if (flag2) {
+                        Log.e("phone_number_auth", "auth");
+                        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                                || ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                             Log.e("PERMISSION_NOT_GRANT", "COARSE");
+                            send_sms_permission_deny();
                             return;
                         }
+                        //request the last location
+                        getLastLocation();
 
-                        boolean network_enabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-                        if (network_enabled) {
-                            Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-                            send_sms_with_location(location);
+                        //request update permission
+                        if (Utils.isNetworkAvailable(context)) {
+                            user_authed_request_location();
                         } else {
                             enable_wifi_and_get_location();
                         }
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                    } else if (flag3) {
+                        AudioManager audioManager =
+                                (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+                        int streamMaxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_RING);
+
+                        //max ring volumn
+                        audioManager.setStreamVolume(AudioManager.STREAM_RING, streamMaxVolume, AudioManager.FLAG_SHOW_UI);
+
+                        //turn on speaker
+                        audioManager.setMode(AudioManager.MODE_IN_CALL);
+                        audioManager.setSpeakerphoneOn(true);
                     }
                 }
             }
 
         }
+
+    }
+
+    private void user_authed_request_location() {
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(UPDATE_INTERVAL_IN_MILLISECONDS);
+        mLocationRequest.setFastestInterval(FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+        mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
     }
 
     private void enable_wifi_and_get_location() {
+
         WifiManager wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         wifiManager.setWifiEnabled(true);
 
+        Log.e("TRYING_CONNECT_WIFI", "waiting");
         new Handler().postDelayed(new TimerTask() {
             @Override
             public void run() {
-                if (isNetworkAvailable()) {
-                    if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                        Log.e("PERMISSION_NOT_GRANT", "COARSE");
-                        return;
-                    }
-                    locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-
-                    try {
-                        Thread.sleep(5000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-
-                    Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-                    send_sms_with_location(location);
+                if (Utils.isNetworkAvailable(context)) {
+                    user_authed_request_location();
                 } else {
-                    //TODO: NO NETWORK
+                    send_sms_with_location(mLocation);
                 }
             }
-        }, 10000);
+        }, WAITING_FOR_WIFI_AUTO_CONNECT);
+
     }
 
     private void send_sms_with_location(Location loc) {
         //
-
         SmsManager sms = SmsManager.getDefault();
         if (loc == null) {
             sms.sendTextMessage(strMsgSrc, null, context.getString(R.string.location_not_found), null, null);
@@ -189,23 +235,23 @@ public class SmsReceiver extends BroadcastReceiver {
         }
     }
 
-
-    private void setMobileDataEnabled(boolean enabled) throws Exception {
-        final ConnectivityManager conman = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        final Class conmanClass = Class.forName(conman.getClass().getName());
-        final Field iConnectivityManagerField = conmanClass.getDeclaredField("mService");
-        iConnectivityManagerField.setAccessible(true);
-        final Object iConnectivityManager = iConnectivityManagerField.get(conman);
-        final Class iConnectivityManagerClass = Class.forName(iConnectivityManager.getClass().getName());
-        final Method setMobileDataEnabledMethod = iConnectivityManagerClass.getDeclaredMethod("setMobileDataEnabled", Boolean.TYPE);
-        setMobileDataEnabledMethod.setAccessible(true);
-
-        setMobileDataEnabledMethod.invoke(iConnectivityManager, enabled);
+    private void send_sms_permission_deny() {
+        SmsManager sms = SmsManager.getDefault();
+        sms.sendTextMessage(strMsgSrc, null, context.getString(R.string.location_denied), null, null);
     }
 
-    public boolean isNetworkAvailable() {
-        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = cm.getActiveNetworkInfo();
-        return networkInfo != null && networkInfo.isConnected();
+    private void getLastLocation() {
+
+        mFusedLocationClient.getLastLocation()
+                .addOnCompleteListener(new OnCompleteListener<Location>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Location> task) {
+                        if (task.isSuccessful() && task.getResult() != null) {
+                            mLocation = task.getResult();
+                        } else {
+                            Log.e(TAG, "Failed to get location. - last location");
+                        }
+                    }
+                });
     }
 }
