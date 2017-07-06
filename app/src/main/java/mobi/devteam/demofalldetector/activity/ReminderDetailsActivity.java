@@ -117,11 +117,15 @@ public class ReminderDetailsActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
+            case android.R.id.home:
+                finish();
+                break;
             case R.id.mnuEdit:
                 Intent intent = new Intent(this, AddEditReminderActivity.class);
                 intent.putExtra(AddEditReminderActivity.EXTRA_IS_ADD_MODE, false);
                 intent.putExtra(AddEditReminderActivity.EXTRA_REMINDER_DATA, reminder);
                 startActivityForResult(intent, ADD_REMINDER_REQUEST);
+                finish();
                 break;
             case R.id.mnuDelete:
                 FirebaseUser currentUser = mAuth.getCurrentUser();
