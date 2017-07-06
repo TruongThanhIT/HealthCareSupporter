@@ -21,7 +21,8 @@
     <string name="login">Login With Password</string>
     <string name="signup">Sign Up</string>
     <string name="forget_password">Can\'t remember your password?</string>
-    <string name="err_login">User name or password invalid!!!</string>
+    <string name="err_login">Please checking your network!</string>
+    <string name="err_invalid_info_login">User name or password invalid!!!</string>
 
     <!--Create information of relative-->
     <string name="nameText">Name: </string>
@@ -77,8 +78,15 @@
     <string name="label_complete">Success</string>
     <string name="label_loading">Loading</string>
     <string name="home_require_profile_config">Please update your profile to continue</string>
-  
+
     <string name="profile_age">Age</string>
-    <string name="profile_invalid_w_h">Please type a valid weight, height</string>
+    <string name="err_invalid_info_profile">Invalid information!!!</string>
+    <string name="confirm_you_are_ok">You are OK!</string>
+    <string name="location_not_found">Sory, we can\'t find the location, please try again later</string>
+    <string name="err_profile">Invalid information</string>
+    <string name="update_success">Update successfull</string>
+    <string name="signin_fail">Sign in failed!!</string>
+    <string name="err_empty_info_relative">Name or phone is empty!!!</string>
+    <string name="err_empty_name_reminder">Please input reminder name</string>
 
 </resources>

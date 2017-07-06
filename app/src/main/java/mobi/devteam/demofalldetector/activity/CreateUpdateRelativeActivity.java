@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -36,6 +37,7 @@ import mobi.devteam.demofalldetector.utils.Tools;
 public class CreateUpdateRelativeActivity extends AppCompatActivity implements IPickResult {
     public static final String EXTRA_IS_ADD_MODE = "is_add_mode";
     public static final String EXTRA_RELATIVE_DATA = "relative_data";
+    public static final String TAG = "RelativeActivity";
     ;
     @BindView(R.id.edtCreateRelativeName)
     EditText edtRelativeName;
@@ -104,10 +106,7 @@ public class CreateUpdateRelativeActivity extends AppCompatActivity implements I
                 this.finish();
                 return true;
             case R.id.mnuSave:
-
                 save_relative();
-
-                finish();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -121,31 +120,36 @@ public class CreateUpdateRelativeActivity extends AppCompatActivity implements I
 
         if (relative == null)
             relative = new Relative();
-
-        relative.setName(edtRelativeName.getText().toString());
-        relative.setPhone(edtRelativePhone.getText().toString());
-
-        if (is_add_mode) {
-            relative.setId(tsLong);
-            child.child(tsLong + "").setValue(relative);
-        } else {
-            child.child(relative.getId() + "").setValue(relative);
+        if(edtRelativeName.getText().toString().equals("") || edtRelativePhone.getText().toString().equals("")){
+            Toast.makeText(this, R.string.err_empty_info_relative, Toast.LENGTH_SHORT).show();
         }
+        else{
+            relative.setName(edtRelativeName.getText().toString());
+            relative.setPhone(edtRelativePhone.getText().toString());
 
-        try {
-            Bitmap bitmapAvatar = Tools.convertImageViewToBitmap(imgCreateRelative);
-            byte[] bytes = Tools.convertBitmapToByteAray(bitmapAvatar);
-            relatives_images.child(relative.getId() + "").putBytes(bytes)
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            @SuppressWarnings("VisibleForTests")
-                            Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                            child.child(relative.getId() + "").child("thumb").setValue(downloadUrl.toString());
-                        }
-                    });
-        } catch (NullPointerException e) {
+            if (is_add_mode) {
+                relative.setId(tsLong);
+                child.child(tsLong + "").setValue(relative);
+            } else {
+                child.child(relative.getId() + "").setValue(relative);
+            }
 
+            try {
+                Bitmap bitmapAvatar = Tools.convertImageViewToBitmap(imgCreateRelative);
+                byte[] bytes = Tools.convertBitmapToByteAray(bitmapAvatar);
+                relatives_images.child(relative.getId() + "").putBytes(bytes)
+                        .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                @SuppressWarnings("VisibleForTests")
+                                Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                                child.child(relative.getId() + "").child("thumb").setValue(downloadUrl.toString());
+                            }
+                        });
+            } catch (NullPointerException e) {
+                Log.e(TAG, e.toString());
+            }
+            finish();
         }
     }
 

@@ -251,7 +251,7 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
 
     @Override
     public void onRecyclerItemClick(int position) {
-
+        // show detail
     }
 
     @Override

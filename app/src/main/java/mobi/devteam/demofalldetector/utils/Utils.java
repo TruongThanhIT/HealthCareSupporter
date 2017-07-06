@@ -59,8 +59,8 @@ public class Utils {
 
             rem.set(Calendar.HOUR_OF_DAY, temp.get(Calendar.HOUR_OF_DAY));
             rem.set(Calendar.MINUTE, temp.get(Calendar.MINUTE));
-            rem.set(Calendar.SECOND, 0);
-            rem.set(Calendar.MILLISECOND, 0);
+            rem.set(Calendar.SECOND, 30);
+            rem.set(Calendar.MILLISECOND, 30);
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, rem.getTimeInMillis(), AlarmManager.INTERVAL_DAY, sender);
             //Nhan duoc reminder se set tiep reminder
         } else if(reminder.getRepeat_type() == ReminderType.TYPE_WEEKLY){
@@ -73,8 +73,8 @@ public class Utils {
 
             rem.set(Calendar.HOUR_OF_DAY, temp.get(Calendar.HOUR_OF_DAY));
             rem.set(Calendar.MINUTE, temp.get(Calendar.MINUTE));
-            rem.set(Calendar.SECOND, 0);
-            rem.set(Calendar.MILLISECOND, 0);
+            rem.set(Calendar.SECOND, 30);
+            rem.set(Calendar.MILLISECOND, 30);
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, rem.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, sender);
         }
         else if(reminder.getRepeat_type() == ReminderType.TYPE_MONTHLY){
@@ -83,8 +83,8 @@ public class Utils {
             }
             rem.set(Calendar.HOUR_OF_DAY, temp.get(Calendar.HOUR_OF_DAY));
             rem.set(Calendar.MINUTE, temp.get(Calendar.MINUTE));
-            rem.set(Calendar.SECOND, 0);
-            rem.set(Calendar.MILLISECOND, 0);
+            rem.set(Calendar.SECOND, 30);
+            rem.set(Calendar.MILLISECOND, 30);
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, rem.getTimeInMillis(), AlarmManager.INTERVAL_DAY * getDuration(), sender);
         }
         else{
@@ -93,8 +93,8 @@ public class Utils {
             }
             rem.set(Calendar.HOUR_OF_DAY, temp.get(Calendar.HOUR_OF_DAY));
             rem.set(Calendar.MINUTE, temp.get(Calendar.MINUTE));
-            rem.set(Calendar.SECOND, 0);
-            rem.set(Calendar.MILLISECOND, 0);
+            rem.set(Calendar.SECOND, 30);
+            rem.set(Calendar.MILLISECOND, 30);
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, rem.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 365, sender);
         }
 

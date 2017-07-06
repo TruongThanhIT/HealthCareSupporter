@@ -15,9 +15,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import mobi.devteam.demofalldetector.activity.ConfirmFallActivity;
 import mobi.devteam.demofalldetector.model.Accelerator;
+import mobi.devteam.demofalldetector.model.FallDetectionStage;
 import mobi.devteam.demofalldetector.model.Profile;
 import mobi.devteam.demofalldetector.utils.Common;
 
@@ -48,23 +50,8 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
     private int age;
     private double bmi;
     private boolean isMale;
-    private Profile mProfile;
-
-    private static double calculate_svm(Accelerator accelerator) {
-        double x = accelerator.getX();
-        double y = accelerator.getY();
-        double z = accelerator.getZ();
-
-        int i_x = x > 0 ? 1 : -1;
-        int i_y = y > 0 ? 1 : -1;
-        int i_z = z > 0 ? 1 : -1;
-
-        try {
-            return Math.sqrt(i_x * (x * x) + i_y * (y * y) + i_z * (z * z));
-        } catch (Exception ignored) {
-            return 0;
-        }
-    }
+    private Profile mProfile; 
+    private FallDetectionStage fallDetectionStage;
 
     @Override
     public void onCreate() {
@@ -73,7 +60,7 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
         acceleratorArrayList = new ArrayList<>();
         recoveryArrayList = new ArrayList<>();
 
-        profile_data = mDatabase.child(currentUser.getUid());
+        profile_data = mDatabase.getReference("profile").child(currentUser.getUid());
         profile_data.keepSynced(false);
 
         profile_data.addValueEventListener(new ValueEventListener() {
@@ -199,7 +186,15 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
         if (svm_current >= threshold_1) { //Threshold 1
             if (current_accelerator.getX() > threshold_2 || current_accelerator.getY() > threshold_2 || current_accelerator.getZ() > threshold_2) { //Threshold 2
                 //is falling ? saving stage
-                //TODO: save stage
+
+                fallDetectionStage = new FallDetectionStage();
+                fallDetectionStage.setThresh_1(threshold_1);
+                fallDetectionStage.setThresh_2(threshold_2);
+                fallDetectionStage.setThresh_3(threshold_3);
+                fallDetectionStage.setConfirm_ok(false);
+                fallDetectionStage.setRecovery(false);
+                fallDetectionStage.setTime(Calendar.getInstance().getTimeInMillis());
+
                 waiting_for_recovery = true;
                 recoveryArrayList.clear();
             }
@@ -222,19 +217,42 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
             Log.e("WAITING_RECOVERY", sum_x + " - " + sum_y + " - " + sum_z);
 
             if (sum_x > threshold_3 || sum_y > threshold_3 || sum_z > threshold_3) { //Threshold 3
+                fallDetectionStage.setRecovery(true);
+                mDatabase.getReference("fall_detection_logs").child(currentUser.getUid()).setValue(fallDetectionStage);
+
+                fallDetectionStage = null;
                 waiting_for_recovery = false; // ok i'm recovery :)),
                 recoveryArrayList.clear(); // clear recovery stages
             }
 
         } else {
             //Didn't get recover after 3s
-            //TODO: send confirm
             Intent dialogIntent = new Intent(this, ConfirmFallActivity.class);
+            dialogIntent.putExtra("time", fallDetectionStage.getTime());
             dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(dialogIntent);
+
+            fallDetectionStage = null;
         }
 
     }
+
+    private static double calculate_svm(Accelerator accelerator) {
+        double x = accelerator.getX();
+        double y = accelerator.getY();
+        double z = accelerator.getZ();
+
+        int i_x = x > 0 ? 1 : -1;
+        int i_y = y > 0 ? 1 : -1;
+        int i_z = z > 0 ? 1 : -1;
+
+        try {
+            return Math.sqrt(i_x * (x * x) + i_y * (y * y) + i_z * (z * z));
+        } catch (Exception ignored) {
+            return 0;
+        }
+    }
+
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {

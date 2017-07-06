@@ -18,6 +18,9 @@ import java.util.Calendar;
 
 import mobi.devteam.demofalldetector.R;
 import mobi.devteam.demofalldetector.activity.AddEditReminderActivity;
+import mobi.devteam.demofalldetector.activity.MainActivity;
+import mobi.devteam.demofalldetector.activity.ReminderDetailsActivity;
+import mobi.devteam.demofalldetector.fragment.HomeFragment;
 import mobi.devteam.demofalldetector.model.Reminder;
 
 public class ReminderService extends Service {
@@ -44,6 +47,8 @@ public class ReminderService extends Service {
         if (reminder == null) {
             Log.e(getClass().getName(),"Reminder is null");
         }
+        if(reminder.getEnd() < Calendar.getInstance().getTimeInMillis())
+            return START_NOT_STICKY;
 
         notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         switch (intent.getAction()) {
@@ -76,7 +81,7 @@ public class ReminderService extends Service {
 
     private void showNotificationReminder() {
         //Content Intent
-        Intent notificationIntent = new Intent(this, AddEditReminderActivity.class);
+        Intent notificationIntent = new Intent(this, ReminderDetailsActivity.class);
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                 | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         notificationIntent.putExtra(Constants.KEY.ITEM_KEY, reminder);

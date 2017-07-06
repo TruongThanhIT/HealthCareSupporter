@@ -143,7 +143,7 @@
             android:id="@+id/rdo_male"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/profile_is_male" />
+            android:text="@string/profile_is_male"/>
 
         <RadioButton
             android:id="@+id/rdo_female"
@@ -151,7 +151,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
             android:layout_marginStart="8dp"
-            android:text="@string/profile_is_female" />
+            android:text="@string/profile_is_female"/>
 
     </RadioGroup>
 
