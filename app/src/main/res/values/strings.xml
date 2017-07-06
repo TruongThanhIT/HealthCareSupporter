@@ -55,6 +55,7 @@
 
     <!-- Do not change position -->
     <string-array name="repeat_array">
+        <item>Never</item>
         <item>Daily</item>
         <item>Weekly</item>
         <item>Monthly</item>

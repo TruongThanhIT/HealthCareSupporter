@@ -51,22 +51,21 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.Remind
         if (reminder != null) {
             holder.txtReminder.setText(reminder.getName());
 
-            if(reminder.getRepeat_type() == ReminderType.TYPE_DAILY){
+            if (reminder.getRepeat_type() == ReminderType.TYPE_NEVER) {
                 holder.txtRepeat.setText(MyApplication.reminder_types[0]);
-            }
-            else if(reminder.getRepeat_type() == ReminderType.TYPE_WEEKLY){
+            } else if (reminder.getRepeat_type() == ReminderType.TYPE_DAILY) {
                 holder.txtRepeat.setText(MyApplication.reminder_types[1]);
-            }
-            else if(reminder.getRepeat_type() == ReminderType.TYPE_MONTHLY){
+            } else if (reminder.getRepeat_type() == ReminderType.TYPE_WEEKLY) {
                 holder.txtRepeat.setText(MyApplication.reminder_types[2]);
-            }
-            else {
+            } else if (reminder.getRepeat_type() == ReminderType.TYPE_MONTHLY) {
                 holder.txtRepeat.setText(MyApplication.reminder_types[3]);
+            } else {
+                holder.txtRepeat.setText(MyApplication.reminder_types[4]);
 
             }
             Calendar dateTime = Tools.convertLongToCalendar(reminder.getHour_alarm());
             holder.txtTime.setText(Utils.get_calendar_date(dateTime) + ", " + Utils.get_calendar_time(dateTime));
-            if(reminder.getName().length() > 0){
+            if (reminder.getName().length() > 0) {
 
                 TextDrawable textDrawable = TextDrawable.builder()
                         .beginConfig()
