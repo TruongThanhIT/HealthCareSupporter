@@ -242,6 +242,7 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
             @Override
             public void run() {
                 if (Utils.isNetworkAvailable(getApplicationContext())) {
+                    //this will update the mLocation
                     user_authed_request_location();
                 }
             }
