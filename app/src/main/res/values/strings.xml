@@ -82,5 +82,6 @@
     <string name="profile_invalid_w_h">Please type a valid weight, height</string>
     <string name="confirm_you_are_ok">You are OK!</string>
     <string name="location_not_found">Sory, we can\'t find the location, please try again later</string>
+    <string name="location_denied">Sory, the your relative denied our location service permission.</string>
 
 </resources>
