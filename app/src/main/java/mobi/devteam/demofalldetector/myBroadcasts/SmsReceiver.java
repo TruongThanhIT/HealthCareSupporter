@@ -7,8 +7,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.media.AudioManager;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -43,21 +41,14 @@ import java.util.TimerTask;
 import mobi.devteam.demofalldetector.R;
 import mobi.devteam.demofalldetector.model.Relative;
 import mobi.devteam.demofalldetector.utils.Common;
+import mobi.devteam.demofalldetector.utils.Utils;
+
+import static mobi.devteam.demofalldetector.utils.Common.FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS;
+import static mobi.devteam.demofalldetector.utils.Common.UPDATE_INTERVAL_IN_MILLISECONDS;
+import static mobi.devteam.demofalldetector.utils.Common.WAITING_FOR_WIFI_AUTO_CONNECT;
 
 public class SmsReceiver extends BroadcastReceiver {
     private final String TAG = this.getClass().getSimpleName();
-
-    /**
-     * The desired interval for location updates. Inexact. Updates may be more or less frequent.
-     */
-    private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 10000;
-
-    /**
-     * The fastest rate for active location updates. Updates will never be more frequent
-     * than this value.
-     */
-    private static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS =
-            UPDATE_INTERVAL_IN_MILLISECONDS / 2;
 
     private ArrayList<Relative> relatives = new ArrayList<>();
     private Intent myIntent;
@@ -70,7 +61,6 @@ public class SmsReceiver extends BroadcastReceiver {
     private LocationRequest mLocationRequest;
 
     private Location mLocation;
-
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -179,7 +169,7 @@ public class SmsReceiver extends BroadcastReceiver {
                         getLastLocation();
 
                         //request update permission
-                        if (isNetworkAvailable()) {
+                        if (Utils.isNetworkAvailable(context)) {
                             user_authed_request_location();
                         } else {
                             enable_wifi_and_get_location();
@@ -221,13 +211,13 @@ public class SmsReceiver extends BroadcastReceiver {
         new Handler().postDelayed(new TimerTask() {
             @Override
             public void run() {
-                if (isNetworkAvailable()) {
+                if (Utils.isNetworkAvailable(context)) {
                     user_authed_request_location();
                 } else {
                     send_sms_with_location(mLocation);
                 }
             }
-        }, 10000);
+        }, WAITING_FOR_WIFI_AUTO_CONNECT);
 
     }
 
@@ -248,12 +238,6 @@ public class SmsReceiver extends BroadcastReceiver {
     private void send_sms_permission_deny() {
         SmsManager sms = SmsManager.getDefault();
         sms.sendTextMessage(strMsgSrc, null, context.getString(R.string.location_denied), null, null);
-    }
-
-    public boolean isNetworkAvailable() {
-        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = cm.getActiveNetworkInfo();
-        return networkInfo != null && networkInfo.isConnected();
     }
 
     private void getLastLocation() {
