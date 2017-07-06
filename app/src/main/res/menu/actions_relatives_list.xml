@@ -3,12 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/mnuEdit"
-        app:showAsAction="ifRoom"
+        app:showAsAction="never"
         android:orderInCategory="100"
         android:title="@string/edit" />
     <item
         android:id="@+id/mnuDelete"
-        app:showAsAction="ifRoom"
+        app:showAsAction="never"
         android:orderInCategory="101"
         android:title="@string/delete" />
 </menu>

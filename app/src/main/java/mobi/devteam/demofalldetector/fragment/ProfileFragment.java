@@ -27,6 +27,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import mobi.devteam.demofalldetector.R;
+import mobi.devteam.demofalldetector.activity.MainActivity;
 import mobi.devteam.demofalldetector.model.Profile;
 import mobi.devteam.demofalldetector.myServices.DetectFallService;
 import mobi.devteam.demofalldetector.myServices.GetLocationService;
@@ -70,7 +71,6 @@ public class ProfileFragment extends Fragment implements ValueEventListener {
     public static ProfileFragment newInstance() {
         ProfileFragment fragment = new ProfileFragment();
         Bundle args = new Bundle();
-
         fragment.setArguments(args);
         return fragment;
     }
@@ -107,9 +107,6 @@ public class ProfileFragment extends Fragment implements ValueEventListener {
                     //cancel service
                     getActivity().stopService(intent);
                 }
-                if (mProfile != null){
-                    profile_data.child("detect_fall").setValue(isChecked);
-                }
             }
         });
 
@@ -122,9 +119,6 @@ public class ProfileFragment extends Fragment implements ValueEventListener {
                 } else {
                     //cancel service
                     getActivity().stopService(intent);
-                }
-                if (mProfile != null){
-                    profile_data.child("allow_find").setValue(isChecked);
                 }
             }
         });
@@ -148,39 +142,47 @@ public class ProfileFragment extends Fragment implements ValueEventListener {
 
     @OnClick(R.id.btnUpdate)
     void updateOnclick() {
-
         double weight = 0;
         double height = 0;
+        int age = 0;
         try{
             height = Double.parseDouble(edtHeight.getText().toString());
             weight = Double.parseDouble(edtWeight.getText().toString());
+            age = Integer.parseInt(edtAge.getText().toString());
         }catch (Exception e){
-            Toast.makeText(getActivity(), getString(R.string.profile_invalid_w_h), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), getString(R.string.err_invalid_info_profile), Toast.LENGTH_SHORT).show();
             return;
         }
-
         Profile profile = new Profile();
-        profile.setAllow_find(sw_allow_find.isChecked());
-        profile.setDetect_fall(sw_fall_detect.isChecked());
+        if(height > 0 && weight > 0 && age > 0){
+            profile.setAllow_find(sw_allow_find.isChecked());
+            profile.setDetect_fall(sw_fall_detect.isChecked());
+            profile.setHeight(height);
+            profile.setWeight(weight);
+            profile.setAge(age);
+            profile.setMale(rdo_male.isChecked());
 
-        profile.setHeight(Double.parseDouble(edtHeight.getText().toString()));
-        profile.setWeight(Double.parseDouble(edtWeight.getText().toString()));
-        profile.setMale(rdo_male.isChecked());
-        profile.setAge(Integer.parseInt(edtAge.getText().toString()));
+            if (mProfile == null){
+                profile.setThresh1(Common.DEFAULT_THRESHOLD_1);
+                profile.setThresh2(Common.DEFAULT_THRESHOLD_2);
+                profile.setThresh3(Common.DEFAULT_THRESHOLD_3);
+            }
 
-        if (mProfile == null){
-            profile.setThresh1(Common.DEFAULT_THRESHOLD_1);
-            profile.setThresh2(Common.DEFAULT_THRESHOLD_2);
-            profile.setThresh3(Common.DEFAULT_THRESHOLD_3);
+            btnUpdate.setMode(ActionProcessButton.Mode.PROGRESS);
+            profile_data.setValue(profile).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    btnUpdate.setMode(ActionProcessButton.Mode.ENDLESS);
+                }
+            });
+            Toast.makeText(this.getActivity(), R.string.update_success, Toast.LENGTH_SHORT).show();
+            MainActivity activity = (MainActivity) getActivity();
+            activity.navItemSelected(R.id.nav_home);
+        }
+        else{
+            Toast.makeText(getActivity(), R.string.err_invalid_info_profile, Toast.LENGTH_SHORT).show();
         }
 
-        btnUpdate.setMode(ActionProcessButton.Mode.PROGRESS);
-        profile_data.setValue(profile).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                btnUpdate.setMode(ActionProcessButton.Mode.ENDLESS);
-            }
-        });
     }
 
     @Override
@@ -199,13 +201,14 @@ public class ProfileFragment extends Fragment implements ValueEventListener {
         sw_allow_find.setChecked(mProfile.isAllow_find());
         sw_fall_detect.setChecked(mProfile.isDetect_fall());
 
-        edtHeight.setText(mProfile.getHeight() + "");
-        edtWeight.setText(mProfile.getWeight() + "");
+        edtHeight.setText(String.valueOf(mProfile.getHeight()));
+        edtWeight.setText(String.valueOf(mProfile.getWeight()));
+        edtAge.setText(String.valueOf(mProfile.getAge()));
 
         if (mProfile.isMale()) {
             rdo_male.setChecked(true);
         } else {
-            rdo_male.setChecked(false);
+            rdo_female.setChecked(true);
         }
     }
 

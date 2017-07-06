@@ -86,6 +86,13 @@
 
         <service android:name=".myServices.DetectFallService" />
         <service android:name=".myServices.GetLocationService" />
+
+        <activity
+            android:name=".activity.ReminderDetailsActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar">
+
+        </activity>
     </application>
 
-</manifest><!-- keo no len , debug-->
+</manifest> <!-- keo no len , debug -->
