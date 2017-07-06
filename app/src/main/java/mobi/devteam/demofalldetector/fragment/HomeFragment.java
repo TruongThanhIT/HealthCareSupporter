@@ -36,6 +36,7 @@ import butterknife.Unbinder;
 import mobi.devteam.demofalldetector.R;
 import mobi.devteam.demofalldetector.activity.AddEditReminderActivity;
 import mobi.devteam.demofalldetector.activity.MainActivity;
+import mobi.devteam.demofalldetector.activity.ReminderDetailsActivity;
 import mobi.devteam.demofalldetector.adapter.ReminderAdapter;
 import mobi.devteam.demofalldetector.model.Profile;
 import mobi.devteam.demofalldetector.model.Reminder;
@@ -251,7 +252,10 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
 
     @Override
     public void onRecyclerItemClick(int position) {
-
+        Reminder selected_reminder = reminderArrayList.get(position);
+        Intent intent = new Intent(getActivity(), ReminderDetailsActivity.class);
+        intent.putExtra(ReminderDetailsActivity.EXTRA_REMINDER, selected_reminder);
+        startActivityForResult(intent, ADD_REMINDER_REQUEST);
     }
 
     @Override

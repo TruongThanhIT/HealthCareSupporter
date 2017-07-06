@@ -50,7 +50,7 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
     private int age;
     private double bmi;
     private boolean isMale;
-    private Profile mProfile;
+    private Profile mProfile; 
     private FallDetectionStage fallDetectionStage;
 
     @Override
@@ -67,6 +67,10 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 mProfile = dataSnapshot.getValue(Profile.class);
+
+                if (mProfile == null)
+                    return;
+
                 age = mProfile.getAge();
                 bmi = mProfile.getWeight() / Math.sqrt(mProfile.getHeight());
                 isMale = mProfile.isMale();
@@ -232,8 +236,7 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
         }
 
     }
-
-
+  
     private static double calculate_svm(Accelerator accelerator) {
         double x = accelerator.getX();
         double y = accelerator.getY();
