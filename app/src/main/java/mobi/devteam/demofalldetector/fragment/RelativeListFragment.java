@@ -158,21 +158,6 @@ public class RelativeListFragment extends Fragment implements OnRecyclerItemClic
 
     }
 
-    private void setDummyData() {
-        Relative relative = new Relative();
-        relative.setId(Calendar.getInstance().getTimeInMillis());
-        relative.setName("Thái Thanh");
-        relative.setPhone("01234567890");
-
-        Relative relative1 = new Relative();
-        relative1.setId(Calendar.getInstance().getTimeInMillis());
-        relative1.setName("Văn Minh");
-        relative1.setPhone("090909567890");
-
-        relatives.add(relative);
-        relatives.add(relative1);
-    }
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);

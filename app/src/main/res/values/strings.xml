@@ -55,6 +55,7 @@
 
     <!-- Do not change position -->
     <string-array name="repeat_array">
+        <item>Never</item>
         <item>Daily</item>
         <item>Weekly</item>
         <item>Monthly</item>
@@ -83,6 +84,8 @@
     <string name="err_invalid_info_profile">Invalid information!!!</string>
     <string name="confirm_you_are_ok">You are OK!</string>
     <string name="location_not_found">Sory, we can\'t find the location, please try again later</string>
+
+    <string name="location_denied">Sory, the your relative denied our location service permission.</string>
     <string name="err_profile">Invalid information</string>
     <string name="update_success">Update successfull</string>
     <string name="signin_fail">Sign in failed!!</string>

@@ -5,6 +5,8 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -97,9 +99,8 @@ public class Utils {
             rem.set(Calendar.MILLISECOND, 30);
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, rem.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 365, sender);
         }
-
-
     }
+
     public static int getDuration(){
         // get todays date
         Calendar cal = Calendar.getInstance();
@@ -123,5 +124,11 @@ public class Utils {
         int maximumDay = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
 
         return maximumDay;
+    }
+
+    public static boolean isNetworkAvailable(Context context) {
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = cm.getActiveNetworkInfo();
+        return networkInfo != null && networkInfo.isConnected();
     }
 }

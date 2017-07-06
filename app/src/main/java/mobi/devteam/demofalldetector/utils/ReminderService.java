@@ -81,7 +81,7 @@ public class ReminderService extends Service {
 
     private void showNotificationReminder() {
         //Content Intent
-        Intent notificationIntent = new Intent(this, ReminderDetailsActivity.class);
+        Intent notificationIntent = new Intent(this, MainActivity.class);
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                 | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         notificationIntent.putExtra(Constants.KEY.ITEM_KEY, reminder);
