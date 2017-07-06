@@ -236,7 +236,7 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
         }
 
     }
-  
+
     private static double calculate_svm(Accelerator accelerator) {
         double x = accelerator.getX();
         double y = accelerator.getY();
@@ -252,6 +252,7 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
             return 0;
         }
     }
+
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
