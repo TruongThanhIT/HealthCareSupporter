@@ -91,5 +91,6 @@
     <string name="signin_fail">Sign in failed!!</string>
     <string name="err_empty_info_relative">Name or phone is empty!!!</string>
     <string name="err_empty_name_reminder">Please input reminder name</string>
+    <string name="confirm_you_are_fall">It\'s look like you are fallen\\nWe are trying to get contact with your relative</string>
 
 </resources>
