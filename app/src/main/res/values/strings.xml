@@ -58,8 +58,8 @@
         <item>Never</item>
         <item>Daily</item>
         <item>Weekly</item>
-        <item>Monthly</item>
-        <item>Yearly</item>
+        <!--<item>Monthly</item>-->
+        <!--<item>Yearly</item>-->
     </string-array>
     <string name="title_activity_confirm_falling">ConfirmFallingActivity</string>
     <string name="confirm_label_confirm">Confirm if you are ok</string>
