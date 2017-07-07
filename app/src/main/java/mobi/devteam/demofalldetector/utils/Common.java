@@ -11,7 +11,7 @@ public class Common {
      */
     public static final double DEFAULT_THRESHOLD_1 = 6f;
     public static final double DEFAULT_THRESHOLD_2 = 5f;
-    public static final double DEFAULT_THRESHOLD_3 = 70f;
+    public static final double DEFAULT_THRESHOLD_3 = 120f;
 
     //Threshold 1
     public static final float T1_AGE_LT_60 = 0.5f;
