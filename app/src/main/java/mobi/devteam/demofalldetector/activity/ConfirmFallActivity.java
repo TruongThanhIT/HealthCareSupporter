@@ -104,6 +104,8 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
     private LocationRequest mLocationRequest;
 
     private Location mLocation;
+    private TimerTask task_wait_for_timeout;
+    private Handler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -180,7 +182,7 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
         });
 
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-        long[] pattern = {0, 200, 0}; //0 to start now, 200 to vibrate 200 ms, 0 to sleep for 0 ms.
+        long[] pattern = {0, 200, 200}; //0 to start now, 200 to vibrate 200 ms, 0 to sleep for 0 ms.
         vibrator.vibrate(pattern, 0);
 
         handle_for_timeout();
@@ -204,10 +206,16 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
     }
 
     private void send_sms_with_location(String strNumber, Location loc) {
+        //TODO: require send sms
         SmsManager sms = SmsManager.getDefault();
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            sms.sendTextMessage(strNumber, null, getString(R.string.location_denied), null, null);
+
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) == PackageManager.PERMISSION_GRANTED) {
+                sms.sendTextMessage(strNumber, null, getString(R.string.location_denied), null, null);
+            } else {
+                Log.e("SEND_SMS_PERMISSION", "NOT GRANT");
+            }
             return;
         }
 
@@ -266,8 +274,9 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
     }
 
     private void handle_for_timeout() {
-        Handler handler = new Handler();
-        handler.postDelayed(new TimerTask() {
+        txtHoldOn.setText(getString(R.string.confirm_you_are_fall));
+        handler = new Handler();
+        task_wait_for_timeout = new TimerTask() {
             @Override
             public void run() {
                 if (relativeArrayList.size() > 0) {
@@ -275,22 +284,27 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
                 }
                 confirm_timeout();
             }
-        }, Common.WAITING_FOR_CONFIRM);
+        };
+        handler.postDelayed(task_wait_for_timeout, Common.WAITING_FOR_CONFIRM);
     }
 
     @Override
     public void onStateChange(boolean active) {
         if (active) {
+            handler.removeCallbacks(task_wait_for_timeout);
+
+
             vibrator.cancel();
+            //confirm ok
             mDatabase.getReference("fall_detection_logs").child(mCurrentUser.getUid()).child("confirm_ok").setValue(true);
 
             imgFall.clearAnimation();
 
             imgFall.setImageResource(R.drawable.smile);
 
-            ScaleAnimation scaleAnimation = new ScaleAnimation(0, 0, 0, 0, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+
+            ScaleAnimation scaleAnimation = new ScaleAnimation(0.5f, 1f, 0.5f, 1f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
             scaleAnimation.setDuration(2000);
-            scaleAnimation.setRepeatCount(2);
             scaleAnimation.setAnimationListener(new Animation.AnimationListener() {
                 @Override
                 public void onAnimationStart(Animation animation) {
@@ -299,7 +313,7 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
 
                 @Override
                 public void onAnimationEnd(Animation animation) {
-                    //TODO: finish
+
                 }
 
                 @Override
@@ -321,10 +335,12 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
                 @Override
                 public void onAnimationEnd(Animator animation) {
                     swipe_btn.setVisibility(View.GONE);
-                    txtHoldOn.setVisibility(View.VISIBLE);
+                    txtHoldOn.setVisibility(View.GONE);
+//                    txtHoldOn.setText(getString(R.string.confirm_you_are_ok));
 
-                    ObjectAnimator.ofFloat(txtHoldOn, "alpha", 0f, 1f).setDuration(1000).start();
-                    txtHoldOn.setText(getString(R.string.confirm_you_are_ok));
+                    ObjectAnimator.ofFloat(txtConfirm, "alpha", 0f, 1f).setDuration(1000).start();
+                    txtConfirm.setText(getString(R.string.confirm_you_are_ok));
+
                 }
 
                 @Override
