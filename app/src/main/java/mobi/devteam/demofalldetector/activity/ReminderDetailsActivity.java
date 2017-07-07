@@ -100,6 +100,7 @@ public class ReminderDetailsActivity extends AppCompatActivity {
         spinReminderRepeat.setSelection(reminder.getRepeat_type());
         spinReminderRepeat.setEnabled(false);
         edtNote.setText(reminder.getNote());
+        edtNote.setHint("");
         edtNote.setKeyListener(null);
         Picasso.with(this)
                 .load(reminder.getThumb())
