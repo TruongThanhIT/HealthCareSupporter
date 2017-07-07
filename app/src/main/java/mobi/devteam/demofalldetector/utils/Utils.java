@@ -65,11 +65,11 @@ public class Utils {
             rem.set(Calendar.MILLISECOND, 30);
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, rem.getTimeInMillis(), AlarmManager.INTERVAL_DAY, sender);
             //Nhan duoc reminder se set tiep reminder
-        } else if(reminder.getRepeat_type() == ReminderType.TYPE_WEEKLY){
+        } else if (reminder.getRepeat_type() == ReminderType.TYPE_WEEKLY) {
             //SHEDULE FOR WEEKLY
-            if (rem.get(Calendar.DAY_OF_WEEK) > temp.get(Calendar.DAY_OF_WEEK)){
+            if (rem.get(Calendar.DAY_OF_WEEK) > temp.get(Calendar.DAY_OF_WEEK)) {
                 //SHEDULE FOR NEXT WEEK
-                rem.add(Calendar.DAY_OF_WEEK,0);
+                rem.add(Calendar.DAY_OF_WEEK, 0);
 //                rem.add(Calendar.DAY_OF_MONTH, 1);
             }
 
@@ -78,9 +78,8 @@ public class Utils {
             rem.set(Calendar.SECOND, 30);
             rem.set(Calendar.MILLISECOND, 30);
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, rem.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, sender);
-        }
-        else if(reminder.getRepeat_type() == ReminderType.TYPE_MONTHLY){
-            if(rem.get(Calendar.DAY_OF_MONTH) > temp.get(Calendar.DAY_OF_MONTH)){
+        } else if (reminder.getRepeat_type() == ReminderType.TYPE_MONTHLY) {
+            if (rem.get(Calendar.DAY_OF_MONTH) > temp.get(Calendar.DAY_OF_MONTH)) {
                 rem.add(Calendar.DAY_OF_MONTH, 0);
             }
             rem.set(Calendar.HOUR_OF_DAY, temp.get(Calendar.HOUR_OF_DAY));
@@ -88,9 +87,8 @@ public class Utils {
             rem.set(Calendar.SECOND, 30);
             rem.set(Calendar.MILLISECOND, 30);
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, rem.getTimeInMillis(), AlarmManager.INTERVAL_DAY * getDuration(), sender);
-        }
-        else{
-            if(rem.get(Calendar.DAY_OF_YEAR) > temp.get(Calendar.DAY_OF_YEAR)){
+        } else {
+            if (rem.get(Calendar.DAY_OF_YEAR) > temp.get(Calendar.DAY_OF_YEAR)) {
                 rem.add(Calendar.DAY_OF_YEAR, 0);
             }
             rem.set(Calendar.HOUR_OF_DAY, temp.get(Calendar.HOUR_OF_DAY));
@@ -101,7 +99,7 @@ public class Utils {
         }
     }
 
-    public static int getDuration(){
+    public static int getDuration() {
         // get todays date
         Calendar cal = Calendar.getInstance();
         // get current month
@@ -111,11 +109,11 @@ public class Utils {
         currentMonth++;
         // check if has not exceeded threshold of december
 
-        if(currentMonth > Calendar.DECEMBER){
+        if (currentMonth > Calendar.DECEMBER) {
             // alright, reset month to jan and forward year by 1 e.g fro 2013 to 2014
             currentMonth = Calendar.JANUARY;
             // Move year ahead as well
-            cal.set(Calendar.YEAR, cal.get(Calendar.YEAR)+1);
+            cal.set(Calendar.YEAR, cal.get(Calendar.YEAR) + 1);
         }
 
         // reset calendar to next month
