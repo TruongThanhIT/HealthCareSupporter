@@ -94,17 +94,15 @@ public class MainActivity extends AppCompatActivity
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         switch (id) {
             case R.id.nav_home:
+                setTitle(R.string.tittle_home);
                 fragmentTransaction.replace(R.id.frame_container, HomeFragment.newInstance());
                 fragmentTransaction.commit();
                 break;
             case R.id.nav_relatives:
+                setTitle(R.string.tittle_relatives);
                 fragmentTransaction.replace(R.id.frame_container, RelativeListFragment.
                         newInstance());
                 fragmentTransaction.commit();
-                break;
-            case R.id.nav_test_faling:
-                Intent intent = new Intent(MainActivity.this, TestActivity.class);
-                startActivity(intent);
                 break;
             case R.id.nav_logout:
                 mAuth.signOut();
@@ -112,6 +110,7 @@ public class MainActivity extends AppCompatActivity
                 finish();
                 break;
             case R.id.nav_profile:
+                setTitle(R.string.tittle_profile);
                 fragmentTransaction.replace(R.id.frame_container, ProfileFragment.newInstance());
                 fragmentTransaction.commit();
                 break;

@@ -129,4 +129,15 @@ public class Utils {
         NetworkInfo networkInfo = cm.getActiveNetworkInfo();
         return networkInfo != null && networkInfo.isConnected();
     }
+
+    public static void cancelAlarmWakeUp(Activity mActivity, Reminder reminder) {
+        Intent service = new Intent(mActivity, ReminderService.class);
+        service.setAction(Constants.ACTION.START_SERVICE);
+        service.putExtra(Constants.KEY.ITEM_KEY, reminder);
+        PendingIntent sender = PendingIntent.getService(mActivity, reminder.getPendingId(), service,
+                0);
+        AlarmManager alarmManager = (AlarmManager) mActivity.getBaseContext().
+                getSystemService(Context.ALARM_SERVICE);
+        alarmManager.cancel(sender);
+    }
 }
