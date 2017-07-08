@@ -226,11 +226,13 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
             }
 
         } else {
+            waiting_for_recovery = false;
             //Didn't get recover after 3s
             Intent dialogIntent = new Intent(this, ConfirmFallActivity.class);
             dialogIntent.putExtra("time", fallDetectionStage.getTime());
             dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(dialogIntent);
+            stopSelf();
 
 //            fallDetectionStage = null;
         }

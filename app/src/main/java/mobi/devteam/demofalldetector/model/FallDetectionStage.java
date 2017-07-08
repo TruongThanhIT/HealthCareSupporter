@@ -1,8 +1,5 @@
 package mobi.devteam.demofalldetector.model;
 
-/**
- * Created by Administrator on 7/4/2017.
- */
 
 public class FallDetectionStage {
     private double thresh_1;

@@ -12,8 +12,8 @@ public class Accelerator {
      */
     public Accelerator(double[] linear_acceleration) {
         this.x = linear_acceleration[0];
-        this.y = linear_acceleration[0];
-        this.z = linear_acceleration[0];
+        this.y = linear_acceleration[1];
+        this.z = linear_acceleration[2];
     }
 
     /**
