@@ -155,7 +155,7 @@ public class ProfileFragment extends Fragment implements ValueEventListener {
         }
         Profile profile = new Profile();
 
-        if(height > 0 && weight > 0 && age > 0){
+        if(height > 0 && height < 3 && weight > 0 && weight < 600 && age > 0 && age < 120){
             profile.setAllow_find(sw_allow_find.isChecked());
             profile.setDetect_fall(sw_fall_detect.isChecked());
             profile.setHeight(height);

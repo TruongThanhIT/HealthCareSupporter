@@ -220,19 +220,21 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
                 fallDetectionStage.setRecovery(true);
                 mDatabase.getReference("fall_detection_logs").child(currentUser.getUid()).setValue(fallDetectionStage);
 
-                fallDetectionStage = null;
+//                fallDetectionStage = null;
                 waiting_for_recovery = false; // ok i'm recovery :)),
                 recoveryArrayList.clear(); // clear recovery stages
             }
 
         } else {
+            waiting_for_recovery = false;
             //Didn't get recover after 3s
             Intent dialogIntent = new Intent(this, ConfirmFallActivity.class);
             dialogIntent.putExtra("time", fallDetectionStage.getTime());
             dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(dialogIntent);
+            stopSelf();
 
-            fallDetectionStage = null;
+//            fallDetectionStage = null;
         }
 
     }
