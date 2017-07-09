@@ -4,12 +4,11 @@ import android.Manifest;
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.app.AlertDialog;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.location.Location;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -19,12 +18,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Vibrator;
+import android.provider.CallLog;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.telephony.PhoneStateListener;
 import android.telephony.SmsManager;
-import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
@@ -32,7 +30,6 @@ import android.view.animation.RotateAnimation;
 import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.amulyakhare.textdrawable.util.ColorGenerator;
@@ -57,6 +54,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.TimerTask;
 
@@ -86,13 +84,6 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
     @BindView(R.id.txtConfirm)
     TextView txtConfirm;
 
-    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-            telephonyManager.listen(new CustomPhoneStateListener(getApplicationContext()), PhoneStateListener.LISTEN_CALL_STATE);
-        }
-    };
     private ArrayList<Relative> relativeArrayList;
     private int current_call_position;
     private double time_key;
@@ -108,6 +99,8 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
     private TimerTask task_wait_for_timeout;
     private Handler handler;
     private MediaPlayer mMediaPlayer;
+    private TimerTask task_detect_handoff_call;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,12 +134,6 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
         imgFall.setAnimation(rotateAnimation);
 
         swipe_btn.setOnStateChangeListener(this);
-
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction("android.intent.action.PHONE_STATE");
-
-        registerReceiver(broadcastReceiver, intentFilter);
-
 
         final DatabaseReference relative_data = mDatabase.getReference("relatives");
 
@@ -404,6 +391,15 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
                 ObjectAnimator.ofFloat(txtHoldOn, "alpha", 0f, 1f).setDuration(2000).start();
                 current_call_position = 0;
                 make_a_call_to_list();
+
+                task_detect_handoff_call = new TimerTask() {
+                    @Override
+                    public void run() {
+                        handler_relative_handoff();
+                    }
+                };
+
+                handler.postDelayed(task_detect_handoff_call, 3000);
             }
 
             @Override
@@ -470,11 +466,50 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
         call_to_number(relative.getPhone());
     }
 
+    private void handler_relative_handoff() {
+        Cursor c = managedQuery(CallLog.Calls.CONTENT_URI,
+                null,
+                CallLog.Calls.TYPE + " = " + CallLog.Calls.OUTGOING_TYPE,
+                null,
+                CallLog.Calls.DATE + " ASC");
+
+        int c_number = c.getColumnIndex(CallLog.Calls.NUMBER);
+
+        int c_date = c.getColumnIndex(CallLog.Calls.DATE);
+        int c_duration = c.getColumnIndex(CallLog.Calls.DURATION);
+
+        while (c.moveToFirst()) { //get last 10 calls log
+
+            try {
+                String phNumber = c.getString(c_number);
+                Date callDayTime = new Date(Long.valueOf(c.getString(c_date)));
+                int callDuration = Integer.parseInt(c.getString(c_duration));
+
+                String current_phonenumber = relativeArrayList.get(current_call_position).getPhone();
+
+                if (phNumber.contains(current_phonenumber)) {
+                    if (callDuration == 0) {
+                        if (Calendar.getInstance().getTimeInMillis() - callDayTime.getTime() < 60000) {
+                            Log.e("NO_ANSWER_FROM", current_phonenumber);
+
+                            current_call_position++;
+                            make_a_call_to_list();
+                        }
+                    } else {
+                        //ANSWER THE CALL cancel handler
+                        handler.removeCallbacks(task_detect_handoff_call);
+                    }
+
+                }
+            } catch (Exception ignored) {
+
+            }
+        }
+    }
+
     private void call_to_number(String tel) {
         Log.e(LOG_TAG, tel);
-        Intent intent = new Intent(Intent.ACTION_CALL);
-
-        intent.setData(Uri.parse("tel:" + tel));
+        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + tel));
 
         //check for permission
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
@@ -489,53 +524,5 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
         startActivity(intent);
     }
 
-    @Override
-    protected void onDestroy() {
-        unregisterReceiver(broadcastReceiver);
-        super.onDestroy();
-    }
-
-    private class CustomPhoneStateListener extends PhoneStateListener {
-
-        //private static final String TAG = "PhoneStateChanged";
-        Context context; //Context to make Toast if required
-
-        public CustomPhoneStateListener(Context context) {
-            super();
-            this.context = context;
-        }
-
-        @Override
-        public void onCallStateChanged(int state, String incomingNumber) {
-            super.onCallStateChanged(state, incomingNumber);
-
-            switch (state) {
-                case TelephonyManager.CALL_STATE_IDLE:
-                    //when Idle i.e no call
-                    Toast.makeText(context, "Phone state Idle", Toast.LENGTH_LONG).show();
-                    break;
-                case TelephonyManager.CALL_STATE_OFFHOOK:
-                    Log.e("off", "off");
-                    //TODO: handle offhook then try to get connect with someone else
-                    //when Off hook i.e in call
-                    //Make intent and start your service here
-
-                    /*
-                    current_call_position += 1;
-                    make_a_call_to_list();
-                    */
-
-                    Toast.makeText(context, "Phone state Off hook", Toast.LENGTH_LONG).show();
-                    break;
-                case TelephonyManager.CALL_STATE_RINGING:
-                    Log.e("Ringing", "Ringing");
-                    //when Ringing
-                    Toast.makeText(context, "Phone state Ringing", Toast.LENGTH_LONG).show();
-                    break;
-                default:
-                    break;
-            }
-        }
-    }
 }
 
