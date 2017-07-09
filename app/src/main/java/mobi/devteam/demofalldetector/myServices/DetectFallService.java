@@ -50,7 +50,7 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
     private int age;
     private double bmi;
     private boolean isMale;
-    private Profile mProfile; 
+    private Profile mProfile;
     private FallDetectionStage fallDetectionStage;
 
     @Override
@@ -218,7 +218,10 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
 
             if (sum_x > threshold_3 || sum_y > threshold_3 || sum_z > threshold_3) { //Threshold 3
                 fallDetectionStage.setRecovery(true);
-                mDatabase.getReference("fall_detection_logs").child(currentUser.getUid()).setValue(fallDetectionStage);
+                mDatabase.getReference("fall_detection_logs")
+                        .child(currentUser.getUid())
+                        .child(fallDetectionStage.getTime() + "")
+                        .setValue(fallDetectionStage);
 
 //                fallDetectionStage = null;
                 waiting_for_recovery = false; // ok i'm recovery :)),

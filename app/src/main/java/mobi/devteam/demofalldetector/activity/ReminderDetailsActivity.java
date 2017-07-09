@@ -1,8 +1,8 @@
 package mobi.devteam.demofalldetector.activity;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -25,12 +25,12 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import mobi.devteam.demofalldetector.R;
 import mobi.devteam.demofalldetector.model.Reminder;
-import mobi.devteam.demofalldetector.utils.Constants;
 import mobi.devteam.demofalldetector.utils.Utils;
 
 public class ReminderDetailsActivity extends AppCompatActivity {
-    private final int ADD_REMINDER_REQUEST = 123;
     public static final String EXTRA_REMINDER = "extra reminder";
+    private static Reminder reminder;
+    private final int ADD_REMINDER_REQUEST = 123;
     @BindView(R.id.imgThumb)
     ImageView imgThumb;
     @BindView(R.id.edtReminder)
@@ -45,8 +45,6 @@ public class ReminderDetailsActivity extends AppCompatActivity {
     EditText edtNote;
     @BindView(R.id.txtTime)
     TextView txtTime;
-
-    private static Reminder reminder;
     private Calendar start;
     private Calendar end;
     private Calendar remind;
@@ -117,7 +115,7 @@ public class ReminderDetailsActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
                 break;

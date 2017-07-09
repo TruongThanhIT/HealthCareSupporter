@@ -35,32 +35,23 @@ import mobi.devteam.demofalldetector.utils.Common;
 
 public class ProfileFragment extends Fragment implements ValueEventListener {
 
-    private View mView;
-
     @BindView(R.id.sw_fall_detect)
     Switch sw_fall_detect;
-
     @BindView(R.id.sw_allow_find)
     Switch sw_allow_find;
-
     @BindView(R.id.edtHeight)
     EditText edtHeight;
-
     @BindView(R.id.edtWeight)
     EditText edtWeight;
-
     @BindView(R.id.rdo_female)
     RadioButton rdo_female;
-
     @BindView(R.id.rdo_male)
     RadioButton rdo_male;
-
     @BindView(R.id.btnUpdate)
     ActionProcessButton btnUpdate;
-
     @BindView(R.id.edtAge)
     EditText edtAge;
-
+    private View mView;
     private Profile mProfile;
     private DatabaseReference profile_data;
 
@@ -145,17 +136,17 @@ public class ProfileFragment extends Fragment implements ValueEventListener {
         double weight = 0;
         double height = 0;
         int age = 0;
-        try{
+        try {
             height = Double.parseDouble(edtHeight.getText().toString());
             weight = Double.parseDouble(edtWeight.getText().toString());
             age = Integer.parseInt(edtAge.getText().toString());
-        }catch (Exception e){
+        } catch (Exception e) {
             Toast.makeText(getActivity(), getString(R.string.err_invalid_info_profile), Toast.LENGTH_SHORT).show();
             return;
         }
         Profile profile = new Profile();
 
-        if(height > 0 && height < 3 && weight > 0 && weight < 600 && age > 0 && age < 120){
+        if (height > 0 && height < 3 && weight > 0 && weight < 600 && age > 0 && age < 120) {
             profile.setAllow_find(sw_allow_find.isChecked());
             profile.setDetect_fall(sw_fall_detect.isChecked());
             profile.setHeight(height);
@@ -166,7 +157,7 @@ public class ProfileFragment extends Fragment implements ValueEventListener {
             profile.setThresh3(Common.DEFAULT_THRESHOLD_3);
             profile.setMale(rdo_male.isChecked());
 
-            if (mProfile == null){
+            if (mProfile == null) {
                 profile.setThresh1(Common.DEFAULT_THRESHOLD_1);
                 profile.setThresh2(Common.DEFAULT_THRESHOLD_2);
                 profile.setThresh3(Common.DEFAULT_THRESHOLD_3);
@@ -182,8 +173,7 @@ public class ProfileFragment extends Fragment implements ValueEventListener {
             Toast.makeText(this.getActivity(), R.string.update_success, Toast.LENGTH_SHORT).show();
             MainActivity activity = (MainActivity) getActivity();
             activity.navItemSelected(R.id.nav_home);
-        }
-        else{
+        } else {
             Toast.makeText(getActivity(), R.string.err_invalid_info_profile, Toast.LENGTH_SHORT).show();
         }
 

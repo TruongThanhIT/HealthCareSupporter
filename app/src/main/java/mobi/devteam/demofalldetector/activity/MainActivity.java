@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    public void navItemSelected(int id){
+    public void navItemSelected(int id) {
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         switch (id) {
             case R.id.nav_home:

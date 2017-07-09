@@ -120,10 +120,9 @@ public class CreateUpdateRelativeActivity extends AppCompatActivity implements I
 
         if (relative == null)
             relative = new Relative();
-        if(edtRelativeName.getText().toString().equals("") || edtRelativePhone.getText().toString().equals("")){
+        if (edtRelativeName.getText().toString().equals("") || edtRelativePhone.getText().toString().equals("")) {
             Toast.makeText(this, R.string.err_empty_info_relative, Toast.LENGTH_SHORT).show();
-        }
-        else{
+        } else {
             relative.setName(edtRelativeName.getText().toString());
             relative.setPhone(edtRelativePhone.getText().toString());
 
