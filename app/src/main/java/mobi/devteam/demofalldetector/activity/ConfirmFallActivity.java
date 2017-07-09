@@ -311,7 +311,10 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
 
             vibrator.cancel();
             //confirm ok
-            mDatabase.getReference("fall_detection_logs").child(mCurrentUser.getUid()).child("confirm_ok").setValue(true);
+            mDatabase.getReference("fall_detection_logs")
+                    .child(mCurrentUser.getUid())
+                    .child(time_key + "")
+                    .child("confirm_ok").setValue(true);
 
             imgFall.clearAnimation();
 
