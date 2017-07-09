@@ -12,6 +12,7 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -106,6 +107,7 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
     private Location mLocation;
     private TimerTask task_wait_for_timeout;
     private Handler handler;
+    private MediaPlayer mMediaPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -184,6 +186,12 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         long[] pattern = {0, 200, 200}; //0 to start now, 200 to vibrate 200 ms, 0 to sleep for 0 ms.
         vibrator.vibrate(pattern, 0);
+
+        mMediaPlayer = new MediaPlayer();
+        mMediaPlayer = MediaPlayer.create(this, R.raw.fall_alarm);
+        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_RING);
+        mMediaPlayer.setLooping(true);
+        mMediaPlayer.start();
 
         handle_for_timeout();
     }
@@ -291,6 +299,7 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
     @Override
     public void onStateChange(boolean active) {
         if (active) {
+            mMediaPlayer.start();
             handler.removeCallbacks(task_wait_for_timeout);
 
 
@@ -359,7 +368,7 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
     }
 
     private void confirm_timeout() {
-
+        mMediaPlayer.stop();
         vibrator.cancel();
 
         //cancel animation
