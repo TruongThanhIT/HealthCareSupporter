@@ -161,6 +161,9 @@ public class ProfileFragment extends Fragment implements ValueEventListener {
             profile.setHeight(height);
             profile.setWeight(weight);
             profile.setAge(age);
+            profile.setThresh1(Common.DEFAULT_THRESHOLD_1);
+            profile.setThresh2(Common.DEFAULT_THRESHOLD_2);
+            profile.setThresh3(Common.DEFAULT_THRESHOLD_3);
             profile.setMale(rdo_male.isChecked());
 
             if (mProfile == null){
