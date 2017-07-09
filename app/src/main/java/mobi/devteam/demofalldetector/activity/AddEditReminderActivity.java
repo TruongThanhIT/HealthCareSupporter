@@ -189,7 +189,7 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
     @OnClick(R.id.txtTime)
     void pickTime() {
         int selected_reminder = get_selected_reminder();
-        if (selected_reminder == ReminderType.TYPE_DAILY) {
+        if (selected_reminder == ReminderType.TYPE_DAILY || selected_reminder == ReminderType.TYPE_NEVER) {
             TimePickerDialog timePickerDialog = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
                 @Override
                 public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
@@ -218,6 +218,42 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
                     .setIs24HourTime(true)
                     .build()
                     .show();
+        } else if (selected_reminder == ReminderType.TYPE_MONTHLY) {
+//            new SlideDayTimePicker.Builder(getSupportFragmentManager())
+//                    .setListener(new SlideDayTimeListener() {
+//                        @Override
+//                        public void onDayTimeSet(int day, int hour, int minute) {
+//                            alarm.set(Calendar.DAY_OF_MONTH, day);
+//                            alarm.set(Calendar.HOUR_OF_DAY, hour);
+//                            alarm.set(Calendar.MINUTE, minute);
+//                            String[] dayOfWeek = getResources().getStringArray(R.array.days_array);
+//                            txtTime.setText(dayOfWeek[day - 1] + ", " + hour + ":" + minute);
+//                        }
+//                    })
+//                    .setInitialDay(alarm.get(Calendar.DAY_OF_MONTH))
+//                    .setInitialHour(alarm.get(Calendar.HOUR_OF_DAY))
+//                    .setInitialMinute(alarm.get(Calendar.MINUTE))
+//                    .setIs24HourTime(true)
+//                    .build()
+//                    .show();
+        } else {
+//            new SlideDayTimePicker.Builder(getSupportFragmentManager())
+//                    .setListener(new SlideDayTimeListener() {
+//                        @Override
+//                        public void onDayTimeSet(int day, int hour, int minute) {
+//                            alarm.set(Calendar.DAY_OF_YEAR, day);
+//                            alarm.set(Calendar.HOUR_OF_DAY, hour);
+//                            alarm.set(Calendar.MINUTE, minute);
+//                            String[] dayOfWeek = getResources().getStringArray(R.array.days_array);
+//                            txtTime.setText(dayOfWeek[day - 1] + ", " + hour + ":" + minute);
+//                        }
+//                    })
+//                    .setInitialDay(alarm.get(Calendar.DAY_OF_YEAR))
+//                    .setInitialHour(alarm.get(Calendar.HOUR_OF_DAY))
+//                    .setInitialMinute(alarm.get(Calendar.MINUTE))
+//                    .setIs24HourTime(true)
+//                    .build()
+//                    .show();
         }
 
     }

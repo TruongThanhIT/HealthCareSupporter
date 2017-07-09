@@ -43,11 +43,13 @@ public class ReminderService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         reminder = intent.getParcelableExtra(Constants.KEY.ITEM_KEY);
-
         if (reminder == null) {
             Log.e(getClass().getName(),"Reminder is null");
         }
-        if(reminder.getEnd() < Calendar.getInstance().getTimeInMillis())
+        Calendar endDate = Calendar.getInstance();
+        endDate.setTimeInMillis(reminder.getEnd());
+        Calendar nowDate = Calendar.getInstance();
+        if(endDate.after(nowDate))
             return START_NOT_STICKY;
 
         notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);

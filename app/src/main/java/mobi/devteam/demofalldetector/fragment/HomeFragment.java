@@ -43,6 +43,7 @@ import mobi.devteam.demofalldetector.model.Reminder;
 import mobi.devteam.demofalldetector.myInterface.OnRecyclerItemClickListener;
 import mobi.devteam.demofalldetector.myServices.DetectFallService;
 import mobi.devteam.demofalldetector.myServices.GetLocationService;
+import mobi.devteam.demofalldetector.utils.Utils;
 
 public class HomeFragment extends Fragment implements OnRecyclerItemClickListener {
 
@@ -286,6 +287,7 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
                 startActivityForResult(intent, ADD_REMINDER_REQUEST);
                 break;
             case 1:
+                Utils.cancelAlarmWakeUp(getActivity(), selected_reminder);
                 FirebaseUser currentUser = mAuth.getCurrentUser();
                 DatabaseReference child = reminder_data.child(currentUser.getUid());
                 DatabaseReference remind = child.child(selected_reminder.getId() + "");
