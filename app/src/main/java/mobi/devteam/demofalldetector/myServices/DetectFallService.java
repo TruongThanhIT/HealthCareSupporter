@@ -221,7 +221,7 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
                 mDatabase.getReference("fall_detection_logs").child(currentUser.getUid()).setValue(fallDetectionStage);
 
 //                fallDetectionStage = null;
-                waiting_for_recovery = false; // ok i'm recovery :)),
+                waiting_for_recovery = false; // ok i'm recovery
                 recoveryArrayList.clear(); // clear recovery stages
             }
 

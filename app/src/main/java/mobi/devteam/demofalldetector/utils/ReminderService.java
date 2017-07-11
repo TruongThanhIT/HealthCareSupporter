@@ -7,20 +7,15 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
-
 import java.util.Calendar;
 
 import mobi.devteam.demofalldetector.R;
-import mobi.devteam.demofalldetector.activity.AddEditReminderActivity;
 import mobi.devteam.demofalldetector.activity.MainActivity;
-import mobi.devteam.demofalldetector.activity.ReminderDetailsActivity;
-import mobi.devteam.demofalldetector.fragment.HomeFragment;
 import mobi.devteam.demofalldetector.model.Reminder;
 
 public class ReminderService extends Service {
