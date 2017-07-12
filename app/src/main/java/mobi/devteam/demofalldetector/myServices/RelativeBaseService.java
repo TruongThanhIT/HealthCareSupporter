@@ -12,7 +12,6 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class RelativeBaseService extends Service {
 
-
     protected FirebaseUser currentUser;
     protected FirebaseDatabase mDatabase;
 
