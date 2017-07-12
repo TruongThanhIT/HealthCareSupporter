@@ -162,7 +162,8 @@ public class SmsReceiver extends BroadcastReceiver {
                         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                                 || ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                             Log.e("PERMISSION_NOT_GRANT", "COARSE");
-                            send_sms_permission_deny();
+                            send_sms_permission_deny(); //Close this for save money when testing :))
+                            Log.e(TAG, "Sent denied get location sms");
                             return;
                         }
                         //request the last location

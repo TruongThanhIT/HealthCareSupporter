@@ -131,7 +131,6 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
                     return;
                 }
 
-
                 mProfile.setDetect_fall(isChecked);
                 profile_data.setValue(mProfile);
                 Intent intent = new Intent(getActivity(), DetectFallService.class);

@@ -202,9 +202,7 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
     }
 
     private void detect_recovery() {
-
         if (recoveryArrayList.size() < LIMIT_SIZE_OF_STATE) { //still waiting for recovery
-
             //calculate for sum of movement acceleration
             double sum_x = 0;
             double sum_y = 0;

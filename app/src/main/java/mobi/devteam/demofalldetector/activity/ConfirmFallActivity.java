@@ -63,6 +63,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import mobi.devteam.demofalldetector.R;
 import mobi.devteam.demofalldetector.model.Relative;
+import mobi.devteam.demofalldetector.myServices.DetectFallService;
 import mobi.devteam.demofalldetector.utils.Common;
 import mobi.devteam.demofalldetector.utils.Utils;
 
@@ -364,7 +365,6 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
 
                 @Override
                 public void onAnimationCancel(Animator animation) {
-
                 }
 
                 @Override
@@ -374,6 +374,8 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
             });
 
             hideSwipe.start();
+            Intent intent = new Intent(this, DetectFallService.class);
+            this.startService(intent);
         }
     }
 
@@ -427,7 +429,7 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
             return;
         }
 
-        if (current_call_position >= relativeArrayList.size() - 1) {
+        if (current_call_position > relativeArrayList.size() - 1) {
             imgFall.setImageResource(R.drawable.fall_icon);
             txtHoldOn.setText(getString(R.string.calling_out_of_bound));
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -488,6 +490,7 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
 
         //permission is granted
         startActivity(intent);
+
     }
 
     @Override
