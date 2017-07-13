@@ -129,6 +129,7 @@ public class ReminderDetailsActivity extends AppCompatActivity {
                 finish();
                 break;
             case R.id.mnuDelete:
+                Utils.cancelAlarmWakeUp(this, reminder);
                 FirebaseUser currentUser = mAuth.getCurrentUser();
                 DatabaseReference child = reminder_data.child(currentUser.getUid());
                 DatabaseReference remind = child.child(reminder.getId() + "");

@@ -44,9 +44,12 @@ public class ReminderService extends Service {
         Calendar endDate = Calendar.getInstance();
         endDate.setTimeInMillis(reminder.getEnd());
         Calendar nowDate = Calendar.getInstance();
-        if(endDate.after(nowDate))
-            return START_NOT_STICKY;
-
+        if(nowDate.after(endDate)){
+            long seconds = (nowDate.getTimeInMillis() - endDate.getTimeInMillis()) / 1000;
+            int hours = (int) (seconds / 3600);
+            if(hours > 1)
+                return START_NOT_STICKY;
+        }
         notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         switch (intent.getAction()) {
             case Constants.ACTION.START_SERVICE:
