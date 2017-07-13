@@ -27,8 +27,6 @@ import java.util.HashMap;
 import mobi.devteam.demofalldetector.model.Reminder;
 
 public class Utils {
-    public static int tempPendingId = -1;
-    public static boolean flag = false;
 
     public static String get_calendar_time(Calendar calendar) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
@@ -41,44 +39,8 @@ public class Utils {
     }
 
     public static int getRandomPendingId() {
-        int id;
-        do {
-            id = Tools.getRandomInt();
-        } while (checkPendingIdExist(id));
+        int id = Tools.getRandomInt();
         return id;
-    }
-
-    private static boolean checkPendingIdExist(int id) {
-        // Checking exist
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference databaseReference = database.getReference("reminders").child(currentUser.getUid());
-        tempPendingId = id;
-        databaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                try{
-                    GenericTypeIndicator<HashMap<String, Reminder>> indicator =
-                            new GenericTypeIndicator<HashMap<String, Reminder>>();
-                    HashMap<String, Reminder> reminderHashMap = dataSnapshot.getValue(indicator);
-                    ArrayList<Reminder> reminders = new ArrayList<Reminder>();
-                    for (Reminder reminder: reminders) {
-                        if(reminder.getPendingId() == tempPendingId){
-                            flag = true;
-                            continue;
-                        }
-                    }
-                }catch(Exception e){
-
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-        return flag;
     }
 
     public static void scheduleNotification(Activity activity, Reminder reminder) {
@@ -93,7 +55,6 @@ public class Utils {
         Calendar temp = Calendar.getInstance();
         temp.setTimeInMillis(reminder.getHour_alarm());
         if (reminder.getRepeat_type() == ReminderType.TYPE_DAILY) {
-
             if (rem.get(Calendar.HOUR_OF_DAY) > temp.get(Calendar.HOUR_OF_DAY)) {
                 //Miss that hour , shedule for next day
                 rem.add(Calendar.DAY_OF_MONTH, 0);
