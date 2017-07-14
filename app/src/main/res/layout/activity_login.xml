@@ -19,7 +19,7 @@
 
         <ImageView
             android:layout_width="match_parent"
-            android:layout_height="@dimen/size_150"
+            android:layout_height="@dimen/size_100"
             android:layout_gravity="center"
             android:layout_marginBottom="@dimen/size_20"
             android:layout_marginTop="@dimen/size_20"
@@ -34,7 +34,7 @@
                 style="@style/tag_login"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="0.7"
+                android:layout_weight="0.6"
                 android:enabled="false"
                 android:text="@string/userName" />
 
@@ -42,7 +42,7 @@
                 android:id="@+id/txtUserName"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="0.3"
+                android:layout_weight="0.4"
                 android:inputType="textFilter" />
         </LinearLayout>
 
@@ -55,7 +55,7 @@
                 style="@style/tag_login"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="0.7"
+                android:layout_weight="0.6"
                 android:enabled="false"
                 android:text="@string/password" />
 
@@ -63,7 +63,7 @@
                 android:id="@+id/txtPassword"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="0.3"
+                android:layout_weight="0.4"
                 android:inputType="textPassword" />
         </LinearLayout>
 
@@ -106,7 +106,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
-            android:text="or"
+            android:text="@string/or"
             android:textAlignment="center" />
 
         <Button

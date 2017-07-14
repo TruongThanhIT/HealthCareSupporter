@@ -27,7 +27,7 @@
             style="@style/textView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0.8"
+            android:layout_weight="0.7"
             android:text="@string/nameText" />
 
         <EditText
@@ -35,7 +35,7 @@
             style="@style/editText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0.2" />
+            android:layout_weight="0.3" />
     </LinearLayout>
 
     <LinearLayout
@@ -48,7 +48,7 @@
             style="@style/textView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0.8"
+            android:layout_weight="0.7"
             android:text="@string/phoneText" />
 
         <EditText
@@ -57,6 +57,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="phone"
-            android:layout_weight="0.2" />
+            android:layout_weight="0.3" />
     </LinearLayout>
 </LinearLayout>
