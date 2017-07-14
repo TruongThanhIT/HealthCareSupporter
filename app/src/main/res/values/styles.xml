@@ -13,7 +13,7 @@
         <item name="android:textColor">#FF2B93E9</item>
     </style>
 
-    <style name="buttonColorRed">
+    <style name="buttonColor">
         <item name="android:layout_height">@dimen/size_10</item>
         <item name="android:layout_marginTop">@dimen/size_20</item>
 

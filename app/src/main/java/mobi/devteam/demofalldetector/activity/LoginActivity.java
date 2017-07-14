@@ -41,8 +41,8 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     EditText edtUserName;
     @BindView(R.id.txtPassword)
     EditText edtPassword;
-    @BindView(R.id.txtForgetPassword)
-    TextView txtForgetPassword;
+//    @BindView(R.id.txtForgetPassword)
+//    TextView txtForgetPassword;
     @BindView(R.id.btnSignUp)
     Button btnSignUp;
     @BindView(R.id.btnSignInWithGoogle)

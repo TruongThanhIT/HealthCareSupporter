@@ -1,9 +1,5 @@
 package mobi.devteam.demofalldetector.utils;
 
-/**
- * Created by Administrator on 7/4/2017.
- */
-
 public class Common {
     /**
      * These config bellow is default for fall detection
