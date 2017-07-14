@@ -15,6 +15,7 @@
     <dimen name="size_30">30dp</dimen>
     <dimen name="size_50">50dp</dimen>
     <dimen name="size_100">100dp</dimen>
+    <dimen name="size_110">110dp</dimen>
     <dimen name="size_150">150dp</dimen>
     <dimen name="size_180">180dp</dimen>
     <dimen name="size_200">200dp</dimen>

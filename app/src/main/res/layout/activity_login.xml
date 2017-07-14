@@ -3,7 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:background="@drawable/bg_app"
     android:layout_height="match_parent">
+    <ImageView
+        android:id="@+id/imgHealth"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/size_110"
+        android:layout_gravity="center"
+        android:layout_marginBottom="@dimen/size_110"
+        android:background="@drawable/image_health" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,19 +23,14 @@
         tools:context="mobi.devteam.demofalldetector.activity.LoginActivity"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/size_100"
-            android:layout_gravity="center"
-            android:layout_marginBottom="@dimen/size_20"
-            android:layout_marginTop="@dimen/size_20"
-            android:background="@drawable/image_health" />
+        android:layout_marginTop="@dimen/size_110"
+        android:layout_alignParentStart="true"
+        android:weightSum="6">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:orientation="horizontal">
 
             <TextView
@@ -36,6 +39,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="0.6"
                 android:enabled="false"
+                android:gravity="center_vertical"
                 android:text="@string/userName" />
 
             <EditText
@@ -43,12 +47,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="0.4"
+                android:gravity="center_vertical"
                 android:inputType="textFilter" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:orientation="horizontal">
 
             <TextView
@@ -56,6 +62,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="0.6"
+                android:gravity="center_vertical"
                 android:enabled="false"
                 android:text="@string/password" />
 
@@ -64,40 +71,23 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="0.4"
+                android:gravity="center_vertical"
                 android:inputType="textPassword" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="0.7"
-                android:enabled="false" />
-
-            <TextView
-                android:id="@+id/txtForgetPassword"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="0.3"
-                android:text="@string/forget_password" />
-
         </LinearLayout>
 
         <Button
             android:id="@+id/btnSignIn"
-            style="@style/buttonColorRed"
+            style="@style/buttonColor"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="@string/login" />
 
         <com.google.android.gms.common.SignInButton
             android:id="@+id/btnSignInWithGoogle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:layout_centerInParent="true"
             android:visibility="visible" />
 
@@ -107,12 +97,14 @@
             android:layout_gravity="center"
             android:gravity="center"
             android:text="@string/or"
+            android:layout_weight="1"
             android:textAlignment="center" />
 
         <Button
             android:id="@+id/btnSignUp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="@string/signup" />
     </LinearLayout>
     <ProgressBar

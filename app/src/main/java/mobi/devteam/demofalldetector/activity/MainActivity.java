@@ -22,7 +22,9 @@ import mobi.devteam.demofalldetector.R;
 import mobi.devteam.demofalldetector.fragment.HomeFragment;
 import mobi.devteam.demofalldetector.fragment.ProfileFragment;
 import mobi.devteam.demofalldetector.fragment.RelativeListFragment;
+import mobi.devteam.demofalldetector.myServices.DetectFallService;
 import mobi.devteam.demofalldetector.myServices.GetLocationService;
+import mobi.devteam.demofalldetector.utils.ReminderService;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -119,6 +121,12 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_logout:
                 try{
                     mAuth.signOut();
+                    Intent detectService = new Intent(this, DetectFallService.class);
+                    Intent getLocationService = new Intent(this, GetLocationService.class);
+                    Intent reminderService = new Intent(this, ReminderService.class);
+                    stopService(detectService);
+                    stopService(getLocationService);
+                    stopService(reminderService);
                     startActivity(new Intent(MainActivity.this, LoginActivity.class));
                     finish();
                 }catch (Exception e){
