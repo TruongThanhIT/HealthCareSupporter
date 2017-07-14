@@ -57,7 +57,7 @@ public class CreateUpdateRelativeActivity extends AppCompatActivity implements I
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_update_relative);
         ButterKnife.bind(this);
-
+        this.setTitle(R.string.nav_relatives_list);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 

@@ -9,6 +9,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -94,6 +95,7 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(),
                 LinearLayoutManager.VERTICAL, false);
         rcv_reminders.setLayoutManager(linearLayoutManager);
+        getActivity().setTitle(R.string.nav_home);
         initData();
         addEvents();
 
@@ -266,9 +268,8 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        menu.add(0, 0, 0, "Edit");
-        menu.add(0, 1, 1, "Delete");
-
+        MenuInflater inflater = this.getActivity().getMenuInflater();
+        inflater.inflate(R.menu.actions_relatives_list, menu);
     }
 
     @Override
@@ -279,13 +280,13 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
         Reminder selected_reminder = reminderArrayList.get(mLong_click_selected);
 
         switch (item.getItemId()) {
-            case 0:
+            case R.id.mnuEdit:
                 Intent intent = new Intent(getActivity(), AddEditReminderActivity.class);
                 intent.putExtra(AddEditReminderActivity.EXTRA_IS_ADD_MODE, false);
                 intent.putExtra(AddEditReminderActivity.EXTRA_REMINDER_DATA, selected_reminder);
                 startActivityForResult(intent, ADD_REMINDER_REQUEST);
                 break;
-            case 1:
+            case R.id.mnuDelete:
                 Utils.cancelAlarmWakeUp(getActivity(), selected_reminder);
                 FirebaseUser currentUser = mAuth.getCurrentUser();
                 DatabaseReference child = reminder_data.child(currentUser.getUid());

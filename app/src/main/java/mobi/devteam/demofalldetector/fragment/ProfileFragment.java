@@ -89,7 +89,7 @@ public class ProfileFragment extends Fragment implements ValueEventListener {
         // Inflate the layout for this fragment
         mView = inflater.inflate(R.layout.fragment_profile, container, false);
         ButterKnife.bind(this, mView);
-
+        getActivity().setTitle(R.string.nav_profile);
         initData();
         addEvents();
 

@@ -10,9 +10,13 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import mobi.devteam.demofalldetector.R;
 import mobi.devteam.demofalldetector.fragment.HomeFragment;
@@ -25,6 +29,8 @@ public class MainActivity extends AppCompatActivity
 
     private FragmentManager fragmentManager;
     private FirebaseAuth mAuth;
+    TextView txtUserName;
+    TextView txtUserEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,9 +46,15 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
 
         mAuth = FirebaseAuth.getInstance();
+        FirebaseUser user = mAuth.getCurrentUser();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        View header = navigationView.getHeaderView(0);
+        txtUserName = (TextView) header.findViewById(R.id.txtUserNameNav);
+        txtUserEmail = (TextView) header.findViewById(R.id.txtEmailUserNav);
+        txtUserEmail.setText(user.getEmail());
+        txtUserName.setText(user.getDisplayName());
 
         fragmentManager = getSupportFragmentManager();
         addControls();
@@ -105,9 +117,13 @@ public class MainActivity extends AppCompatActivity
                 fragmentTransaction.commit();
                 break;
             case R.id.nav_logout:
-                mAuth.signOut();
-                startActivity(new Intent(MainActivity.this, LoginActivity.class));
-                finish();
+                try{
+                    mAuth.signOut();
+                    startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                    finish();
+                }catch (Exception e){
+                    Log.e(this.getLocalClassName(), e.toString());
+                }
                 break;
             case R.id.nav_profile:
                 setTitle(R.string.tittle_profile);

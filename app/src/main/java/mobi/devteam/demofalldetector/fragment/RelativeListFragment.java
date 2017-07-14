@@ -70,7 +70,7 @@ public class RelativeListFragment extends Fragment implements OnRecyclerItemClic
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        getActivity().setTitle(R.string.tittle_manage_relatives);
+        getActivity().setTitle(R.string.nav_relatives_list);
 
 //        ((MainActivity) getActivity()).showFab();
         setHasOptionsMenu(true);
