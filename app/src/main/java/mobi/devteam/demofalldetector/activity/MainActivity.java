@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import mobi.devteam.demofalldetector.R;
 import mobi.devteam.demofalldetector.fragment.HomeFragment;
@@ -44,15 +45,15 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
 
         mAuth = FirebaseAuth.getInstance();
+        FirebaseUser user = mAuth.getCurrentUser();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         View header = navigationView.getHeaderView(0);
         txtUserName = (TextView) header.findViewById(R.id.txtUserNameNav);
         txtUserEmail = (TextView) header.findViewById(R.id.txtEmailUserNav);
-        // Get user name and email user
-//        txtUserEmail.setText(LoginActivity.user.getEmailUser());
-//        txtUserName.setText(LoginActivity.user.getNameUser());
+        txtUserEmail.setText(user.getEmail());
+        txtUserName.setText(user.getDisplayName());
 
         fragmentManager = getSupportFragmentManager();
         addControls();
