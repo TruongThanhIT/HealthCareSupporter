@@ -9,7 +9,7 @@
     <string name="nav_share">Share</string>
     <string name="nav_rate">Rate</string>
     <string name="nav_home">Home</string>
-    <string name="nav_relatives_list">Relatives</string>
+    <string name="nav_relatives_list">Manage relative information</string>
     <string name="nav_profile">Profile</string>
     <string name="nav_logout">Logout</string>
 
@@ -18,6 +18,7 @@
     <string name="hintYourEmail">Your email</string>
     <string name="userName">User name</string>
     <string name="password">Password</string>
+    <string name="or">or</string>
     <string name="login">Login With Password</string>
     <string name="signup">Sign Up</string>
     <string name="forget_password">Can\'t remember your password?</string>
@@ -25,8 +26,8 @@
     <string name="err_invalid_info_login">User name or password invalid!!!</string>
 
     <!--Create information of relative-->
-    <string name="nameText">Name: </string>
-    <string name="phoneText">Phone: </string>
+    <string name="nameText">Name </string>
+    <string name="phoneText">Phone </string>
     <string name="err_image">Choose image</string>
 
     <!-- TODO: Remove or change this placeholder text -->
@@ -35,15 +36,14 @@
     <!--Relatives-->
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
-    <string name="tittle_manage_relatives">Information of relatives</string>
     <string name="title_activity_add_edit_task">AddEditTaskActivity</string>
 
     <!-- Reminder -->
-    <string name="ae_reminder_name">Reminder short:</string>
-    <string name="ae_reminder_start">Start date:</string>
+    <string name="ae_reminder_name">Reminder short</string>
+    <string name="ae_reminder_start">Start date</string>
     <string name="ae_reminder_end">End date</string>
-    <string name="ae_reminder_repeat">Repeat:</string>
-    <string name="ae_reminder_note">Notes:</string>
+    <string name="ae_reminder_repeat">Repeat</string>
+    <string name="ae_reminder_note">Notes</string>
     <string name="snoozeAlert">Snooze after 10 minutes</string>
 
 
@@ -58,8 +58,6 @@
         <item>Never</item>
         <item>Daily</item>
         <item>Weekly</item>
-        <item>Monthly</item>
-        <item>Yearly</item>
     </string-array>
     <string name="title_activity_confirm_falling">ConfirmFallingActivity</string>
     <string name="confirm_label_confirm">Confirm if you are ok</string>
@@ -83,11 +81,10 @@
     <string name="profile_age">Age</string>
     <string name="err_invalid_info_profile">Invalid information!!!</string>
     <string name="confirm_you_are_ok">You are OK!</string>
-    <string name="location_not_found">Sory, we can\'t find the location, please try again later</string>
+    <string name="location_not_found">Sorry, we can\'t find the location, please try again later</string>
 
-    <string name="location_denied">Sory, the your relative denied our location service permission.</string>
-    <string name="err_profile">Invalid information</string>
-    <string name="update_success">Update successfull</string>
+    <string name="location_denied">Sorry, Your relative denied our location service permission.</string>
+    <string name="update_success">Update successfully</string>
     <string name="signin_fail">Sign in failed!!</string>
     <string name="err_empty_info_relative">Name or phone is empty!!!</string>
     <string name="err_empty_name_reminder">Please input reminder name</string>
@@ -96,4 +93,16 @@
     <string name="tittle_relatives">Manage relative information</string>
     <string name="tittle_profile">Profile</string>
 
+    <string name="tab_day">Day</string>
+    <string name="tab_time">Time</string>
+
+    <string name="sunday">Sunday</string>
+    <string name="monday">Monday</string>
+    <string name="tuesday">Tuesday</string>
+    <string name="wednesday">Wednesday</string>
+    <string name="thursday">Thursday</string>
+    <string name="friday">Friday</string>
+    <string name="saturday">Saturday</string>
+
+    <string name="profile_sensitive">Sensitive</string>
 </resources>

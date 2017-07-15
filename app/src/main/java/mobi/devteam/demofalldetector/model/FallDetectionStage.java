@@ -5,7 +5,7 @@ public class FallDetectionStage {
     private double thresh_1;
     private double thresh_2;
     private double thresh_3;
-    private double time;
+    private long time;
 
     private boolean confirm_ok;
     private boolean recovery;
@@ -37,11 +37,11 @@ public class FallDetectionStage {
         this.thresh_3 = thresh_3;
     }
 
-    public double getTime() {
+    public long getTime() {
         return time;
     }
 
-    public void setTime(double time) {
+    public void setTime(long time) {
         this.time = time;
     }
 

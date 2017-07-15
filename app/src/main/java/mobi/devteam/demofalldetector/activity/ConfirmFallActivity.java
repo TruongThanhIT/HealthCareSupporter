@@ -14,6 +14,7 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -23,8 +24,12 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.SmsManager;
+
+import android.telephony.TelephonyManager;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.view.animation.ScaleAnimation;
@@ -53,6 +58,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -62,6 +68,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import mobi.devteam.demofalldetector.R;
 import mobi.devteam.demofalldetector.model.Relative;
+import mobi.devteam.demofalldetector.myServices.DetectFallService;
 import mobi.devteam.demofalldetector.utils.Common;
 import mobi.devteam.demofalldetector.utils.Utils;
 
@@ -84,9 +91,13 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
     @BindView(R.id.txtConfirm)
     TextView txtConfirm;
 
+
+    @BindView(R.id.imgBackground)
+    ImageView imgBackground;
+
     private ArrayList<Relative> relativeArrayList;
     private int current_call_position;
-    private double time_key;
+    private long time_key;
     private FirebaseUser mCurrentUser;
     private FirebaseDatabase mDatabase;
     private Vibrator vibrator;
@@ -105,6 +116,12 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON|
+                WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD|
+                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED|
+                WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+
         setContentView(R.layout.activity_confirm_fall);
         ButterKnife.bind(this);
 
@@ -126,7 +143,7 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
         mCurrentUser = mAuth.getCurrentUser();
         mDatabase = FirebaseDatabase.getInstance();
 
-        time_key = getIntent().getDoubleExtra("time", Calendar.getInstance().getTimeInMillis());
+        time_key = getIntent().getLongExtra("time", System.currentTimeMillis());
 
         RotateAnimation rotateAnimation = new RotateAnimation(0, -60f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
         rotateAnimation.setDuration(1000);
@@ -181,6 +198,13 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
         mMediaPlayer.start();
 
         handle_for_timeout();
+
+        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+
+        Picasso.with(this)
+                .load(R.drawable.bg_confirm)
+                .resize(displayMetrics.widthPixels, displayMetrics.heightPixels)
+                .into(imgBackground);
     }
 
     private void request_the_location() {
@@ -203,15 +227,18 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
     private void send_sms_with_location(String strNumber, Location loc) {
         //TODO: require send sms
         SmsManager sms = SmsManager.getDefault();
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) == PackageManager.PERMISSION_GRANTED) {
-                sms.sendTextMessage(strNumber, null, getString(R.string.location_denied), null, null);
-            } else {
-                Log.e("SEND_SMS_PERMISSION", "NOT GRANT");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                    || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) == PackageManager.PERMISSION_GRANTED) {
+                    sms.sendTextMessage(strNumber, null, getString(R.string.location_denied), null, null);
+                } else {
+                    Log.e("SEND_SMS_PERMISSION", "NOT GRANT");
+                }
+                return;
             }
-            return;
         }
 
         //
@@ -301,12 +328,12 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
             mDatabase.getReference("fall_detection_logs")
                     .child(mCurrentUser.getUid())
                     .child(time_key + "")
-                    .child("confirm_ok").setValue(true);
+                    .child("confirm_ok")
+                    .setValue(true);
 
             imgFall.clearAnimation();
 
             imgFall.setImageResource(R.drawable.smile);
-
 
             ScaleAnimation scaleAnimation = new ScaleAnimation(0.5f, 1f, 0.5f, 1f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
             scaleAnimation.setDuration(2000);
@@ -346,11 +373,16 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
                     ObjectAnimator.ofFloat(txtConfirm, "alpha", 0f, 1f).setDuration(1000).start();
                     txtConfirm.setText(getString(R.string.confirm_you_are_ok));
 
+                    new Handler().postDelayed(new TimerTask() {
+                        @Override
+                        public void run() {
+                            finish();
+                        }
+                    }, 2000);
                 }
 
                 @Override
                 public void onAnimationCancel(Animator animation) {
-
                 }
 
                 @Override
@@ -360,6 +392,8 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
             });
 
             hideSwipe.start();
+            Intent intent = new Intent(this, DetectFallService.class);
+            this.startService(intent);
         }
     }
 
@@ -422,7 +456,7 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
             return;
         }
 
-        if (current_call_position >= relativeArrayList.size() - 1) {
+        if (current_call_position > relativeArrayList.size() - 1) {
             imgFall.setImageResource(R.drawable.fall_icon);
             txtHoldOn.setText(getString(R.string.calling_out_of_bound));
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -522,6 +556,7 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
 
         //permission is granted
         startActivity(intent);
+
     }
 
 }

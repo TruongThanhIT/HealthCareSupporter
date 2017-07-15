@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.RadioButton;
+import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.Toast;
 
@@ -51,7 +52,12 @@ public class ProfileFragment extends Fragment implements ValueEventListener {
     ActionProcessButton btnUpdate;
     @BindView(R.id.edtAge)
     EditText edtAge;
+
+
+    @BindView(R.id.skSensitive)
+    SeekBar skSensitive;
     private View mView;
+
     private Profile mProfile;
     private DatabaseReference profile_data;
 
@@ -80,9 +86,11 @@ public class ProfileFragment extends Fragment implements ValueEventListener {
         // Inflate the layout for this fragment
         mView = inflater.inflate(R.layout.fragment_profile, container, false);
         ButterKnife.bind(this, mView);
-
+        getActivity().setTitle(R.string.nav_profile);
         initData();
         addEvents();
+        skSensitive.setMax(100);
+        skSensitive.setProgress(50);
 
         return mView;
     }
@@ -111,6 +119,24 @@ public class ProfileFragment extends Fragment implements ValueEventListener {
                     //cancel service
                     getActivity().stopService(intent);
                 }
+            }
+        });
+
+        skSensitive.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (fromUser && progress == 0)
+                    seekBar.setProgress(1);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
             }
         });
     }
@@ -157,11 +183,17 @@ public class ProfileFragment extends Fragment implements ValueEventListener {
             profile.setThresh3(Common.DEFAULT_THRESHOLD_3);
             profile.setMale(rdo_male.isChecked());
 
-            if (mProfile == null) {
-                profile.setThresh1(Common.DEFAULT_THRESHOLD_1);
-                profile.setThresh2(Common.DEFAULT_THRESHOLD_2);
-                profile.setThresh3(Common.DEFAULT_THRESHOLD_3);
-            }
+            //if (mProfile == null){
+            int progress = skSensitive.getProgress();
+            float percent = (float) (progress - 50) / 100;
+
+            profile.setSensitive(progress);
+
+            profile.setThresh1(Common.DEFAULT_THRESHOLD_1 + Common.DEFAULT_THRESHOLD_1 * percent);//max + 50%
+            profile.setThresh2(Common.DEFAULT_THRESHOLD_2 + Common.DEFAULT_THRESHOLD_2 * percent);//max + 50%
+            profile.setThresh3(Common.DEFAULT_THRESHOLD_3 + Common.DEFAULT_THRESHOLD_3 * percent/10);//max + 10%
+            //}
+
 
             btnUpdate.setMode(ActionProcessButton.Mode.PROGRESS);
             profile_data.setValue(profile).addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -191,6 +223,12 @@ public class ProfileFragment extends Fragment implements ValueEventListener {
 
         if (mProfile == null)
             return;
+
+        try {
+            skSensitive.setProgress((int) mProfile.getSensitive());
+        } catch (Exception ignored) {
+            skSensitive.setProgress(50);
+        }
 
         sw_allow_find.setChecked(mProfile.isAllow_find());
         sw_fall_detect.setChecked(mProfile.isDetect_fall());

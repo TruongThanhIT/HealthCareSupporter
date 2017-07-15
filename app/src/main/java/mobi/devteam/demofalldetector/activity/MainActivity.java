@@ -10,21 +10,30 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import mobi.devteam.demofalldetector.R;
 import mobi.devteam.demofalldetector.fragment.HomeFragment;
 import mobi.devteam.demofalldetector.fragment.ProfileFragment;
 import mobi.devteam.demofalldetector.fragment.RelativeListFragment;
+import mobi.devteam.demofalldetector.myServices.DetectFallService;
 import mobi.devteam.demofalldetector.myServices.GetLocationService;
+import mobi.devteam.demofalldetector.utils.ReminderService;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private FragmentManager fragmentManager;
     private FirebaseAuth mAuth;
+    TextView txtUserName;
+    TextView txtUserEmail;
+    private NavigationView navigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,9 +49,17 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
 
         mAuth = FirebaseAuth.getInstance();
+        FirebaseUser user = mAuth.getCurrentUser();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        navigationView.getMenu().getItem(0).setChecked(true);
+
+        View header = navigationView.getHeaderView(0);
+        txtUserName = (TextView) header.findViewById(R.id.txtUserNameNav);
+        txtUserEmail = (TextView) header.findViewById(R.id.txtEmailUserNav);
+        txtUserEmail.setText(user.getEmail());
+        txtUserName.setText(user.getDisplayName());
 
         fragmentManager = getSupportFragmentManager();
         addControls();
@@ -50,8 +67,6 @@ public class MainActivity extends AppCompatActivity
 
         onNavigationItemSelected(navigationView.getMenu().getItem(0));// select home for default
 
-        //TODO: HANDLE THING HERE
-        startService(new Intent(this, GetLocationService.class));
     }
 
     private void initData() {
@@ -97,25 +112,40 @@ public class MainActivity extends AppCompatActivity
                 setTitle(R.string.tittle_home);
                 fragmentTransaction.replace(R.id.frame_container, HomeFragment.newInstance());
                 fragmentTransaction.commit();
+                navigationView.getMenu().getItem(0).setChecked(true);
+
                 break;
             case R.id.nav_relatives:
                 setTitle(R.string.tittle_relatives);
                 fragmentTransaction.replace(R.id.frame_container, RelativeListFragment.
                         newInstance());
                 fragmentTransaction.commit();
+                navigationView.getMenu().getItem(1).setChecked(true);
                 break;
             case R.id.nav_logout:
-                mAuth.signOut();
-                startActivity(new Intent(MainActivity.this, LoginActivity.class));
-                finish();
+                try{
+                    mAuth.signOut();
+                    Intent detectService = new Intent(this, DetectFallService.class);
+                    Intent getLocationService = new Intent(this, GetLocationService.class);
+                    Intent reminderService = new Intent(this, ReminderService.class);
+                    stopService(detectService);
+                    stopService(getLocationService);
+                    stopService(reminderService);
+                    startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                    finish();
+                }catch (Exception e){
+                    Log.e(this.getLocalClassName(), e.toString());
+                }
                 break;
             case R.id.nav_profile:
                 setTitle(R.string.tittle_profile);
                 fragmentTransaction.replace(R.id.frame_container, ProfileFragment.newInstance());
                 fragmentTransaction.commit();
+                navigationView.getMenu().getItem(2).setChecked(true);
                 break;
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
     }
+
 }

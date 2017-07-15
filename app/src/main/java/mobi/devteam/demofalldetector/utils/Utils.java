@@ -26,19 +26,8 @@ public class Utils {
     }
 
     public static int getRandomPendingId() {
-        int id;
-        do {
-            id = Tools.getRandomInt();
-        } while (checkPendingIdExist(id));
+        int id = Tools.getRandomInt();
         return id;
-    }
-
-    private static boolean checkPendingIdExist(int id) {
-        // Checking exist
-//        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-//        FirebaseDatabase database = FirebaseDatabase.getInstance();
-//        DatabaseReference databaseReference = database.getReference("reminders").child(currentUser.getUid()+"");
-        return false;
     }
 
     public static void scheduleNotification(Activity activity, Reminder reminder) {
@@ -53,7 +42,6 @@ public class Utils {
         Calendar temp = Calendar.getInstance();
         temp.setTimeInMillis(reminder.getHour_alarm());
         if (reminder.getRepeat_type() == ReminderType.TYPE_DAILY) {
-
             if (rem.get(Calendar.HOUR_OF_DAY) > temp.get(Calendar.HOUR_OF_DAY)) {
                 //Miss that hour , shedule for next day
                 rem.add(Calendar.DAY_OF_MONTH, 0);
@@ -65,12 +53,12 @@ public class Utils {
             rem.set(Calendar.MILLISECOND, 30);
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, rem.getTimeInMillis(), AlarmManager.INTERVAL_DAY, sender);
             //Nhan duoc reminder se set tiep reminder
-        } else if (reminder.getRepeat_type() == ReminderType.TYPE_WEEKLY) {
+        } else  {
             //SHEDULE FOR WEEKLY
             if (rem.get(Calendar.DAY_OF_WEEK) > temp.get(Calendar.DAY_OF_WEEK)) {
                 //SHEDULE FOR NEXT WEEK
                 rem.add(Calendar.DAY_OF_WEEK, 0);
-//                rem.add(Calendar.DAY_OF_MONTH, 1);
+//                rem.add(Calendar.DAY_OF_MONTH, 0);
             }
 
             rem.set(Calendar.HOUR_OF_DAY, temp.get(Calendar.HOUR_OF_DAY));
@@ -78,50 +66,7 @@ public class Utils {
             rem.set(Calendar.SECOND, 30);
             rem.set(Calendar.MILLISECOND, 30);
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, rem.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, sender);
-        } else if (reminder.getRepeat_type() == ReminderType.TYPE_MONTHLY) {
-            if (rem.get(Calendar.DAY_OF_MONTH) > temp.get(Calendar.DAY_OF_MONTH)) {
-                rem.add(Calendar.DAY_OF_MONTH, 0);
-            }
-            rem.set(Calendar.HOUR_OF_DAY, temp.get(Calendar.HOUR_OF_DAY));
-            rem.set(Calendar.MINUTE, temp.get(Calendar.MINUTE));
-            rem.set(Calendar.SECOND, 30);
-            rem.set(Calendar.MILLISECOND, 30);
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, rem.getTimeInMillis(), AlarmManager.INTERVAL_DAY * getDuration(), sender);
-        } else {
-            if (rem.get(Calendar.DAY_OF_YEAR) > temp.get(Calendar.DAY_OF_YEAR)) {
-                rem.add(Calendar.DAY_OF_YEAR, 0);
-            }
-            rem.set(Calendar.HOUR_OF_DAY, temp.get(Calendar.HOUR_OF_DAY));
-            rem.set(Calendar.MINUTE, temp.get(Calendar.MINUTE));
-            rem.set(Calendar.SECOND, 30);
-            rem.set(Calendar.MILLISECOND, 30);
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, rem.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 365, sender);
         }
-    }
-
-    public static int getDuration() {
-        // get todays date
-        Calendar cal = Calendar.getInstance();
-        // get current month
-        int currentMonth = cal.get(Calendar.MONTH);
-
-        // move month ahead
-        currentMonth++;
-        // check if has not exceeded threshold of december
-
-        if (currentMonth > Calendar.DECEMBER) {
-            // alright, reset month to jan and forward year by 1 e.g fro 2013 to 2014
-            currentMonth = Calendar.JANUARY;
-            // Move year ahead as well
-            cal.set(Calendar.YEAR, cal.get(Calendar.YEAR) + 1);
-        }
-
-        // reset calendar to next month
-        cal.set(Calendar.MONTH, currentMonth);
-        // get the maximum possible days in this month
-        int maximumDay = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
-
-        return maximumDay;
     }
 
     public static boolean isNetworkAvailable(Context context) {
