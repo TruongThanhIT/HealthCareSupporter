@@ -67,8 +67,6 @@ public class MainActivity extends AppCompatActivity
 
         onNavigationItemSelected(navigationView.getMenu().getItem(0));// select home for default
 
-        //TODO: HANDLE THING HERE
-        startService(new Intent(this, GetLocationService.class));
     }
 
     private void initData() {
@@ -149,4 +147,5 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
     }
+
 }

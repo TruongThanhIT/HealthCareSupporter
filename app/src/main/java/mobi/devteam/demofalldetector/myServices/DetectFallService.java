@@ -15,7 +15,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 
 import mobi.devteam.demofalldetector.activity.ConfirmFallActivity;
 import mobi.devteam.demofalldetector.model.Accelerator;
@@ -50,7 +49,7 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
     private int age;
     private double bmi;
     private boolean isMale;
-    private Profile mProfile; 
+    private Profile mProfile;
     private FallDetectionStage fallDetectionStage;
 
     @Override
@@ -193,7 +192,9 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
                 fallDetectionStage.setThresh_3(threshold_3);
                 fallDetectionStage.setConfirm_ok(false);
                 fallDetectionStage.setRecovery(false);
-                fallDetectionStage.setTime(Calendar.getInstance().getTimeInMillis());
+                fallDetectionStage.setTime(System.currentTimeMillis());
+
+                mDatabase.getReference("fall_detection_logs").child(currentUser.getUid()).child(fallDetectionStage.getTime() + "").setValue(fallDetectionStage);
 
                 waiting_for_recovery = true;
                 recoveryArrayList.clear();
@@ -215,8 +216,13 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
             Log.e("WAITING_RECOVERY", sum_x + " - " + sum_y + " - " + sum_z);
 
             if (sum_x > threshold_3 || sum_y > threshold_3 || sum_z > threshold_3) { //Threshold 3
+
                 fallDetectionStage.setRecovery(true);
-                mDatabase.getReference("fall_detection_logs").child(currentUser.getUid()).setValue(fallDetectionStage);
+                mDatabase.getReference("fall_detection_logs")
+                        .child(currentUser.getUid())
+                        .child(fallDetectionStage.getTime() + "")
+                        .child("recovery")
+                        .setValue(true);
 
 //                fallDetectionStage = null;
                 waiting_for_recovery = false; // ok i'm recovery
@@ -247,7 +253,7 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
         int i_z = z > 0 ? 1 : -1;
 
         try {
-            return Math.sqrt(i_x * (x * x) + i_y * (y * y) + i_z * (z * z));
+            return Math.sqrt(Math.abs(i_x * (x * x) + i_y * (y * y) + i_z * (z * z)));
         } catch (Exception ignored) {
             return 0;
         }

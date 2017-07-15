@@ -57,7 +57,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.TimerTask;
 
@@ -100,7 +99,7 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
     };
     private ArrayList<Relative> relativeArrayList;
     private int current_call_position;
-    private double time_key;
+    private long time_key;
     private FirebaseUser mCurrentUser;
     private FirebaseDatabase mDatabase;
     private Vibrator vibrator;
@@ -137,7 +136,7 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
         mCurrentUser = mAuth.getCurrentUser();
         mDatabase = FirebaseDatabase.getInstance();
 
-        time_key = getIntent().getDoubleExtra("time", Calendar.getInstance().getTimeInMillis());
+        time_key = getIntent().getLongExtra("time", System.currentTimeMillis());
 
         RotateAnimation rotateAnimation = new RotateAnimation(0, -60f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
         rotateAnimation.setDuration(1000);
@@ -331,12 +330,17 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
 
             vibrator.cancel();
             //confirm ok
-            mDatabase.getReference("fall_detection_logs").child(mCurrentUser.getUid()).child("confirm_ok").setValue(true);
+            mDatabase.getReference("fall_detection_logs")
+                    .child(mCurrentUser.getUid())
+                    .child(time_key + "")
+                    .child("confirm_ok")
+                    .setValue(true);
+
+            Log.e("confirm_ok","ok");
 
             imgFall.clearAnimation();
 
             imgFall.setImageResource(R.drawable.smile);
-
 
             ScaleAnimation scaleAnimation = new ScaleAnimation(0.5f, 1f, 0.5f, 1f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
             scaleAnimation.setDuration(2000);

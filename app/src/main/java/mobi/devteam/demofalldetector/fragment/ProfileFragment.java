@@ -193,9 +193,9 @@ public class ProfileFragment extends Fragment implements ValueEventListener {
 
             profile.setSensitive(progress);
 
-            profile.setThresh1(Common.DEFAULT_THRESHOLD_1 + Common.DEFAULT_THRESHOLD_1 * percent);
-            profile.setThresh2(Common.DEFAULT_THRESHOLD_2 + Common.DEFAULT_THRESHOLD_2 * percent);
-            profile.setThresh3(Common.DEFAULT_THRESHOLD_3 + Common.DEFAULT_THRESHOLD_3 * percent);
+            profile.setThresh1(Common.DEFAULT_THRESHOLD_1 + Common.DEFAULT_THRESHOLD_1 * percent);//max + 50%
+            profile.setThresh2(Common.DEFAULT_THRESHOLD_2 + Common.DEFAULT_THRESHOLD_2 * percent);//max + 50%
+            profile.setThresh3(Common.DEFAULT_THRESHOLD_3 + Common.DEFAULT_THRESHOLD_3 * percent/10);//max + 10%
             //}
 
             btnUpdate.setMode(ActionProcessButton.Mode.PROGRESS);
