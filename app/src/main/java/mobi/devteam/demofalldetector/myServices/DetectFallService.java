@@ -61,7 +61,7 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
         recoveryArrayList = new ArrayList<>();
 
         profile_data = mDatabase.getReference("profile").child(currentUser.getUid());
-        profile_data.keepSynced(false);
+//        profile_data.keepSynced(false);
 
         profile_data.addValueEventListener(new ValueEventListener() {
             @Override
@@ -147,7 +147,7 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
         }
 
         if (event.timestamp - lastTimestamp < TIME_PER_STAGE) {
-            return;
+                return;
         }
         lastTimestamp = event.timestamp;
 
@@ -217,7 +217,6 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
             if (sum_x > threshold_3 || sum_y > threshold_3 || sum_z > threshold_3) { //Threshold 3
                 fallDetectionStage.setRecovery(true);
                 mDatabase.getReference("fall_detection_logs").child(currentUser.getUid()).setValue(fallDetectionStage);
-
 //                fallDetectionStage = null;
                 waiting_for_recovery = false; // ok i'm recovery
                 recoveryArrayList.clear(); // clear recovery stages
@@ -231,7 +230,6 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
             dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(dialogIntent);
             stopSelf();
-
 //            fallDetectionStage = null;
         }
 

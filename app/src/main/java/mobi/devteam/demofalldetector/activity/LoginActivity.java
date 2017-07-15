@@ -106,7 +106,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                         Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
 
                         if (!task.isSuccessful()) {
-                            Toast.makeText(LoginActivity.this, task.getException().getMessage(),
+                            Toast.makeText(LoginActivity.this, R.string.err_invalid_info_login,
                                     Toast.LENGTH_SHORT).show();
                         } else {
                             goto_main_activity();

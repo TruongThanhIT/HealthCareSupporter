@@ -92,7 +92,7 @@
     <string name="signin_fail">Đăng nhập thất bại!!</string>
     <string name="err_empty_info_relative">Tên hoặc số điện thoại rỗng!!!</string>
     <string name="err_empty_name_reminder">Xin hãy nhập tên của công việc</string>
-    <string name="confirm_you_are_fall">Dường như bạn đã té\\nChúng tôi đang cố gắng liên lạc với người thân của bạn</string>
+    <string name="confirm_you_are_fall">Dường như bạn đã té. Chúng tôi đang cố gắng liên lạc với người thân của bạn</string>
 
     <string name="tab_day">Ngày</string>
     <string name="tab_time">Giờ</string>
