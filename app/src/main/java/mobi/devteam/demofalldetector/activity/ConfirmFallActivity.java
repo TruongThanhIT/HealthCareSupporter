@@ -14,6 +14,7 @@ import android.location.Location;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -24,6 +25,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.telephony.PhoneStateListener;
 import android.telephony.SmsManager;
 import android.telephony.TelephonyManager;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
@@ -85,6 +87,9 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
 
     @BindView(R.id.txtConfirm)
     TextView txtConfirm;
+
+    @BindView(R.id.imgBackground)
+    ImageView imgBackground;
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -187,6 +192,13 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
         vibrator.vibrate(pattern, 0);
 
         handle_for_timeout();
+
+        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+
+        Picasso.with(this)
+                .load(R.drawable.bg_confirm)
+                .resize(displayMetrics.widthPixels, displayMetrics.heightPixels)
+                .into(imgBackground);
     }
 
     private void request_the_location() {
@@ -209,15 +221,18 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
     private void send_sms_with_location(String strNumber, Location loc) {
         //TODO: require send sms
         SmsManager sms = SmsManager.getDefault();
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) == PackageManager.PERMISSION_GRANTED) {
-                sms.sendTextMessage(strNumber, null, getString(R.string.location_denied), null, null);
-            } else {
-                Log.e("SEND_SMS_PERMISSION", "NOT GRANT");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                    || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) == PackageManager.PERMISSION_GRANTED) {
+                    sms.sendTextMessage(strNumber, null, getString(R.string.location_denied), null, null);
+                } else {
+                    Log.e("SEND_SMS_PERMISSION", "NOT GRANT");
+                }
+                return;
             }
-            return;
         }
 
         //
@@ -361,6 +376,12 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
                     ObjectAnimator.ofFloat(txtConfirm, "alpha", 0f, 1f).setDuration(1000).start();
                     txtConfirm.setText(getString(R.string.confirm_you_are_ok));
 
+                    new Handler().postDelayed(new TimerTask() {
+                        @Override
+                        public void run() {
+                            finish();
+                        }
+                    }, 2000);
                 }
 
                 @Override

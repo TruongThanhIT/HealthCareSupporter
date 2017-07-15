@@ -57,11 +57,11 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         android:ems="10"
         android:inputType="numberSigned|numberDecimal"
         app:layout_constraintLeft_toRightOf="@+id/textView5"
-        app:layout_constraintTop_toBottomOf="@+id/sw_allow_find" />
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/skSensitive" />
 
     <EditText
         android:id="@+id/edtWeight"
@@ -179,5 +179,31 @@
         android:layout_marginBottom="8dp"
         android:layout_marginLeft="8dp"
         app:layout_constraintLeft_toLeftOf="parent" />
+
+    <SeekBar
+        android:id="@+id/skSensitive"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="0dp"
+        android:layout_marginLeft="0dp"
+
+        android:layout_marginRight="0dp"
+        android:layout_marginTop="0dp"
+        app:layout_constraintBottom_toBottomOf="@+id/textView14"
+        app:layout_constraintRight_toRightOf="@+id/edtHeight"
+        app:layout_constraintTop_toTopOf="@+id/textView14"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintVertical_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="@+id/edtHeight" />
+
+    <TextView
+        android:id="@+id/textView14"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/profile_sensitive"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginTop="12dp"
+        app:layout_constraintTop_toBottomOf="@+id/sw_allow_find" />
 
 </android.support.constraint.ConstraintLayout>

@@ -83,8 +83,8 @@
     <string name="confirm_you_are_ok">You are OK!</string>
     <string name="location_not_found">Sorry, we can\'t find the location, please try again later</string>
 
-    <string name="location_denied">Sorry, the your relative denied our location service permission.</string>
-    <string name="update_success">Update successfull</string>
+    <string name="location_denied">Sorry, Your relative denied our location service permission.</string>
+    <string name="update_success">Update successfully</string>
     <string name="signin_fail">Sign in failed!!</string>
     <string name="err_empty_info_relative">Name or phone is empty!!!</string>
     <string name="err_empty_name_reminder">Please input reminder name</string>
@@ -104,4 +104,5 @@
     <string name="friday">Friday</string>
     <string name="saturday">Saturday</string>
 
+    <string name="profile_sensitive">Sensitive</string>
 </resources>

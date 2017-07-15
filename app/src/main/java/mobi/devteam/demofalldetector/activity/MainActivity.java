@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity
     private FirebaseAuth mAuth;
     TextView txtUserName;
     TextView txtUserEmail;
+    private NavigationView navigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,8 +51,10 @@ public class MainActivity extends AppCompatActivity
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser user = mAuth.getCurrentUser();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        navigationView.getMenu().getItem(0).setChecked(true);
+
         View header = navigationView.getHeaderView(0);
         txtUserName = (TextView) header.findViewById(R.id.txtUserNameNav);
         txtUserEmail = (TextView) header.findViewById(R.id.txtEmailUserNav);
@@ -111,12 +114,15 @@ public class MainActivity extends AppCompatActivity
                 setTitle(R.string.tittle_home);
                 fragmentTransaction.replace(R.id.frame_container, HomeFragment.newInstance());
                 fragmentTransaction.commit();
+                navigationView.getMenu().getItem(0).setChecked(true);
+
                 break;
             case R.id.nav_relatives:
                 setTitle(R.string.tittle_relatives);
                 fragmentTransaction.replace(R.id.frame_container, RelativeListFragment.
                         newInstance());
                 fragmentTransaction.commit();
+                navigationView.getMenu().getItem(1).setChecked(true);
                 break;
             case R.id.nav_logout:
                 try{
@@ -137,6 +143,7 @@ public class MainActivity extends AppCompatActivity
                 setTitle(R.string.tittle_profile);
                 fragmentTransaction.replace(R.id.frame_container, ProfileFragment.newInstance());
                 fragmentTransaction.commit();
+                navigationView.getMenu().getItem(2).setChecked(true);
                 break;
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
