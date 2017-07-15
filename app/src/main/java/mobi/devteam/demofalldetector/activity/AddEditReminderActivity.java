@@ -74,6 +74,7 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
     private Calendar end;
     private Calendar alarm;
     private StorageReference mStorageRef;
+    private boolean isImageChanged = false;
 
 
     @Override
@@ -270,17 +271,19 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
             // Add notification
             Utils.scheduleNotification(this, reminder);
             try {
-                Bitmap bitmapAvatar = Tools.convertImageViewToBitmap(imgThumb);
-                byte[] bytes = Tools.convertBitmapToByteAray(bitmapAvatar);
-                reminders_images.child(reminder.getId() + "").putBytes(bytes)
-                        .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                            @Override
-                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                @SuppressWarnings("VisibleForTests")
-                                Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                                child.child(reminder.getId() + "").child("thumb").setValue(downloadUrl.toString());
-                            }
-                        });
+                if (isImageChanged) {
+                    Bitmap bitmapAvatar = Tools.convertImageViewToBitmap(imgThumb);
+                    byte[] bytes = Tools.convertBitmapToByteAray(bitmapAvatar);
+                    reminders_images.child(reminder.getId() + "").putBytes(bytes)
+                            .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                @Override
+                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                    @SuppressWarnings("VisibleForTests")
+                                    Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                                    child.child(reminder.getId() + "").child("thumb").setValue(downloadUrl.toString());
+                                }
+                            });
+                }
             } catch (NullPointerException e) {
                 Log.e(TAG, e.toString());
             }
@@ -304,8 +307,10 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
         if (r.getError() == null) {
             Bitmap scaledBitmap = Tools.scaleCenterCrop(r.getBitmap(), 300, 300);
             imgThumb.setImageBitmap(scaledBitmap);
+            isImageChanged = true;
         } else {
             Toast.makeText(this, r.getError().getMessage(), Toast.LENGTH_LONG).show();
+            isImageChanged = false;
         }
     }
 }

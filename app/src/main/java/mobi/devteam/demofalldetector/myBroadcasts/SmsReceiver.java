@@ -226,6 +226,7 @@ public class SmsReceiver extends BroadcastReceiver {
             @Override
             public void run() {
                 if (Utils.isNetworkAvailable(context)) {
+                    //update the mLocation, and wait for response
                     user_authed_request_location();
                 } else {
                     send_sms_with_location(mLocation);

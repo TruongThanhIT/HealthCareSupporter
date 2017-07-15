@@ -226,6 +226,7 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
                         .child("recovery")
                         .setValue(true);
 
+
 //                fallDetectionStage = null;
                 waiting_for_recovery = false; // ok i'm recovery
                 recoveryArrayList.clear(); // clear recovery stages
