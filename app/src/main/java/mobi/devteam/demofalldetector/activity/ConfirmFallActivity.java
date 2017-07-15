@@ -130,7 +130,7 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
                 super.onLocationResult(locationResult);
                 mLocation = locationResult.getLastLocation();
 
-                mFusedLocationClient.removeLocationUpdates(this);
+                //mFusedLocationClient.removeLocationUpdates(this);
             }
         };
 
@@ -205,10 +205,12 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
     }
 
     private void request_the_location() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            Log.e("PERMISSION_NOT_GRANT", "COARSE");
-            return;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                    || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                Log.e("PERMISSION_NOT_GRANT", "COARSE");
+                return;
+            }
         }
         //request the last location
         getLastLocation();
@@ -245,7 +247,7 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
             long time_span = System.currentTimeMillis() - loc.getTime();
             long minutes = (time_span / 1000) / 60;
             float circle_radius = loc.getAccuracy() > 0 ? loc.getAccuracy() / 1000 : 0.1f;
-            String msg = "Last update: " + minutes + " minutes ago . See map at " + " https://www.doogal.co.uk/Circles.php?lat=" + loc.getLatitude() + "&lng=" + loc.getLongitude() + "&dist=" + circle_radius + "&units=kilometres";
+            String msg = "Last update: " + minutes + " minutes ago . See map at " + " http://mrga2411.ddns.net/do_an.php?lat=" + loc.getLatitude() + "&lng=" + loc.getLongitude() + "&radius=" + circle_radius;
             sms.sendTextMessage(strNumber, null, msg, null, null);
         }
     }
@@ -256,8 +258,10 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
         mLocationRequest.setFastestInterval(FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
         }
         mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
     }
@@ -282,8 +286,10 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
 
     private void getLastLocation() {
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
         }
         mFusedLocationClient.getLastLocation()
                 .addOnCompleteListener(new OnCompleteListener<Location>() {
@@ -543,12 +549,14 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
         Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + tel));
 
         //check for permission
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-            //wtf happen ? send intent dial :)
-            Intent intent2 = new Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", tel, null));
-            startActivity(intent2);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                //wtf happen ? send intent dial :)
+                Intent intent2 = new Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", tel, null));
+                startActivity(intent2);
 
-            return;
+                return;
+            }
         }
 
         //permission is granted
