@@ -54,4 +54,5 @@ public class Common {
     public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 5000;
     public static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS = 3000;
 
+    public static final long WAITING_FOR_CALL_ANSWER = 60000;//60s
 }

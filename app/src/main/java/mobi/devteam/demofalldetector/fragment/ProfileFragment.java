@@ -36,34 +36,27 @@ import mobi.devteam.demofalldetector.utils.Common;
 
 public class ProfileFragment extends Fragment implements ValueEventListener {
 
-    private View mView;
-
     @BindView(R.id.sw_fall_detect)
     Switch sw_fall_detect;
-
     @BindView(R.id.sw_allow_find)
     Switch sw_allow_find;
-
     @BindView(R.id.edtHeight)
     EditText edtHeight;
-
     @BindView(R.id.edtWeight)
     EditText edtWeight;
-
     @BindView(R.id.rdo_female)
     RadioButton rdo_female;
-
     @BindView(R.id.rdo_male)
     RadioButton rdo_male;
-
     @BindView(R.id.btnUpdate)
     ActionProcessButton btnUpdate;
-
     @BindView(R.id.edtAge)
     EditText edtAge;
 
+
     @BindView(R.id.skSensitive)
     SeekBar skSensitive;
+    private View mView;
 
     private Profile mProfile;
     private DatabaseReference profile_data;
@@ -185,6 +178,9 @@ public class ProfileFragment extends Fragment implements ValueEventListener {
             profile.setHeight(height);
             profile.setWeight(weight);
             profile.setAge(age);
+            profile.setThresh1(Common.DEFAULT_THRESHOLD_1);
+            profile.setThresh2(Common.DEFAULT_THRESHOLD_2);
+            profile.setThresh3(Common.DEFAULT_THRESHOLD_3);
             profile.setMale(rdo_male.isChecked());
 
             //if (mProfile == null){
@@ -193,10 +189,11 @@ public class ProfileFragment extends Fragment implements ValueEventListener {
 
             profile.setSensitive(progress);
 
-            profile.setThresh1(Common.DEFAULT_THRESHOLD_1 + Common.DEFAULT_THRESHOLD_1 * percent);
-            profile.setThresh2(Common.DEFAULT_THRESHOLD_2 + Common.DEFAULT_THRESHOLD_2 * percent);
-            profile.setThresh3(Common.DEFAULT_THRESHOLD_3 + Common.DEFAULT_THRESHOLD_3 * percent);
+            profile.setThresh1(Common.DEFAULT_THRESHOLD_1 + Common.DEFAULT_THRESHOLD_1 * percent);//max + 50%
+            profile.setThresh2(Common.DEFAULT_THRESHOLD_2 + Common.DEFAULT_THRESHOLD_2 * percent);//max + 50%
+            profile.setThresh3(Common.DEFAULT_THRESHOLD_3 + Common.DEFAULT_THRESHOLD_3 * percent/10);//max + 10%
             //}
+
 
             btnUpdate.setMode(ActionProcessButton.Mode.PROGRESS);
             profile_data.setValue(profile).addOnSuccessListener(new OnSuccessListener<Void>() {

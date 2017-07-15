@@ -16,7 +16,6 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.ProgressBar;
 import android.widget.Switch;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -299,5 +298,16 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
         return true;
     }
 
-
+    @Override
+    public void onResume() {
+        Intent intent = new Intent(getActivity(), GetLocationService.class);
+        boolean isChecked = sw_fall_detect.isChecked();
+        if (isChecked) {
+            getActivity().startService(intent);
+        } else {
+            //cancel service
+            getActivity().stopService(intent);
+        }
+        super.onResume();
+    }
 }
