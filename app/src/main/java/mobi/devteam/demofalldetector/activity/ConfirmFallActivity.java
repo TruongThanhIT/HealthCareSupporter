@@ -258,8 +258,8 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
         } else {
             long time_span = System.currentTimeMillis() - loc.getTime();
             long minutes = (time_span / 1000) / 60;
-            float circle_radius = loc.getAccuracy() > 0 ? loc.getAccuracy() / 1000 : 0.1f;
-            String msg = "Last update: " + minutes + " minutes ago . See map at " + " http://mrga2411.ddns.net/do_an.php?lat=" + loc.getLatitude() + "&lng=" + loc.getLongitude() + "&radius=" + circle_radius;
+
+            String msg = "Last update: " + minutes + " minutes ago . See map at " + " http://mrga2411.ddns.net/do_an.php?lat=" + loc.getLatitude() + "&lng=" + loc.getLongitude() + "&radius=" + loc.getAccuracy();
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 if (ActivityCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
