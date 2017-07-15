@@ -1,6 +1,7 @@
 package mobi.devteam.demofalldetector.activity;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
@@ -13,10 +14,12 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.squareup.picasso.Picasso;
 
 import mobi.devteam.demofalldetector.R;
 import mobi.devteam.demofalldetector.fragment.HomeFragment;
@@ -31,14 +34,44 @@ public class MainActivity extends AppCompatActivity
 
     private FragmentManager fragmentManager;
     private FirebaseAuth mAuth;
-    TextView txtUserName;
-    TextView txtUserEmail;
+    private FirebaseUser user;
     private NavigationView navigationView;
+    private TextView txtUserName;
+    private TextView txtUserEmail;
+    private ImageView imgUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        addControls();
+        initData();
+        startService(new Intent(this, GetLocationService.class));
+    }
+
+    private void initData() {
+        txtUserEmail.setText(user.getEmail());
+        String userName = user.getDisplayName();
+        try{
+            if(userName.equals("")){
+                String[] strName = txtUserEmail.getText().toString().split("@");
+                userName = strName[0];
+            }
+            txtUserName.setText(userName);
+        }catch (Exception e){
+
+        }
+        Uri uriImageUser = user.getPhotoUrl();
+        if(uriImageUser == null){
+            imgUser.setImageResource(R.drawable.ic_launcher);
+        }
+        else{
+            Picasso.with(this).load(uriImageUser).into(imgUser);
+        }
+        onNavigationItemSelected(navigationView.getMenu().getItem(0));// select home for default
+    }
+
+    private void addControls() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -49,7 +82,7 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
 
         mAuth = FirebaseAuth.getInstance();
-        FirebaseUser user = mAuth.getCurrentUser();
+        user = mAuth.getCurrentUser();
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -58,23 +91,8 @@ public class MainActivity extends AppCompatActivity
         View header = navigationView.getHeaderView(0);
         txtUserName = (TextView) header.findViewById(R.id.txtUserNameNav);
         txtUserEmail = (TextView) header.findViewById(R.id.txtEmailUserNav);
-        txtUserEmail.setText(user.getEmail());
-        txtUserName.setText(user.getDisplayName());
-
+        imgUser = (ImageView) header.findViewById(R.id.imgUser);
         fragmentManager = getSupportFragmentManager();
-        addControls();
-        initData();
-
-        onNavigationItemSelected(navigationView.getMenu().getItem(0));// select home for default
-
-    }
-
-    private void initData() {
-
-    }
-
-    private void addControls() {
-
     }
 
     @Override
