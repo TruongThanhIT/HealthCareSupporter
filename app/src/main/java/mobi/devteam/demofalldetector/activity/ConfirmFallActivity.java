@@ -11,8 +11,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.location.Location;
 import android.media.AudioManager;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.Build;
@@ -107,18 +106,17 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
     private Location mLocation;
     private TimerTask task_wait_for_timeout;
     private Handler handler;
-
+    private MediaPlayer mMediaPlayer;
     private TimerTask task_detect_handoff_call;
-    private Ringtone ringtone;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON|
-                WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD|
-                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED|
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON |
+                WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
+                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
                 WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
 
         setContentView(R.layout.activity_confirm_fall);
@@ -190,11 +188,11 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
         long[] pattern = {0, 200, 200}; //0 to start now, 200 to vibrate 200 ms, 0 to sleep for 0 ms.
         vibrator.vibrate(pattern, 0);
 
-        Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        ringtone = RingtoneManager.getRingtone(getApplicationContext(), notification);
-        ringtone.play();
+        mMediaPlayer = MediaPlayer.create(this, R.raw.fall_alarm);
+        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 
-
+        mMediaPlayer.setLooping(true);
+        mMediaPlayer.start();
 
         handle_for_timeout();
 
@@ -318,7 +316,7 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
     @Override
     public void onStateChange(boolean active) {
         if (active) {
-            ringtone.stop();
+            mMediaPlayer.stop();
             handler.removeCallbacks(task_wait_for_timeout);
 
 
@@ -397,7 +395,7 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
     }
 
     private void confirm_timeout() {
-        ringtone.stop();
+        mMediaPlayer.stop();
         vibrator.cancel();
 
         //cancel animation
