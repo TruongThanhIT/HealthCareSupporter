@@ -447,16 +447,21 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
 
                 ObjectAnimator.ofFloat(txtHoldOn, "alpha", 0f, 1f).setDuration(2000).start();
                 current_call_position = 0;
-                make_a_call_to_list();
+                try {
+                    make_a_call_to_list();
 
-                task_detect_handoff_call = new TimerTask() {
-                    @Override
-                    public void run() {
-                        handler_relative_handoff();
-                    }
-                };
+                    task_detect_handoff_call = new TimerTask() {
+                        @Override
+                        public void run() {
+                            handler_relative_handoff();
+                        }
+                    };
 
-                handler.postDelayed(task_detect_handoff_call, 3000);
+                    handler.postDelayed(task_detect_handoff_call, 40000);
+                } catch (Exception e) {
+                    Log.e(LOG_TAG, e.toString());
+                }
+
             }
 
             @Override
@@ -529,13 +534,10 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
                 CallLog.Calls.TYPE + " = " + CallLog.Calls.OUTGOING_TYPE,
                 null,
                 CallLog.Calls.DATE + " ASC");
-
         int c_number = c.getColumnIndex(CallLog.Calls.NUMBER);
-
         int c_date = c.getColumnIndex(CallLog.Calls.DATE);
         int c_duration = c.getColumnIndex(CallLog.Calls.DURATION);
-
-        while (c.moveToFirst()) { //get last 10 calls log
+        while (c.moveToLast()) { //get last 10 calls log
 
             try {
                 String phNumber = c.getString(c_number);

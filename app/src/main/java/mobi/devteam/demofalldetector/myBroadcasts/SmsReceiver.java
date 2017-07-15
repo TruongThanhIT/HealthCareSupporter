@@ -249,7 +249,7 @@ public class SmsReceiver extends BroadcastReceiver {
             long time_span = System.currentTimeMillis() - loc.getTime();
             long minutes = (time_span / 1000) / 60;
 
-            String msg = "Last update: " + minutes + " minutes ago . See map at " + " http://mrga2411.ddns.net/do_an.php?lat=" + loc.getLatitude() + "&lng=" + loc.getLongitude() + "&radius=" + loc.getAccuracy() + "&units=kilometres";
+            String msg = "Last update: " + minutes + " minutes ago. See map at " + " http://mrga2411.ddns.net/do_an.php?lat=" + loc.getLatitude() + "&lng=" + loc.getLongitude() + "&radius=" + loc.getAccuracy() + "&units=kilometres";
             sms.sendTextMessage(strMsgSrc, null, msg, null, null);
         }
     }

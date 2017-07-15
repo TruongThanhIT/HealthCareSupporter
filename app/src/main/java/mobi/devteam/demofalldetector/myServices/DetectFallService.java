@@ -152,11 +152,11 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
         lastTimestamp = event.timestamp;
 
         // alpha is calculated as t / (t + dT)
-        // with t, the low-pass filter's time-constant
-        // and dT, the event delivery rate
-
+        // with t, the low-pass filter's time-constant. t = 120
+        // and dT, the event delivery rate dT = 30
         //Bo loc chuyen dong , cang -> 1 thi bo loc cang giam (van dong nhieu)
         // -> 0 bo loc nhay hay (nguoi gia)
+
         gravity[0] = ALPHA_CONSTANT * gravity[0] + (1 - ALPHA_CONSTANT) * event.values[0]; //x
         gravity[1] = ALPHA_CONSTANT * gravity[1] + (1 - ALPHA_CONSTANT) * event.values[1]; //y
         gravity[2] = ALPHA_CONSTANT * gravity[2] + (1 - ALPHA_CONSTANT) * event.values[2]; //Z
