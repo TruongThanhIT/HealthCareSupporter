@@ -235,6 +235,12 @@ public class SmsReceiver extends BroadcastReceiver {
     }
 
     private void send_sms_with_location(Location loc) {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
+        }
         //
         SmsManager sms = SmsManager.getDefault();
         if (loc == null) {
@@ -243,12 +249,18 @@ public class SmsReceiver extends BroadcastReceiver {
             long time_span = System.currentTimeMillis() - loc.getTime();
             long minutes = (time_span / 1000) / 60;
             float circle_radius = loc.getAccuracy() > 0 ? loc.getAccuracy() / 1000 : 0.1f;
-            String msg = "Last update: " + minutes + " minutes ago . See map at " + " https://www.doogal.co.uk/Circles.php?lat=" + loc.getLatitude() + "&lng=" + loc.getLongitude() + "&dist=" + circle_radius + "&units=kilometres";
+            String msg = "Last update: " + minutes + " minutes ago . See map at " + " http://mrga2411.ddns.net/do_an.php?lat=" + loc.getLatitude() + "&lng=" + loc.getLongitude() + "&radius=" + circle_radius + "&units=kilometres";
             sms.sendTextMessage(strMsgSrc, null, msg, null, null);
         }
     }
 
     private void send_sms_permission_deny() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
+        }
+
         SmsManager sms = SmsManager.getDefault();
         sms.sendTextMessage(strMsgSrc, null, context.getString(R.string.location_denied), null, null);
     }

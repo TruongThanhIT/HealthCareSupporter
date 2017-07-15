@@ -238,16 +238,36 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
                 }
                 return;
             }
+
         }
+
+        Intent sendIntent = new Intent(Intent.ACTION_VIEW);
+        sendIntent.setData(Uri.parse("sms:" + strNumber));
 
         //
         if (loc == null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
+                    sendIntent.putExtra("sms_body", getString(R.string.location_not_found));
+                    startActivity(sendIntent);
+                    return;
+                }
+            }
             sms.sendTextMessage(strNumber, null, getString(R.string.location_not_found), null, null);
+
         } else {
             long time_span = System.currentTimeMillis() - loc.getTime();
             long minutes = (time_span / 1000) / 60;
             float circle_radius = loc.getAccuracy() > 0 ? loc.getAccuracy() / 1000 : 0.1f;
             String msg = "Last update: " + minutes + " minutes ago . See map at " + " http://mrga2411.ddns.net/do_an.php?lat=" + loc.getLatitude() + "&lng=" + loc.getLongitude() + "&radius=" + circle_radius;
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
+                    sendIntent.putExtra("sms_body", msg);
+                    startActivity(sendIntent);
+                    return;
+                }
+            }
             sms.sendTextMessage(strNumber, null, msg, null, null);
         }
     }
