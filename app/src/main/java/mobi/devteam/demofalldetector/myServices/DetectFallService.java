@@ -24,7 +24,8 @@ import mobi.devteam.demofalldetector.utils.Common;
 
 public class DetectFallService extends RelativeBaseService implements SensorEventListener {
 
-    private static final int LIMIT_SIZE_OF_STATE = 30;
+    private static final int LIMIT_SIZE_OF_STATE = 30;//3s
+    private static final int LIMIT_SIZE_OF_STATE_RECOVERY = 60;//6s
     private static final long TIME_PER_STAGE = 120; //ms
     private static final float ALPHA_CONSTANT = 0.8f;
 
@@ -203,7 +204,7 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
     }
 
     private void detect_recovery() {
-        if (recoveryArrayList.size() < LIMIT_SIZE_OF_STATE) { //still waiting for recovery
+        if (recoveryArrayList.size() < LIMIT_SIZE_OF_STATE_RECOVERY) { //still waiting for recovery
             //calculate for sum of movement acceleration
             double sum_x = 0;
             double sum_y = 0;
@@ -213,6 +214,7 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
                 sum_y += Math.abs(accelerator.getY());
                 sum_z += Math.abs(accelerator.getZ());
             }
+
             Log.e("WAITING_RECOVERY", sum_x + " - " + sum_y + " - " + sum_z);
 
             if (sum_x > threshold_3 || sum_y > threshold_3 || sum_z > threshold_3) { //Threshold 3
