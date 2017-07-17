@@ -1,10 +1,16 @@
 package mobi.devteam.demofalldetector.myServices;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -16,6 +22,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
+import mobi.devteam.demofalldetector.R;
 import mobi.devteam.demofalldetector.activity.ConfirmFallActivity;
 import mobi.devteam.demofalldetector.model.Accelerator;
 import mobi.devteam.demofalldetector.model.FallDetectionStage;
@@ -52,6 +59,11 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
     private boolean isMale;
     private Profile mProfile;
     private FallDetectionStage fallDetectionStage;
+    private Notification.Builder m_notificationBuilder;
+
+
+    public DetectFallService() {
+    }
 
     @Override
     public void onCreate() {
@@ -233,6 +245,8 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
         } else {
             waiting_for_recovery = false;
             //Didn't get recover after 3s
+            recoveryArrayList.clear();
+            acceleratorArrayList.clear();
             Intent dialogIntent = new Intent(this, ConfirmFallActivity.class);
             dialogIntent.putExtra("time", fallDetectionStage.getTime());
             dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -270,6 +284,8 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
         Sensor mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
         Log.e("onstartcommand", "onstart");
+        addNotifiddcation(this);
+        startForeground(5363, m_notificationBuilder.build());
         return START_STICKY;
     }
 
@@ -277,5 +293,32 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
     @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    public class MyBinder extends Binder {
+        public DetectFallService getService() {
+            return DetectFallService.this;
+        }
+    }
+
+    private void addNotifiddcation(Context context) {
+        // create the notification
+        m_notificationBuilder = new Notification.Builder(context)
+                .setContentTitle(getString(R.string.tittle_home))
+                .setContentText(getString(R.string.tittle_home))
+                .setSmallIcon(R.drawable.ic_launcher);
+
+        // create the pending intent and add to the notification
+        Intent intent = new Intent(context, DetectFallService.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+        m_notificationBuilder.setContentIntent(pendingIntent);
+
+
+        // send the notification
+        NotificationManager m_notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        m_notificationManager.notify(5363, m_notificationBuilder.build());
+
+
+
     }
 }

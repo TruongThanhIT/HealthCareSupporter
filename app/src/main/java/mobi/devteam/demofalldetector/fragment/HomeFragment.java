@@ -1,12 +1,16 @@
 package mobi.devteam.demofalldetector.fragment;
 
+import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -45,6 +49,8 @@ import mobi.devteam.demofalldetector.myServices.DetectFallService;
 import mobi.devteam.demofalldetector.myServices.GetLocationService;
 import mobi.devteam.demofalldetector.utils.Utils;
 
+import static android.content.Context.BIND_AUTO_CREATE;
+
 public class HomeFragment extends Fragment implements OnRecyclerItemClickListener {
 
     private final int ADD_REMINDER_REQUEST = 123;
@@ -65,6 +71,20 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
     private int mLong_click_selected;
     private DatabaseReference profile_data;
     private Profile mProfile;
+    private String TAG = "HomeFragment";
+    private boolean startBindService;
+
+    private DetectFallService m_service;
+
+    private ServiceConnection m_serviceConnection = new ServiceConnection() {
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            m_service = ((DetectFallService.MyBinder)service).getService();
+        }
+
+        public void onServiceDisconnected(ComponentName className) {
+            m_service = null;
+        }
+    };
 
     public HomeFragment() {
 
@@ -137,6 +157,9 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
                 Intent intent = new Intent(getActivity(), DetectFallService.class);
                 if (isChecked) {
                     getActivity().startService(intent);
+                    getActivity().bindService(intent, m_serviceConnection, BIND_AUTO_CREATE);
+                    startBindService = true;
+
                 } else {
                     //cancel service
                     getActivity().stopService(intent);
@@ -249,6 +272,12 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
     public void onDestroyView() {
         super.onDestroyView();
         bind.unbind();
+        try{
+            if(startBindService)
+                getActivity().unbindService(m_serviceConnection);
+        }catch (Exception e){
+            Log.e(TAG, e.toString());
+        }
     }
 
     @Override
@@ -310,4 +339,6 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
         }
         super.onResume();
     }
+
+
 }
