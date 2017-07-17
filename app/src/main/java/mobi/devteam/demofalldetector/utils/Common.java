@@ -44,7 +44,7 @@ public class Common {
     public static final float T3_BMI_25_30 = 0.5f;
     public static final float T3_BMI_30 = 1f;
 
-    public static final long WAITING_FOR_CONFIRM = 30000;
+    public static final long WAITING_FOR_CONFIRM = 10000;
 
     public static final String SMS_COMMAND_GET_GPS = "HC_LOCATION";
     public static final String SMS_COMMAND_MAX_SOUND = "HC_MAXSOUND";

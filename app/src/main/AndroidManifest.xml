@@ -50,6 +50,7 @@
             android:name=".activity.TestActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:launchMode="singleTop"
             android:name=".activity.MainActivity"
             android:label="@string/title_activity_main"
             android:screenOrientation="portrait"

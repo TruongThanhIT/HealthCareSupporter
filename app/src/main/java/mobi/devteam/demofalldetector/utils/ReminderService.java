@@ -109,7 +109,7 @@ public class ReminderService extends Service {
                     .setTicker(reminder.getName())
                     .setSubText(Utils.get_calendar_date(Calendar.getInstance()))
                     .setContentText(reminder.getNote())
-                    .setSmallIcon(R.drawable.ic_alarm)
+                    .setSmallIcon(R.drawable.ic_launcher_new)
                     .setOngoing(true)
                     .setAutoCancel(true)
                     .setContentIntent(pendingIntent)

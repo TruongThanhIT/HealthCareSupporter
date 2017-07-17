@@ -14,6 +14,7 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
+import android.nfc.Tag;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -330,9 +331,6 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
         task_wait_for_timeout = new TimerTask() {
             @Override
             public void run() {
-                if (relativeArrayList.size() > 0) {
-                    send_sms_with_location(relativeArrayList.get(0).getPhone(), mLocation);
-                }
                 confirm_timeout();
             }
         };
@@ -506,6 +504,8 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
             return;
         }
 
+//        send_sms_with_location(relativeArrayList.get(current_call_position).getPhone(), mLocation);
+
         txtHoldOn.setText(getString(R.string.calling_someone, relativeArrayList.get(current_call_position).getName()));
 
         Relative relative = relativeArrayList.get(current_call_position);
@@ -537,8 +537,9 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
         int c_number = c.getColumnIndex(CallLog.Calls.NUMBER);
         int c_date = c.getColumnIndex(CallLog.Calls.DATE);
         int c_duration = c.getColumnIndex(CallLog.Calls.DURATION);
-        while (c.moveToLast()) { //get last 10 calls log
-
+        int count = 0;
+        while (c.moveToLast() && count < 10) { //get last 10 calls log
+            count++;
             try {
                 String phNumber = c.getString(c_number);
                 Date callDayTime = new Date(Long.valueOf(c.getString(c_date)));
@@ -558,6 +559,7 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
                         //ANSWER THE CALL cancel handler
                         handler.removeCallbacks(task_detect_handoff_call);
                     }
+                    break;
 
                 }
             } catch (Exception ignored) {
