@@ -4,8 +4,11 @@ import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
@@ -20,6 +23,7 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.ProgressBar;
 import android.widget.Switch;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -45,14 +49,17 @@ import mobi.devteam.demofalldetector.adapter.ReminderAdapter;
 import mobi.devteam.demofalldetector.model.Profile;
 import mobi.devteam.demofalldetector.model.Reminder;
 import mobi.devteam.demofalldetector.myInterface.OnRecyclerItemClickListener;
+import mobi.devteam.demofalldetector.myInterface.OnRequestPermissionListener;
 import mobi.devteam.demofalldetector.myServices.DetectFallService;
 import mobi.devteam.demofalldetector.myServices.GetLocationService;
+import mobi.devteam.demofalldetector.utils.AppPermission;
 import mobi.devteam.demofalldetector.utils.Utils;
 
 import static android.content.Context.BIND_AUTO_CREATE;
 
-public class HomeFragment extends Fragment implements OnRecyclerItemClickListener {
+public class HomeFragment extends Fragment implements OnRecyclerItemClickListener, OnRequestPermissionListener {
 
+    private static final int MY_PERMISSIONS_REQUEST = 235;
     private final int ADD_REMINDER_REQUEST = 123;
     @BindView(R.id.rcv_reminders)
     RecyclerView rcv_reminders;
@@ -73,18 +80,25 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
     private Profile mProfile;
     private String TAG = "HomeFragment";
     private boolean startBindService;
+
     private DetectFallService m_service;
+
+    private AppPermission appPermission;
 
     private ServiceConnection m_serviceConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder service) {
-            m_service = ((DetectFallService.MyBinder)service).getService();
+            m_service = ((DetectFallService.MyBinder) service).getService();
         }
+
         public void onServiceDisconnected(ComponentName className) {
             m_service = null;
         }
     };
+    private boolean isWaitingForSettingResult = false;
 
-    public HomeFragment() {}
+    public HomeFragment() {
+
+    }
 
     public static HomeFragment newInstance() {
         HomeFragment fragment = new HomeFragment();
@@ -96,7 +110,9 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {}
+        if (getArguments() != null) {
+
+        }
     }
 
     @Override
@@ -111,6 +127,9 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
         getActivity().setTitle(R.string.nav_home);
         initData();
         addEvents();
+
+        appPermission = new AppPermission(getActivity(), this);
+
         return mView;
     }
 
@@ -144,24 +163,10 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
                     goto_profile_page();
                     return;
                 }
+
                 mProfile.setDetect_fall(isChecked);
                 profile_data.setValue(mProfile);
-                Intent intent = new Intent(getActivity(), DetectFallService.class);
-                if (isChecked) {
-                    getActivity().startService(intent);
-                    getActivity().bindService(intent, m_serviceConnection, BIND_AUTO_CREATE);
-                    startBindService = true;
-
-                } else {
-                    try{
-                        //cancel service
-                        getActivity().stopService(intent);
-                        if(startBindService)
-                            getActivity().unbindService(m_serviceConnection);
-                    }catch (Exception e){
-                        Log.e(TAG, e.toString());
-                    }
-                }
+                start_fall_detect_service();
             }
         });
 
@@ -175,16 +180,40 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
 
                 mProfile.setAllow_find(isChecked);
                 profile_data.setValue(mProfile);
-
-                Intent intent = new Intent(getActivity(), GetLocationService.class);
-                if (isChecked) {
-                    getActivity().startService(intent);
-                } else {
-                    //cancel service
-                    getActivity().stopService(intent);
-                }
+                start_allow_find_location_service();
             }
         });
+    }
+
+    private void start_allow_find_location_service() {
+        boolean isChecked = sw_allow_find.isChecked();
+        Intent intent = new Intent(getActivity(), GetLocationService.class);
+        if (isChecked) {
+            getActivity().startService(intent);
+        } else {
+            //cancel service
+            getActivity().stopService(intent);
+        }
+    }
+
+    private void start_fall_detect_service() {
+        boolean isChecked = sw_allow_find.isChecked();
+        Intent intent = new Intent(getActivity(), DetectFallService.class);
+        if (isChecked) {
+            getActivity().startService(intent);
+            getActivity().bindService(intent, m_serviceConnection, BIND_AUTO_CREATE);
+            startBindService = true;
+
+        } else {
+            try{
+                //cancel service
+                getActivity().stopService(intent);
+                if(startBindService)
+                    getActivity().unbindService(m_serviceConnection);
+            }catch (Exception e){
+                Log.e(TAG, e.toString());
+            }
+        }
     }
 
     private void goto_profile_page() {
@@ -211,6 +240,7 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
         reminderArrayList = new ArrayList<>();
         reminderAdapter = new ReminderAdapter(getActivity(), reminderArrayList, this);
         rcv_reminders.setAdapter(reminderAdapter);
+
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         mAuth = FirebaseAuth.getInstance();
         reminder_data = database.getReference("reminders");
@@ -269,10 +299,10 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
     public void onDestroyView() {
         super.onDestroyView();
         bind.unbind();
-        try{
-            if(startBindService)
+        try {
+            if (startBindService)
                 getActivity().unbindService(m_serviceConnection);
-        }catch (Exception e){
+        } catch (Exception e) {
             Log.e(TAG, e.toString());
         }
     }
@@ -326,22 +356,40 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
 
     @Override
     public void onResume() {
-        Intent intent = new Intent(getActivity(), GetLocationService.class);
-        boolean isChecked = sw_fall_detect.isChecked();
-        if (isChecked) {
-            getActivity().startService(intent);
-        } else {
-            try{
-                //cancel service
-                getActivity().stopService(intent);
-                if(startBindService)
-                    getActivity().unbindService(m_serviceConnection);
-            }catch (Exception e){
-                Log.e(TAG, e.toString());
-            }
+        if (isWaitingForSettingResult){
+            isWaitingForSettingResult = false;
+            start_fall_detect_service();
+            start_allow_find_location_service();
+            return;
         }
         super.onResume();
     }
 
+    @Override
+    public void showSettingIntent() {
+        isWaitingForSettingResult = true;
+        Intent intent = new Intent(Settings.ACTION_SETTINGS);
+        startActivity(intent);
+    }
 
+    @Override
+    public void requestPermissions(String[] permissions) {
+        requestPermissions(permissions,MY_PERMISSIONS_REQUEST);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == MY_PERMISSIONS_REQUEST && permissions.length > 0){
+            for (int grant:grantResults){
+                if (grant != PackageManager.PERMISSION_GRANTED){
+                    Toast.makeText(m_service, getString(R.string.request_permissions_deny), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            }
+
+            start_fall_detect_service();
+            start_allow_find_location_service();
+        }
+    }
 }

@@ -40,12 +40,17 @@ public class MainActivity extends AppCompatActivity
     private TextView txtUserEmail;
     private ImageView imgUser;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         addControls();
         initData();
+
+
+
         startService(new Intent(this, GetLocationService.class));
     }
 
@@ -165,5 +170,4 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
     }
-
 }

@@ -108,4 +108,7 @@
     <string name="saturday">Thứ bảy</string>
 
     <string name="profile_sensitive">Do nhay</string>
+    <string name="request_permissions_desc">We have to request these permissions to get the app working correctly\nOpen Setting -> Permission -> Allow all the request</string>
+    <string name="request_permissions">Request permissions</string>
+    <string name="request_permissions_deny">Sorry, You have to allow all the permission to get the app working correctly</string>
 </resources>
