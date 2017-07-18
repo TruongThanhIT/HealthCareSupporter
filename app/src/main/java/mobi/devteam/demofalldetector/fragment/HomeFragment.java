@@ -166,7 +166,11 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
 
                 mProfile.setDetect_fall(isChecked);
                 profile_data.setValue(mProfile);
-                start_fall_detect_service();
+
+                if (appPermission.check_permission())
+                    start_fall_detect_service();
+                else
+                    appPermission.request_permission();
             }
         });
 
@@ -180,7 +184,11 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
 
                 mProfile.setAllow_find(isChecked);
                 profile_data.setValue(mProfile);
-                start_allow_find_location_service();
+
+                if (appPermission.check_permission())
+                    start_allow_find_location_service();
+                else
+                    appPermission.request_permission();
             }
         });
     }
@@ -205,12 +213,12 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
             startBindService = true;
 
         } else {
-            try{
+            try {
                 //cancel service
                 getActivity().stopService(intent);
-                if(startBindService)
+                if (startBindService)
                     getActivity().unbindService(m_serviceConnection);
-            }catch (Exception e){
+            } catch (Exception e) {
                 Log.e(TAG, e.toString());
             }
         }
@@ -356,7 +364,7 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
 
     @Override
     public void onResume() {
-        if (isWaitingForSettingResult){
+        if (isWaitingForSettingResult) {
             isWaitingForSettingResult = false;
             start_fall_detect_service();
             start_allow_find_location_service();
@@ -374,15 +382,15 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
 
     @Override
     public void requestPermissions(String[] permissions) {
-        requestPermissions(permissions,MY_PERMISSIONS_REQUEST);
+        requestPermissions(permissions, MY_PERMISSIONS_REQUEST);
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == MY_PERMISSIONS_REQUEST && permissions.length > 0){
-            for (int grant:grantResults){
-                if (grant != PackageManager.PERMISSION_GRANTED){
+        if (requestCode == MY_PERMISSIONS_REQUEST && permissions.length > 0) {
+            for (int grant : grantResults) {
+                if (grant != PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(m_service, getString(R.string.request_permissions_deny), Toast.LENGTH_SHORT).show();
                     return;
                 }
