@@ -88,8 +88,9 @@
     <string name="signin_fail">Sign in failed!!</string>
     <string name="err_empty_info_relative">Name or phone is empty!!!</string>
     <string name="err_empty_name_reminder">Please input reminder name</string>
-    <string name="confirm_you_are_fall">It\'s look like you are fallen\\nWe are trying to get contact with your relative</string>
+    <string name="confirm_you_are_fall">It\'s look like you are fallen. We are trying to get contact with your relative</string>
     <string name="tittle_home">Health care supporter</string>
+    <string name="open_app">Touch to open</string>
     <string name="tittle_relatives">Manage relative information</string>
     <string name="tittle_profile">Profile</string>
 
@@ -105,4 +106,7 @@
     <string name="saturday">Saturday</string>
 
     <string name="profile_sensitive">Sensitive</string>
+    <string name="request_permissions_desc">We have to request these permissions to get the app working correctly\nOpen Setting -> Permission -> Allow all the request</string>
+    <string name="request_permissions">Request permissions</string>
+    <string name="request_permissions_deny">Sorry, You have to allow all the permission to get the app working correctly</string>
 </resources>

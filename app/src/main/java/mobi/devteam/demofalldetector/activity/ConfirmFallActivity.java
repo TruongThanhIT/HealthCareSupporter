@@ -14,6 +14,7 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
+import android.nfc.Tag;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -24,8 +25,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.SmsManager;
-
-import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
@@ -58,7 +57,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -96,7 +94,7 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
     ImageView imgBackground;
 
     private ArrayList<Relative> relativeArrayList;
-    private int current_call_position;
+    private int current_call_position = -1 ;
     private long time_key;
     private FirebaseUser mCurrentUser;
     private FirebaseDatabase mDatabase;
@@ -111,15 +109,17 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
     private Handler handler;
     private MediaPlayer mMediaPlayer;
     private TimerTask task_detect_handoff_call;
+    private boolean isCallEmergency;
+    private static final String EMERGENCY_TEL = "01282808428";
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON|
-                WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD|
-                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED|
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON |
+                WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
+                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
                 WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
 
         setContentView(R.layout.activity_confirm_fall);
@@ -133,7 +133,7 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
                 super.onLocationResult(locationResult);
                 mLocation = locationResult.getLastLocation();
 
-                mFusedLocationClient.removeLocationUpdates(this);
+                //mFusedLocationClient.removeLocationUpdates(this);
             }
         };
 
@@ -191,9 +191,9 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
         long[] pattern = {0, 200, 200}; //0 to start now, 200 to vibrate 200 ms, 0 to sleep for 0 ms.
         vibrator.vibrate(pattern, 0);
 
-        mMediaPlayer = new MediaPlayer();
         mMediaPlayer = MediaPlayer.create(this, R.raw.fall_alarm);
-        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_RING);
+        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+
         mMediaPlayer.setLooping(true);
         mMediaPlayer.start();
 
@@ -208,10 +208,12 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
     }
 
     private void request_the_location() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            Log.e("PERMISSION_NOT_GRANT", "COARSE");
-            return;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                    || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                Log.e("PERMISSION_NOT_GRANT", "COARSE");
+                return;
+            }
         }
         //request the last location
         getLastLocation();
@@ -239,16 +241,36 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
                 }
                 return;
             }
+
         }
+
+        Intent sendIntent = new Intent(Intent.ACTION_VIEW);
+        sendIntent.setData(Uri.parse("sms:" + strNumber));
 
         //
         if (loc == null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
+                    sendIntent.putExtra("sms_body", getString(R.string.location_not_found));
+                    startActivity(sendIntent);
+                    return;
+                }
+            }
             sms.sendTextMessage(strNumber, null, getString(R.string.location_not_found), null, null);
+
         } else {
             long time_span = System.currentTimeMillis() - loc.getTime();
             long minutes = (time_span / 1000) / 60;
-            float circle_radius = loc.getAccuracy() > 0 ? loc.getAccuracy() / 1000 : 0.1f;
-            String msg = "Last update: " + minutes + " minutes ago . See map at " + " https://www.doogal.co.uk/Circles.php?lat=" + loc.getLatitude() + "&lng=" + loc.getLongitude() + "&dist=" + circle_radius + "&units=kilometres";
+
+            String msg = "Last update: " + minutes + " minutes ago . See map at " + " http://mrga2411.ddns.net/do_an.php?lat=" + loc.getLatitude() + "&lng=" + loc.getLongitude() + "&radius=" + loc.getAccuracy();
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
+                    sendIntent.putExtra("sms_body", msg);
+                    startActivity(sendIntent);
+                    return;
+                }
+            }
             sms.sendTextMessage(strNumber, null, msg, null, null);
         }
     }
@@ -259,8 +281,10 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
         mLocationRequest.setFastestInterval(FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
         }
         mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
     }
@@ -285,8 +309,10 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
 
     private void getLastLocation() {
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
         }
         mFusedLocationClient.getLastLocation()
                 .addOnCompleteListener(new OnCompleteListener<Location>() {
@@ -307,9 +333,6 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
         task_wait_for_timeout = new TimerTask() {
             @Override
             public void run() {
-                if (relativeArrayList.size() > 0) {
-                    send_sms_with_location(relativeArrayList.get(0).getPhone(), mLocation);
-                }
                 confirm_timeout();
             }
         };
@@ -319,7 +342,7 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
     @Override
     public void onStateChange(boolean active) {
         if (active) {
-            mMediaPlayer.start();
+            mMediaPlayer.stop();
             handler.removeCallbacks(task_wait_for_timeout);
 
 
@@ -421,19 +444,10 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
             public void onAnimationEnd(Animator animation) {
                 swipe_btn.setVisibility(View.GONE);
                 txtHoldOn.setVisibility(View.VISIBLE);
-
                 ObjectAnimator.ofFloat(txtHoldOn, "alpha", 0f, 1f).setDuration(2000).start();
                 current_call_position = 0;
                 make_a_call_to_list();
-
-                task_detect_handoff_call = new TimerTask() {
-                    @Override
-                    public void run() {
-                        handler_relative_handoff();
-                    }
-                };
-
-                handler.postDelayed(task_detect_handoff_call, 3000);
+                isCallEmergency = false;
             }
 
             @Override
@@ -455,34 +469,17 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
             Log.e(LOG_TAG, "Relative list is zero");
             return;
         }
-
         if (current_call_position > relativeArrayList.size() - 1) {
             imgFall.setImageResource(R.drawable.fall_icon);
             txtHoldOn.setText(getString(R.string.calling_out_of_bound));
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-            builder.setTitle(getString(R.string.calling_emergency_service))
-                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            call_to_number("911");
-                        }
-                    })
-                    .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-
-                        }
-                    });
-            builder.show();
+            isCallEmergency = true;
+            call_to_number(EMERGENCY_TEL);
+            finish();
             return;
         }
-
+//        send_sms_with_location(relativeArrayList.get(current_call_position).getPhone(), mLocation);
         txtHoldOn.setText(getString(R.string.calling_someone, relativeArrayList.get(current_call_position).getName()));
-
         Relative relative = relativeArrayList.get(current_call_position);
-
-        //TODO: test here
         String first_letter = relative.getName().length() > 0 ? relative.getName().substring(0, 1).toUpperCase() : "R";
 
         TextDrawable textDrawable = TextDrawable.builder()
@@ -506,14 +503,10 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
                 CallLog.Calls.TYPE + " = " + CallLog.Calls.OUTGOING_TYPE,
                 null,
                 CallLog.Calls.DATE + " ASC");
-
         int c_number = c.getColumnIndex(CallLog.Calls.NUMBER);
-
         int c_date = c.getColumnIndex(CallLog.Calls.DATE);
         int c_duration = c.getColumnIndex(CallLog.Calls.DURATION);
-
-        while (c.moveToFirst()) { //get last 10 calls log
-
+        while (c.moveToLast()) { //get last 10 calls log
             try {
                 String phNumber = c.getString(c_number);
                 Date callDayTime = new Date(Long.valueOf(c.getString(c_date)));
@@ -523,17 +516,17 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
 
                 if (phNumber.contains(current_phonenumber)) {
                     if (callDuration == 0) {
-                        if (Calendar.getInstance().getTimeInMillis() - callDayTime.getTime() < 60000) {
+                        // Chua xu ly tinh huong mot so sim co dang ky tin nhan thoai
+//                        if (Calendar.getInstance().getTimeInMillis() - callDayTime.getTime() < 60000) {
                             Log.e("NO_ANSWER_FROM", current_phonenumber);
-
                             current_call_position++;
                             make_a_call_to_list();
-                        }
+//                        }
                     } else {
                         //ANSWER THE CALL cancel handler
                         handler.removeCallbacks(task_detect_handoff_call);
                     }
-
+                    break;
                 }
             } catch (Exception ignored) {
 
@@ -544,19 +537,27 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
     private void call_to_number(String tel) {
         Log.e(LOG_TAG, tel);
         Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + tel));
-
         //check for permission
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-            //wtf happen ? send intent dial :)
-            Intent intent2 = new Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", tel, null));
-            startActivity(intent2);
-
-            return;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                //wtf happen ? send intent dial :)
+                Intent intent2 = new Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", tel, null));
+                startActivity(intent2);
+                return;
+            }
         }
 
         //permission is granted
         startActivity(intent);
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(current_call_position >= 0 && current_call_position <= relativeArrayList.size()){
+            handler_relative_handoff();
+        }
     }
 
 }

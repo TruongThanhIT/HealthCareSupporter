@@ -194,7 +194,6 @@ public class ProfileFragment extends Fragment implements ValueEventListener {
             profile.setThresh3(Common.DEFAULT_THRESHOLD_3 + Common.DEFAULT_THRESHOLD_3 * percent/10);//max + 10%
             //}
 
-
             btnUpdate.setMode(ActionProcessButton.Mode.PROGRESS);
             profile_data.setValue(profile).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override

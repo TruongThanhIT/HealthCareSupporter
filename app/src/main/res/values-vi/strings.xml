@@ -2,6 +2,8 @@
 <resources>
     <string name="app_name">Hỗ trợ chăm sóc sức khỏe</string>
     <string name="title_activity_main">Hỗ trợ chăm sóc sức khỏe</string>
+    <string name="tittle_home">Hỗ trợ chăm sóc sức khỏe</string>
+    <string name="open_app">Chạm để mở ứng dụng</string>
 
     <!-- Navigation -->
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -92,7 +94,7 @@
     <string name="signin_fail">Đăng nhập thất bại!!</string>
     <string name="err_empty_info_relative">Tên hoặc số điện thoại rỗng!!!</string>
     <string name="err_empty_name_reminder">Xin hãy nhập tên của công việc</string>
-    <string name="confirm_you_are_fall">Dường như bạn đã té\\nChúng tôi đang cố gắng liên lạc với người thân của bạn</string>
+    <string name="confirm_you_are_fall">Dường như bạn đã té. Chúng tôi đang cố gắng liên lạc với người thân của bạn</string>
 
     <string name="tab_day">Ngày</string>
     <string name="tab_time">Giờ</string>
@@ -106,4 +108,7 @@
     <string name="saturday">Thứ bảy</string>
 
     <string name="profile_sensitive">Do nhay</string>
+    <string name="request_permissions_desc">We have to request these permissions to get the app working correctly\nOpen Setting -> Permission -> Allow all the request</string>
+    <string name="request_permissions">Request permissions</string>
+    <string name="request_permissions_deny">Sorry, You have to allow all the permission to get the app working correctly</string>
 </resources>
