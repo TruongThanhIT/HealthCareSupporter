@@ -158,7 +158,7 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
         }
 
         if (event.timestamp - lastTimestamp < TIME_PER_STAGE) {
-                return;
+            return;
         }
         lastTimestamp = event.timestamp;
 
@@ -205,8 +205,12 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
                 fallDetectionStage.setConfirm_ok(false);
                 fallDetectionStage.setRecovery(false);
                 fallDetectionStage.setTime(System.currentTimeMillis());
+                fallDetectionStage.setAccelerator_log(acceleratorArrayList);
 
-                mDatabase.getReference("fall_detection_logs").child(currentUser.getUid()).child(fallDetectionStage.getTime() + "").setValue(fallDetectionStage);
+                mDatabase.getReference("fall_detection_logs")
+                        .child(currentUser.getUid())
+                        .child(fallDetectionStage.getTime() + "")
+                        .setValue(fallDetectionStage);
 
                 waiting_for_recovery = true;
                 recoveryArrayList.clear();
@@ -215,33 +219,46 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
     }
 
     private void detect_recovery() {
+        double sum_x = 0;
+        double sum_y = 0;
+        double sum_z = 0;
+        for (Accelerator accelerator : recoveryArrayList) {
+            sum_x += Math.abs(accelerator.getX());
+            sum_y += Math.abs(accelerator.getY());
+            sum_z += Math.abs(accelerator.getZ());
+        }
+
         if (recoveryArrayList.size() < LIMIT_SIZE_OF_STATE_RECOVERY) { //still waiting for recovery
             //calculate for sum of movement acceleration
-            double sum_x = 0;
-            double sum_y = 0;
-            double sum_z = 0;
-            for (Accelerator accelerator : recoveryArrayList) {
-                sum_x += Math.abs(accelerator.getX());
-                sum_y += Math.abs(accelerator.getY());
-                sum_z += Math.abs(accelerator.getZ());
-            }
-
             Log.e("WAITING_RECOVERY", sum_x + " - " + sum_y + " - " + sum_z);
 
             if (sum_x > threshold_3 || sum_y > threshold_3 || sum_z > threshold_3) { //Threshold 3
 
-                fallDetectionStage.setRecovery(true);
                 mDatabase.getReference("fall_detection_logs")
                         .child(currentUser.getUid())
                         .child(fallDetectionStage.getTime() + "")
                         .child("recovery")
                         .setValue(true);
-//                fallDetectionStage = null;
+
+                mDatabase.getReference("fall_detection_logs")
+                        .child(currentUser.getUid())
+                        .child(fallDetectionStage.getTime() + "")
+                        .child("recovery_sum")
+                        .setValue(new Accelerator(sum_x, sum_y, sum_z));
+
+
                 waiting_for_recovery = false; // ok i'm recovery
                 recoveryArrayList.clear(); // clear recovery stages
+                acceleratorArrayList.clear();
             }
 
         } else {
+            mDatabase.getReference("fall_detection_logs")
+                    .child(currentUser.getUid())
+                    .child(fallDetectionStage.getTime() + "")
+                    .child("recovery_sum")
+                    .setValue(new Accelerator(sum_x, sum_y, sum_z));
+
             waiting_for_recovery = false;
             //Didn't get recover after 3s
             recoveryArrayList.clear();
@@ -250,8 +267,10 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
             dialogIntent.putExtra("time", fallDetectionStage.getTime());
             dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(dialogIntent);
-            stopSelf();
-//            fallDetectionStage = null;
+
+            //TODO: should handler this by pause the service then we can send the broadcast to start the serv
+            stopForeground(true);
+
         }
 
     }

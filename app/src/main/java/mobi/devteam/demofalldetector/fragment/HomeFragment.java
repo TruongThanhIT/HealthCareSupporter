@@ -236,12 +236,6 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
                 });
         builder.show();
 
-//        MainActivity activity = (MainActivity) getActivity();
-//        android.support.v4.app.FragmentManager supportFragmentManager = activity.getSupportFragmentManager();
-//
-//        android.support.v4.app.FragmentTransaction fragmentTransaction = supportFragmentManager.beginTransaction();
-//        fragmentTransaction.replace(R.id.frame_container, ProfileFragment.newInstance());
-//        fragmentTransaction.commit();
     }
 
     private void initData() {
