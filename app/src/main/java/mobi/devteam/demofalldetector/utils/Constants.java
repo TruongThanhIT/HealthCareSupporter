@@ -6,7 +6,7 @@ public class Constants {
         String ITEM_KEY = "mobi.devteam.itemkey";
     }
 
-    interface ACTION {
+    public interface ACTION {
         String DISMISS_ACTION = "action.dismiss";
         String SNOOZE_ACTION = "action.snooze";
         String START_SERVICE = "start.service";

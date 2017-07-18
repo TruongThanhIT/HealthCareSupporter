@@ -2,6 +2,8 @@
 <resources>
     <string name="app_name">Hỗ trợ chăm sóc sức khỏe</string>
     <string name="title_activity_main">Hỗ trợ chăm sóc sức khỏe</string>
+    <string name="tittle_home">Hỗ trợ chăm sóc sức khỏe</string>
+    <string name="open_app">Chạm để mở ứng dụng</string>
 
     <!-- Navigation -->
     <string name="navigation_drawer_open">Open navigation drawer</string>

@@ -12,6 +12,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import mobi.devteam.demofalldetector.model.Reminder;
+import mobi.devteam.demofalldetector.myServices.ReminderService;
 
 public class Utils {
 

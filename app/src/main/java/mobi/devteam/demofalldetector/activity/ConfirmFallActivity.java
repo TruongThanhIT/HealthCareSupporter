@@ -94,7 +94,7 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
     ImageView imgBackground;
 
     private ArrayList<Relative> relativeArrayList;
-    private int current_call_position;
+    private int current_call_position = -1 ;
     private long time_key;
     private FirebaseUser mCurrentUser;
     private FirebaseDatabase mDatabase;
@@ -109,6 +109,8 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
     private Handler handler;
     private MediaPlayer mMediaPlayer;
     private TimerTask task_detect_handoff_call;
+    private boolean isCallEmergency;
+    private static final String EMERGENCY_TEL = "01282808428";
 
 
     @Override
@@ -442,24 +444,10 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
             public void onAnimationEnd(Animator animation) {
                 swipe_btn.setVisibility(View.GONE);
                 txtHoldOn.setVisibility(View.VISIBLE);
-
                 ObjectAnimator.ofFloat(txtHoldOn, "alpha", 0f, 1f).setDuration(2000).start();
                 current_call_position = 0;
-                try {
-                    make_a_call_to_list();
-
-                    task_detect_handoff_call = new TimerTask() {
-                        @Override
-                        public void run() {
-                            handler_relative_handoff();
-                        }
-                    };
-
-                    handler.postDelayed(task_detect_handoff_call, 40000);
-                } catch (Exception e) {
-                    Log.e(LOG_TAG, e.toString());
-                }
-
+                make_a_call_to_list();
+                isCallEmergency = false;
             }
 
             @Override
@@ -481,36 +469,17 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
             Log.e(LOG_TAG, "Relative list is zero");
             return;
         }
-
         if (current_call_position > relativeArrayList.size() - 1) {
             imgFall.setImageResource(R.drawable.fall_icon);
             txtHoldOn.setText(getString(R.string.calling_out_of_bound));
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-            builder.setTitle(getString(R.string.calling_emergency_service))
-                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            call_to_number("911");
-                        }
-                    })
-                    .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-
-                        }
-                    });
-            builder.show();
+            isCallEmergency = true;
+            call_to_number(EMERGENCY_TEL);
+            finish();
             return;
         }
-
 //        send_sms_with_location(relativeArrayList.get(current_call_position).getPhone(), mLocation);
-
         txtHoldOn.setText(getString(R.string.calling_someone, relativeArrayList.get(current_call_position).getName()));
-
         Relative relative = relativeArrayList.get(current_call_position);
-
-        //TODO: test here
         String first_letter = relative.getName().length() > 0 ? relative.getName().substring(0, 1).toUpperCase() : "R";
 
         TextDrawable textDrawable = TextDrawable.builder()
@@ -537,9 +506,7 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
         int c_number = c.getColumnIndex(CallLog.Calls.NUMBER);
         int c_date = c.getColumnIndex(CallLog.Calls.DATE);
         int c_duration = c.getColumnIndex(CallLog.Calls.DURATION);
-        int count = 0;
-        while (c.moveToLast() && count < 10) { //get last 10 calls log
-            count++;
+        while (c.moveToLast()) { //get last 10 calls log
             try {
                 String phNumber = c.getString(c_number);
                 Date callDayTime = new Date(Long.valueOf(c.getString(c_date)));
@@ -549,18 +516,17 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
 
                 if (phNumber.contains(current_phonenumber)) {
                     if (callDuration == 0) {
-                        if (Calendar.getInstance().getTimeInMillis() - callDayTime.getTime() < 60000) {
+                        // Chua xu ly tinh huong mot so sim co dang ky tin nhan thoai
+//                        if (Calendar.getInstance().getTimeInMillis() - callDayTime.getTime() < 60000) {
                             Log.e("NO_ANSWER_FROM", current_phonenumber);
-
                             current_call_position++;
                             make_a_call_to_list();
-                        }
+//                        }
                     } else {
                         //ANSWER THE CALL cancel handler
                         handler.removeCallbacks(task_detect_handoff_call);
                     }
                     break;
-
                 }
             } catch (Exception ignored) {
 
@@ -571,14 +537,12 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
     private void call_to_number(String tel) {
         Log.e(LOG_TAG, tel);
         Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + tel));
-
         //check for permission
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
                 //wtf happen ? send intent dial :)
                 Intent intent2 = new Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", tel, null));
                 startActivity(intent2);
-
                 return;
             }
         }
@@ -586,6 +550,14 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
         //permission is granted
         startActivity(intent);
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(current_call_position >= 0 && current_call_position <= relativeArrayList.size()){
+            handler_relative_handoff();
+        }
     }
 
 }
