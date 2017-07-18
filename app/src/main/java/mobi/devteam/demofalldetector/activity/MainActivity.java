@@ -27,7 +27,7 @@ import mobi.devteam.demofalldetector.fragment.ProfileFragment;
 import mobi.devteam.demofalldetector.fragment.RelativeListFragment;
 import mobi.devteam.demofalldetector.myServices.DetectFallService;
 import mobi.devteam.demofalldetector.myServices.GetLocationService;
-import mobi.devteam.demofalldetector.utils.ReminderService;
+import mobi.devteam.demofalldetector.myServices.ReminderService;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {

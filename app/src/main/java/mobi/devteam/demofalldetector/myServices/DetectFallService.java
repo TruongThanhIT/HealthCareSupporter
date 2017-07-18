@@ -5,7 +5,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -305,20 +304,16 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
         // create the notification
         m_notificationBuilder = new Notification.Builder(context)
                 .setContentTitle(getString(R.string.tittle_home))
-                .setContentText(getString(R.string.tittle_home))
-                .setSmallIcon(R.drawable.ic_launcher);
+                .setContentText(getString(R.string.open_app))
+                .setSmallIcon(R.drawable.ic_launcher_mini);
 
         // create the pending intent and add to the notification
         Intent intent = new Intent(context, DetectFallService.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
         m_notificationBuilder.setContentIntent(pendingIntent);
 
-
         // send the notification
         NotificationManager m_notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         m_notificationManager.notify(5363, m_notificationBuilder.build());
-
-
-
     }
 }

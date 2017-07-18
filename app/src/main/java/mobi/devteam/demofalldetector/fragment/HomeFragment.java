@@ -73,22 +73,18 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
     private Profile mProfile;
     private String TAG = "HomeFragment";
     private boolean startBindService;
-
     private DetectFallService m_service;
 
     private ServiceConnection m_serviceConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName className, IBinder service) {
             m_service = ((DetectFallService.MyBinder)service).getService();
         }
-
         public void onServiceDisconnected(ComponentName className) {
             m_service = null;
         }
     };
 
-    public HomeFragment() {
-
-    }
+    public HomeFragment() {}
 
     public static HomeFragment newInstance() {
         HomeFragment fragment = new HomeFragment();
@@ -100,9 +96,7 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-
-        }
+        if (getArguments() != null) {}
     }
 
     @Override
@@ -117,7 +111,6 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
         getActivity().setTitle(R.string.nav_home);
         initData();
         addEvents();
-
         return mView;
     }
 
@@ -151,7 +144,6 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
                     goto_profile_page();
                     return;
                 }
-
                 mProfile.setDetect_fall(isChecked);
                 profile_data.setValue(mProfile);
                 Intent intent = new Intent(getActivity(), DetectFallService.class);
@@ -161,8 +153,14 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
                     startBindService = true;
 
                 } else {
-                    //cancel service
-                    getActivity().stopService(intent);
+                    try{
+                        //cancel service
+                        getActivity().stopService(intent);
+                        if(startBindService)
+                            getActivity().unbindService(m_serviceConnection);
+                    }catch (Exception e){
+                        Log.e(TAG, e.toString());
+                    }
                 }
             }
         });
@@ -213,7 +211,6 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
         reminderArrayList = new ArrayList<>();
         reminderAdapter = new ReminderAdapter(getActivity(), reminderArrayList, this);
         rcv_reminders.setAdapter(reminderAdapter);
-
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         mAuth = FirebaseAuth.getInstance();
         reminder_data = database.getReference("reminders");
@@ -334,8 +331,14 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
         if (isChecked) {
             getActivity().startService(intent);
         } else {
-            //cancel service
-            getActivity().stopService(intent);
+            try{
+                //cancel service
+                getActivity().stopService(intent);
+                if(startBindService)
+                    getActivity().unbindService(m_serviceConnection);
+            }catch (Exception e){
+                Log.e(TAG, e.toString());
+            }
         }
         super.onResume();
     }

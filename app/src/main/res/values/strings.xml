@@ -90,6 +90,7 @@
     <string name="err_empty_name_reminder">Please input reminder name</string>
     <string name="confirm_you_are_fall">It\'s look like you are fallen. We are trying to get contact with your relative</string>
     <string name="tittle_home">Health care supporter</string>
+    <string name="open_app">Touch to open</string>
     <string name="tittle_relatives">Manage relative information</string>
     <string name="tittle_profile">Profile</string>
 
