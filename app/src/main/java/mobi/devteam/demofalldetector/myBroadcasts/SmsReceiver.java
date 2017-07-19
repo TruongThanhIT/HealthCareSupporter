@@ -164,9 +164,9 @@ public class SmsReceiver extends BroadcastReceiver {
                             if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                                     || ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                                 Log.e("PERMISSION_NOT_GRANT", "COARSE");
-                                send_sms_permission_deny(); //Close this for save money when testing :))
+//                                send_sms_permission_deny(); //Close this for save money when testing :))
                                 Log.e(TAG, "Sent denied get location sms");
-                                return;
+                                    return;
                             }
                         }
                         //request the last location
@@ -227,7 +227,7 @@ public class SmsReceiver extends BroadcastReceiver {
                     //update the mLocation, and wait for response
                     user_authed_request_location();
                 } else {
-                    send_sms_with_location(mLocation);
+//                    send_sms_with_location(mLocation);
                 }
             }
         }, WAITING_FOR_WIFI_AUTO_CONNECT);
@@ -249,7 +249,7 @@ public class SmsReceiver extends BroadcastReceiver {
             long time_span = System.currentTimeMillis() - loc.getTime();
             long minutes = (time_span / 1000) / 60;
 
-            String msg = "Last update: " + minutes + " minutes ago . See map at " + " http://mrga2411.ddns.net/do_an.php?lat=" + loc.getLatitude() + "&lng=" + loc.getLongitude() + "&radius=" + loc.getAccuracy() + "&units=kilometres";
+            String msg = "Last update: " + minutes + " minutes ago. See map at " + " http://mrga2411.ddns.net/do_an.php?lat=" + loc.getLatitude() + "&lng=" + loc.getLongitude() + "&radius=" + loc.getAccuracy() + "&units=kilometres";
             sms.sendTextMessage(strMsgSrc, null, msg, null, null);
         }
     }

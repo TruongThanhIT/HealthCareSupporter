@@ -12,6 +12,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import mobi.devteam.demofalldetector.model.Reminder;
+import mobi.devteam.demofalldetector.myServices.ReminderService;
 
 public class Utils {
 
@@ -53,7 +54,7 @@ public class Utils {
             rem.set(Calendar.MILLISECOND, 30);
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, rem.getTimeInMillis(), AlarmManager.INTERVAL_DAY, sender);
             //Nhan duoc reminder se set tiep reminder
-        } else  {
+        } else {
             //SHEDULE FOR WEEKLY
             if (rem.get(Calendar.DAY_OF_WEEK) > temp.get(Calendar.DAY_OF_WEEK)) {
                 //SHEDULE FOR NEXT WEEK

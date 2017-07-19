@@ -1,10 +1,15 @@
 package mobi.devteam.demofalldetector.myServices;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -16,6 +21,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
+import mobi.devteam.demofalldetector.R;
 import mobi.devteam.demofalldetector.activity.ConfirmFallActivity;
 import mobi.devteam.demofalldetector.model.Accelerator;
 import mobi.devteam.demofalldetector.model.FallDetectionStage;
@@ -52,6 +58,11 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
     private boolean isMale;
     private Profile mProfile;
     private FallDetectionStage fallDetectionStage;
+    private Notification.Builder m_notificationBuilder;
+
+
+    public DetectFallService() {
+    }
 
     @Override
     public void onCreate() {
@@ -147,16 +158,16 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
         }
 
         if (event.timestamp - lastTimestamp < TIME_PER_STAGE) {
-                return;
+            return;
         }
         lastTimestamp = event.timestamp;
 
         // alpha is calculated as t / (t + dT)
-        // with t, the low-pass filter's time-constant
-        // and dT, the event delivery rate
-
+        // with t, the low-pass filter's time-constant. t = 120
+        // and dT, the event delivery rate dT = 30
         //Bo loc chuyen dong , cang -> 1 thi bo loc cang giam (van dong nhieu)
         // -> 0 bo loc nhay hay (nguoi gia)
+
         gravity[0] = ALPHA_CONSTANT * gravity[0] + (1 - ALPHA_CONSTANT) * event.values[0]; //x
         gravity[1] = ALPHA_CONSTANT * gravity[1] + (1 - ALPHA_CONSTANT) * event.values[1]; //y
         gravity[2] = ALPHA_CONSTANT * gravity[2] + (1 - ALPHA_CONSTANT) * event.values[2]; //Z
@@ -194,8 +205,12 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
                 fallDetectionStage.setConfirm_ok(false);
                 fallDetectionStage.setRecovery(false);
                 fallDetectionStage.setTime(System.currentTimeMillis());
+                fallDetectionStage.setAccelerator_log(acceleratorArrayList);
 
-                mDatabase.getReference("fall_detection_logs").child(currentUser.getUid()).child(fallDetectionStage.getTime() + "").setValue(fallDetectionStage);
+                mDatabase.getReference("fall_detection_logs")
+                        .child(currentUser.getUid())
+                        .child(fallDetectionStage.getTime() + "")
+                        .setValue(fallDetectionStage);
 
                 waiting_for_recovery = true;
                 recoveryArrayList.clear();
@@ -204,41 +219,58 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
     }
 
     private void detect_recovery() {
+        double sum_x = 0;
+        double sum_y = 0;
+        double sum_z = 0;
+        for (Accelerator accelerator : recoveryArrayList) {
+            sum_x += Math.abs(accelerator.getX());
+            sum_y += Math.abs(accelerator.getY());
+            sum_z += Math.abs(accelerator.getZ());
+        }
+
         if (recoveryArrayList.size() < LIMIT_SIZE_OF_STATE_RECOVERY) { //still waiting for recovery
             //calculate for sum of movement acceleration
-            double sum_x = 0;
-            double sum_y = 0;
-            double sum_z = 0;
-            for (Accelerator accelerator : recoveryArrayList) {
-                sum_x += Math.abs(accelerator.getX());
-                sum_y += Math.abs(accelerator.getY());
-                sum_z += Math.abs(accelerator.getZ());
-            }
-
             Log.e("WAITING_RECOVERY", sum_x + " - " + sum_y + " - " + sum_z);
 
             if (sum_x > threshold_3 || sum_y > threshold_3 || sum_z > threshold_3) { //Threshold 3
 
-                fallDetectionStage.setRecovery(true);
                 mDatabase.getReference("fall_detection_logs")
                         .child(currentUser.getUid())
                         .child(fallDetectionStage.getTime() + "")
                         .child("recovery")
                         .setValue(true);
-//                fallDetectionStage = null;
+
+                mDatabase.getReference("fall_detection_logs")
+                        .child(currentUser.getUid())
+                        .child(fallDetectionStage.getTime() + "")
+                        .child("recovery_sum")
+                        .setValue(new Accelerator(sum_x, sum_y, sum_z));
+
+
                 waiting_for_recovery = false; // ok i'm recovery
                 recoveryArrayList.clear(); // clear recovery stages
+                acceleratorArrayList.clear();
             }
 
         } else {
+            mDatabase.getReference("fall_detection_logs")
+                    .child(currentUser.getUid())
+                    .child(fallDetectionStage.getTime() + "")
+                    .child("recovery_sum")
+                    .setValue(new Accelerator(sum_x, sum_y, sum_z));
+
             waiting_for_recovery = false;
             //Didn't get recover after 3s
+            recoveryArrayList.clear();
+            acceleratorArrayList.clear();
             Intent dialogIntent = new Intent(this, ConfirmFallActivity.class);
             dialogIntent.putExtra("time", fallDetectionStage.getTime());
             dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(dialogIntent);
-            stopSelf();
-//            fallDetectionStage = null;
+
+            //TODO: should handler this by pause the service then we can send the broadcast to start the serv
+            stopForeground(true);
+
         }
 
     }
@@ -270,6 +302,8 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
         Sensor mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
         Log.e("onstartcommand", "onstart");
+        addNotifiddcation(this);
+        startForeground(5363, m_notificationBuilder.build());
         return START_STICKY;
     }
 
@@ -277,5 +311,28 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
     @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    public class MyBinder extends Binder {
+        public DetectFallService getService() {
+            return DetectFallService.this;
+        }
+    }
+
+    private void addNotifiddcation(Context context) {
+        // create the notification
+        m_notificationBuilder = new Notification.Builder(context)
+                .setContentTitle(getString(R.string.tittle_home))
+                .setContentText(getString(R.string.open_app))
+                .setSmallIcon(R.drawable.ic_launcher_mini);
+
+        // create the pending intent and add to the notification
+        Intent intent = new Intent(context, DetectFallService.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+        m_notificationBuilder.setContentIntent(pendingIntent);
+
+        // send the notification
+        NotificationManager m_notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        m_notificationManager.notify(5363, m_notificationBuilder.build());
     }
 }

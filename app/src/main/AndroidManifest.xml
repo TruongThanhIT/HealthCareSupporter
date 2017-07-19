@@ -18,13 +18,13 @@
     <!-- request -->
     <uses-permission android:name="android.permission.READ_CALL_LOG" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
 
     <!-- request -->
     <uses-permission android:name="android.permission.SEND_SMS" />
     <uses-permission android:name="android.permission.READ_SMS" />
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
+
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
@@ -50,6 +50,7 @@
             android:name=".activity.TestActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:launchMode="singleTop"
             android:name=".activity.MainActivity"
             android:label="@string/title_activity_main"
             android:screenOrientation="portrait"
@@ -72,7 +73,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
 
         <service
-            android:name=".utils.ReminderService"
+            android:name=".myServices.ReminderService"
             android:enabled="true"
             android:exported="false">
             <intent-filter>

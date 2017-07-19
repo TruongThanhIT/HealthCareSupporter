@@ -1,4 +1,4 @@
-package mobi.devteam.demofalldetector.utils;
+package mobi.devteam.demofalldetector.myServices;
 
 import android.app.AlarmManager;
 import android.app.Notification;
@@ -17,6 +17,8 @@ import java.util.Calendar;
 import mobi.devteam.demofalldetector.R;
 import mobi.devteam.demofalldetector.activity.MainActivity;
 import mobi.devteam.demofalldetector.model.Reminder;
+import mobi.devteam.demofalldetector.utils.Constants;
+import mobi.devteam.demofalldetector.utils.Utils;
 
 public class ReminderService extends Service {
     private static final int TIME_SNOOZE = 10 * 60 * 1000;
@@ -109,7 +111,7 @@ public class ReminderService extends Service {
                     .setTicker(reminder.getName())
                     .setSubText(Utils.get_calendar_date(Calendar.getInstance()))
                     .setContentText(reminder.getNote())
-                    .setSmallIcon(R.drawable.ic_alarm)
+                    .setSmallIcon(R.drawable.ic_launcher_mini)
                     .setOngoing(true)
                     .setAutoCancel(true)
                     .setContentIntent(pendingIntent)

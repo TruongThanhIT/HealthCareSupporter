@@ -1,12 +1,19 @@
 package mobi.devteam.demofalldetector.fragment;
 
+import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -16,6 +23,7 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.ProgressBar;
 import android.widget.Switch;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -41,12 +49,17 @@ import mobi.devteam.demofalldetector.adapter.ReminderAdapter;
 import mobi.devteam.demofalldetector.model.Profile;
 import mobi.devteam.demofalldetector.model.Reminder;
 import mobi.devteam.demofalldetector.myInterface.OnRecyclerItemClickListener;
+import mobi.devteam.demofalldetector.myInterface.OnRequestPermissionListener;
 import mobi.devteam.demofalldetector.myServices.DetectFallService;
 import mobi.devteam.demofalldetector.myServices.GetLocationService;
+import mobi.devteam.demofalldetector.utils.AppPermission;
 import mobi.devteam.demofalldetector.utils.Utils;
 
-public class HomeFragment extends Fragment implements OnRecyclerItemClickListener {
+import static android.content.Context.BIND_AUTO_CREATE;
 
+public class HomeFragment extends Fragment implements OnRecyclerItemClickListener, OnRequestPermissionListener {
+
+    private static final int MY_PERMISSIONS_REQUEST = 235;
     private final int ADD_REMINDER_REQUEST = 123;
     @BindView(R.id.rcv_reminders)
     RecyclerView rcv_reminders;
@@ -65,6 +78,23 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
     private int mLong_click_selected;
     private DatabaseReference profile_data;
     private Profile mProfile;
+    private String TAG = "HomeFragment";
+    private boolean startBindService;
+
+    private DetectFallService m_service;
+
+    private AppPermission appPermission;
+
+    private ServiceConnection m_serviceConnection = new ServiceConnection() {
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            m_service = ((DetectFallService.MyBinder) service).getService();
+        }
+
+        public void onServiceDisconnected(ComponentName className) {
+            m_service = null;
+        }
+    };
+    private boolean isWaitingForSettingResult = false;
 
     public HomeFragment() {
 
@@ -97,6 +127,8 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
         getActivity().setTitle(R.string.nav_home);
         initData();
         addEvents();
+
+        appPermission = new AppPermission(getActivity(), this);
 
         return mView;
     }
@@ -134,13 +166,11 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
 
                 mProfile.setDetect_fall(isChecked);
                 profile_data.setValue(mProfile);
-                Intent intent = new Intent(getActivity(), DetectFallService.class);
-                if (isChecked) {
-                    getActivity().startService(intent);
-                } else {
-                    //cancel service
-                    getActivity().stopService(intent);
-                }
+
+                if (appPermission.check_permission())
+                    start_fall_detect_service();
+                else
+                    appPermission.request_permission();
             }
         });
 
@@ -155,15 +185,43 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
                 mProfile.setAllow_find(isChecked);
                 profile_data.setValue(mProfile);
 
-                Intent intent = new Intent(getActivity(), GetLocationService.class);
-                if (isChecked) {
-                    getActivity().startService(intent);
-                } else {
-                    //cancel service
-                    getActivity().stopService(intent);
-                }
+                if (appPermission.check_permission())
+                    start_allow_find_location_service();
+                else
+                    appPermission.request_permission();
             }
         });
+    }
+
+    private void start_allow_find_location_service() {
+        boolean isChecked = sw_allow_find.isChecked();
+        Intent intent = new Intent(getActivity(), GetLocationService.class);
+        if (isChecked) {
+            getActivity().startService(intent);
+        } else {
+            //cancel service
+            getActivity().stopService(intent);
+        }
+    }
+
+    private void start_fall_detect_service() {
+        boolean isChecked = sw_allow_find.isChecked();
+        Intent intent = new Intent(getActivity(), DetectFallService.class);
+        if (isChecked) {
+            getActivity().startService(intent);
+            getActivity().bindService(intent, m_serviceConnection, BIND_AUTO_CREATE);
+            startBindService = true;
+
+        } else {
+            try {
+                //cancel service
+                getActivity().stopService(intent);
+                if (startBindService)
+                    getActivity().unbindService(m_serviceConnection);
+            } catch (Exception e) {
+                Log.e(TAG, e.toString());
+            }
+        }
     }
 
     private void goto_profile_page() {
@@ -178,12 +236,6 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
                 });
         builder.show();
 
-//        MainActivity activity = (MainActivity) getActivity();
-//        android.support.v4.app.FragmentManager supportFragmentManager = activity.getSupportFragmentManager();
-//
-//        android.support.v4.app.FragmentTransaction fragmentTransaction = supportFragmentManager.beginTransaction();
-//        fragmentTransaction.replace(R.id.frame_container, ProfileFragment.newInstance());
-//        fragmentTransaction.commit();
     }
 
     private void initData() {
@@ -249,6 +301,12 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
     public void onDestroyView() {
         super.onDestroyView();
         bind.unbind();
+        try {
+            if (startBindService)
+                getActivity().unbindService(m_serviceConnection);
+        } catch (Exception e) {
+            Log.e(TAG, e.toString());
+        }
     }
 
     @Override
@@ -300,14 +358,40 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
 
     @Override
     public void onResume() {
-        Intent intent = new Intent(getActivity(), GetLocationService.class);
-        boolean isChecked = sw_fall_detect.isChecked();
-        if (isChecked) {
-            getActivity().startService(intent);
-        } else {
-            //cancel service
-            getActivity().stopService(intent);
+        if (isWaitingForSettingResult) {
+            isWaitingForSettingResult = false;
+            start_fall_detect_service();
+            start_allow_find_location_service();
+            return;
         }
         super.onResume();
+    }
+
+    @Override
+    public void showSettingIntent() {
+        isWaitingForSettingResult = true;
+        Intent intent = new Intent(Settings.ACTION_SETTINGS);
+        startActivity(intent);
+    }
+
+    @Override
+    public void requestPermissions(String[] permissions) {
+        requestPermissions(permissions, MY_PERMISSIONS_REQUEST);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == MY_PERMISSIONS_REQUEST && permissions.length > 0) {
+            for (int grant : grantResults) {
+                if (grant != PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(m_service, getString(R.string.request_permissions_deny), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            }
+
+            start_fall_detect_service();
+            start_allow_find_location_service();
+        }
     }
 }

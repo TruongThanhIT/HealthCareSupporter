@@ -1,11 +1,14 @@
 package mobi.devteam.demofalldetector.model;
 
 
+import java.util.ArrayList;
+
 public class FallDetectionStage {
     private double thresh_1;
     private double thresh_2;
     private double thresh_3;
     private long time;
+    private ArrayList<Accelerator> accelerator_log;
 
     private boolean confirm_ok;
     private boolean recovery;
@@ -59,5 +62,13 @@ public class FallDetectionStage {
 
     public void setRecovery(boolean recovery) {
         this.recovery = recovery;
+    }
+
+    public ArrayList<Accelerator> getAccelerator_log() {
+        return accelerator_log;
+    }
+
+    public void setAccelerator_log(ArrayList<Accelerator> accelerator_log) {
+        this.accelerator_log = accelerator_log;
     }
 }
