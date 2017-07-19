@@ -94,11 +94,9 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
             m_service = null;
         }
     };
-    private boolean isWaitingForSettingResult = false;
+    private boolean isWaitingForSettingResult;
 
-    public HomeFragment() {
-
-    }
+    public HomeFragment() {}
 
     public static HomeFragment newInstance() {
         HomeFragment fragment = new HomeFragment();
@@ -110,9 +108,6 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-
-        }
     }
 
     @Override
@@ -205,7 +200,7 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
     }
 
     private void start_fall_detect_service() {
-        boolean isChecked = sw_allow_find.isChecked();
+        boolean isChecked = sw_fall_detect.isChecked();
         Intent intent = new Intent(getActivity(), DetectFallService.class);
         if (isChecked) {
             getActivity().startService(intent);
@@ -389,7 +384,6 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
                     return;
                 }
             }
-
             start_fall_detect_service();
             start_allow_find_location_service();
         }
