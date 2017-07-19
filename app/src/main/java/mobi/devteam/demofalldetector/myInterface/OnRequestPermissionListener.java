@@ -1,9 +1,5 @@
 package mobi.devteam.demofalldetector.myInterface;
 
-/**
- * Created by Administrator on 7/18/2017.
- */
-
 public interface OnRequestPermissionListener {
 
     /**

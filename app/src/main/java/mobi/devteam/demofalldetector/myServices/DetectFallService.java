@@ -218,7 +218,7 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
         }
     }
 
-    private void detect_recovery() {
+    private void detect_recovery(){
         double sum_x = 0;
         double sum_y = 0;
         double sum_z = 0;
@@ -245,8 +245,6 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
                         .child(fallDetectionStage.getTime() + "")
                         .child("recovery_sum")
                         .setValue(new Accelerator(sum_x, sum_y, sum_z));
-
-
                 waiting_for_recovery = false; // ok i'm recovery
                 recoveryArrayList.clear(); // clear recovery stages
                 acceleratorArrayList.clear();
@@ -267,10 +265,7 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
             dialogIntent.putExtra("time", fallDetectionStage.getTime());
             dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(dialogIntent);
-
-            //TODO: should handler this by pause the service then we can send the broadcast to start the serv
             stopForeground(true);
-
         }
 
     }

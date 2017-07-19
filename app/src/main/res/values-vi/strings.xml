@@ -107,8 +107,8 @@
     <string name="friday">Thứ sáu</string>
     <string name="saturday">Thứ bảy</string>
 
-    <string name="profile_sensitive">Do nhay</string>
-    <string name="request_permissions_desc">We have to request these permissions to get the app working correctly\nOpen Setting -> Permission -> Allow all the request</string>
-    <string name="request_permissions">Request permissions</string>
-    <string name="request_permissions_deny">Sorry, You have to allow all the permission to get the app working correctly</string>
+    <string name="profile_sensitive">Độ nhạy</string>
+    <string name="request_permissions_desc">Hãy mở quyền để ứng dụng có thể hoạt động tốt nhất\nMở cài đặt -> Phân quyền -> Cho phép tất cả các quyền truy cập</string>
+    <string name="request_permissions">Yêu cầu phân quyền</string>
+    <string name="request_permissions_deny">Xin lỗi, Bạn vui lòng bật tất cả các quyền được yêu cầu để ứng dụng có thể hoạt động tốt nhất</string>
 </resources>
