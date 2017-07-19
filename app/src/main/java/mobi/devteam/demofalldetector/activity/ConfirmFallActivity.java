@@ -3,9 +3,7 @@ package mobi.devteam.demofalldetector.activity;
 import android.Manifest;
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -14,7 +12,6 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
-import android.nfc.Tag;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -57,7 +54,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.TimerTask;
@@ -94,7 +90,7 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
     ImageView imgBackground;
 
     private ArrayList<Relative> relativeArrayList;
-    private int current_call_position = -1 ;
+    private int current_call_position = -1;
     private long time_key;
     private FirebaseUser mCurrentUser;
     private FirebaseDatabase mDatabase;
@@ -415,8 +411,10 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
             });
 
             hideSwipe.start();
-            Intent intent = new Intent(this, DetectFallService.class);
-            this.startService(intent);
+
+            Intent intent = new Intent();
+            intent.setAction(DetectFallService.MY_UNPAUSED_SERVICE_ACTION);
+            sendBroadcast(intent);
         }
     }
 
@@ -518,9 +516,9 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
                     if (callDuration == 0) {
                         // Chua xu ly tinh huong mot so sim co dang ky tin nhan thoai
 //                        if (Calendar.getInstance().getTimeInMillis() - callDayTime.getTime() < 60000) {
-                            Log.e("NO_ANSWER_FROM", current_phonenumber);
-                            current_call_position++;
-                            make_a_call_to_list();
+                        Log.e("NO_ANSWER_FROM", current_phonenumber);
+                        current_call_position++;
+                        make_a_call_to_list();
 //                        }
                     } else {
                         //ANSWER THE CALL cancel handler
@@ -555,10 +553,18 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
     @Override
     protected void onResume() {
         super.onResume();
-        if(current_call_position >= 0 && current_call_position <= relativeArrayList.size()){
+        if (current_call_position >= 0 && current_call_position <= relativeArrayList.size()) {
             handler_relative_handoff();
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        Intent intent = new Intent();
+        intent.setAction(DetectFallService.MY_UNPAUSED_SERVICE_ACTION);
+        sendBroadcast(intent);
+
+        super.onDestroy();
+    }
 }
 

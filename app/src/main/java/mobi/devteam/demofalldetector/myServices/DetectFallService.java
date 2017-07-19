@@ -3,8 +3,10 @@ package mobi.devteam.demofalldetector.myServices;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -35,6 +37,8 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
     private static final long TIME_PER_STAGE = 120; //ms
     private static final float ALPHA_CONSTANT = 0.8f;
 
+    public static final String MY_UNPAUSED_SERVICE_ACTION = "my_unpaused_service_action";
+
     private double[] gravity = new double[3];
     private double[] linear_acceleration = new double[3];
 
@@ -60,6 +64,14 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
     private FallDetectionStage fallDetectionStage;
     private Notification.Builder m_notificationBuilder;
 
+    private boolean service_is_paused = false;
+
+    private BroadcastReceiver myReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            service_is_paused = false;
+        }
+    };
 
     public DetectFallService() {
     }
@@ -147,13 +159,19 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
 
     @Override
     public void onDestroy() {
-        mSensorManager.unregisterListener(this);
+        try {
+            mSensorManager.unregisterListener(this);
+            unregisterReceiver(myReceiver);
+        }catch (Exception e){
+
+        }
+
         super.onDestroy();
     }
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        if (mProfile == null) {
+        if (mProfile == null || service_is_paused) {
             return;
         }
 
@@ -265,7 +283,8 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
             dialogIntent.putExtra("time", fallDetectionStage.getTime());
             dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(dialogIntent);
-            stopForeground(true);
+
+            service_is_paused = true;
         }
 
     }
@@ -299,6 +318,10 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
         Log.e("onstartcommand", "onstart");
         addNotifiddcation(this);
         startForeground(5363, m_notificationBuilder.build());
+
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(MY_UNPAUSED_SERVICE_ACTION);
+        registerReceiver(myReceiver,intentFilter);
         return START_STICKY;
     }
 
