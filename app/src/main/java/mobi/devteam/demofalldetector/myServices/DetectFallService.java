@@ -34,7 +34,7 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
 
     private static final int LIMIT_SIZE_OF_STATE = 30;//3s
     private static final int LIMIT_SIZE_OF_STATE_RECOVERY = 60;//6s
-    private static final long TIME_PER_STAGE = 120; //ms
+    private static final long TIME_PER_STAGE = 100 * 1000000; //ms - 1000000 is nano second
     private static final float ALPHA_CONSTANT = 0.8f;
 
     public static final String MY_UNPAUSED_SERVICE_ACTION = "my_unpaused_service_action";
@@ -70,7 +70,7 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
         @Override
         public void onReceive(Context context, Intent intent) {
             recoveryArrayList.clear();
-            acceleratorArrayList.clear();
+//            acceleratorArrayList.clear();
             service_is_paused = false;
         }
     };
@@ -164,7 +164,7 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
         try {
             mSensorManager.unregisterListener(this);
             unregisterReceiver(myReceiver);
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
 
@@ -176,7 +176,7 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
         if (mProfile == null || service_is_paused) {
             return;
         }
-
+        long l = event.timestamp - lastTimestamp;
         if (event.timestamp - lastTimestamp < TIME_PER_STAGE) {
             return;
         }
@@ -238,7 +238,7 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
         }
     }
 
-    private void detect_recovery(){
+    private void detect_recovery() {
         double sum_x = 0;
         double sum_y = 0;
         double sum_z = 0;
@@ -267,7 +267,7 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
                         .setValue(new Accelerator(sum_x, sum_y, sum_z));
                 waiting_for_recovery = false; // ok i'm recovery
                 recoveryArrayList.clear(); // clear recovery stages
-                acceleratorArrayList.clear();
+//                acceleratorArrayList.clear();
             }
 
         } else {
@@ -280,7 +280,7 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
             waiting_for_recovery = false;
             //Didn't get recover after 3s
             recoveryArrayList.clear();
-            acceleratorArrayList.clear();
+//            acceleratorArrayList.clear();
             Intent dialogIntent = new Intent(this, ConfirmFallActivity.class);
             dialogIntent.putExtra("time", fallDetectionStage.getTime());
             dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -323,7 +323,7 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(MY_UNPAUSED_SERVICE_ACTION);
-        registerReceiver(myReceiver,intentFilter);
+        registerReceiver(myReceiver, intentFilter);
         return START_STICKY;
     }
 

@@ -96,7 +96,8 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
     };
     private boolean isWaitingForSettingResult;
 
-    public HomeFragment() {}
+    public HomeFragment() {
+    }
 
     public static HomeFragment newInstance() {
         HomeFragment fragment = new HomeFragment();
@@ -203,9 +204,11 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
         boolean isChecked = sw_fall_detect.isChecked();
         Intent intent = new Intent(getActivity(), DetectFallService.class);
         if (isChecked) {
-            getActivity().startService(intent);
-            getActivity().bindService(intent, m_serviceConnection, BIND_AUTO_CREATE);
-            startBindService = true;
+            if (!Utils.isMyServiceRunning(getActivity(), DetectFallService.class)) {
+                getActivity().startService(intent);
+                getActivity().bindService(intent, m_serviceConnection, BIND_AUTO_CREATE);
+                startBindService = true;
+            }
 
         } else {
             try {

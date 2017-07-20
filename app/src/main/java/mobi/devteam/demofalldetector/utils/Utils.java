@@ -1,6 +1,7 @@
 package mobi.devteam.demofalldetector.utils;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -85,5 +86,15 @@ public class Utils {
         AlarmManager alarmManager = (AlarmManager) mActivity.getBaseContext().
                 getSystemService(Context.ALARM_SERVICE);
         alarmManager.cancel(sender);
+    }
+
+    public static boolean isMyServiceRunning(Context context, Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 }
