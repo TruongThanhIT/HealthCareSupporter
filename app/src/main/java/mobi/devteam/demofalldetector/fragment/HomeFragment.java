@@ -353,13 +353,13 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
 
     @Override
     public void onResume() {
+        super.onResume();
         if (isWaitingForSettingResult) {
             isWaitingForSettingResult = false;
             start_fall_detect_service();
             start_allow_find_location_service();
             return;
         }
-        super.onResume();
     }
 
     @Override
@@ -380,7 +380,7 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
         if (requestCode == MY_PERMISSIONS_REQUEST && permissions.length > 0) {
             for (int grant : grantResults) {
                 if (grant != PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(m_service, getString(R.string.request_permissions_deny), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), getString(R.string.request_permissions_deny), Toast.LENGTH_SHORT).show();
                     return;
                 }
             }
