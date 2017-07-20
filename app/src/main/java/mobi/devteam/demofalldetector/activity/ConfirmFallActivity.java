@@ -187,8 +187,13 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
         long[] pattern = {0, 200, 200}; //0 to start now, 200 to vibrate 200 ms, 0 to sleep for 0 ms.
         vibrator.vibrate(pattern, 0);
 
+        AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+        int streamMaxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC,streamMaxVolume,0);
+
         mMediaPlayer = MediaPlayer.create(this, R.raw.fall_alarm);
         mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+
 
         mMediaPlayer.setLooping(true);
         mMediaPlayer.start();

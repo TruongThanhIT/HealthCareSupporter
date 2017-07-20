@@ -69,6 +69,8 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
     private BroadcastReceiver myReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            recoveryArrayList.clear();
+            acceleratorArrayList.clear();
             service_is_paused = false;
         }
     };
@@ -223,7 +225,7 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
                 fallDetectionStage.setConfirm_ok(false);
                 fallDetectionStage.setRecovery(false);
                 fallDetectionStage.setTime(System.currentTimeMillis());
-                fallDetectionStage.setAccelerator_log(acceleratorArrayList);
+                fallDetectionStage.setAccelerator_log(current_accelerator);
 
                 mDatabase.getReference("fall_detection_logs")
                         .child(currentUser.getUid())
