@@ -162,7 +162,7 @@ public class ProfileFragment extends Fragment implements ValueEventListener {
         double height = 0;
         int age = 0;
         try {
-            height = Double.parseDouble(edtHeight.getText().toString());
+            height = Double.parseDouble(edtHeight.getText().toString()) / 100;
             weight = Double.parseDouble(edtWeight.getText().toString());
             age = Integer.parseInt(edtAge.getText().toString());
         } catch (Exception e) {

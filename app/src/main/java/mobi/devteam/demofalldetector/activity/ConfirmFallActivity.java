@@ -482,7 +482,6 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
             txtHoldOn.setText(getString(R.string.calling_out_of_bound));
             isCallEmergency = true;
             call_to_number(EMERGENCY_TEL);
-            finish();
             return;
         }
 //        send_sms_with_location(relativeArrayList.get(current_call_position).getPhone(), mLocation);
@@ -563,7 +562,7 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
     @Override
     protected void onResume() {
         super.onResume();
-        if (current_call_position >= 0 && current_call_position <= relativeArrayList.size()) {
+        if (current_call_position >= 0 && current_call_position < relativeArrayList.size()) {
             handler_relative_handoff();
         }
     }
@@ -578,6 +577,7 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
                 sendBroadcast(intent);
             }
         }, 3000);
+        finish();
 
         super.onDestroy();
     }
