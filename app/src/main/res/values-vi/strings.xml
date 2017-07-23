@@ -74,7 +74,7 @@
     <string name="calling_emergency_service">Đang gọi cấp cứu</string>
     <string name="home_enable_fall_detect">Bật phát hiện té ngã</string>
     <string name="home_allow_tracking">Cho phép truy cập vị trí</string>
-    <string name="profile_height">Chiều cao (m)</string>
+    <string name="profile_height">Chiều cao (cm)</string>
     <string name="profile_weight">Cân nặng (kg)</string>
     <string name="profile_is_male">Nam</string>
     <string name="profile_is_female">Nữ</string>

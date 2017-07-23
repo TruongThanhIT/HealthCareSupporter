@@ -68,7 +68,7 @@
     <string name="calling_emergency_service">Calling emergency service</string>
     <string name="home_enable_fall_detect">Enable fall detect</string>
     <string name="home_allow_tracking">Allow relatives find me</string>
-    <string name="profile_height">Height (m)</string>
+    <string name="profile_height">Height (cm)</string>
     <string name="profile_weight">Weight (kg)</string>
     <string name="profile_is_male">Male</string>
     <string name="profile_is_female">Female</string>

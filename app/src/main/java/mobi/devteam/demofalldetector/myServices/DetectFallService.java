@@ -285,7 +285,6 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
             dialogIntent.putExtra("time", fallDetectionStage.getTime());
             dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(dialogIntent);
-
             service_is_paused = true;
         }
 
