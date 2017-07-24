@@ -3,15 +3,14 @@ package mobi.devteam.demofalldetector.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import com.dd.processbutton.iml.ActionProcessButton;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -35,20 +34,25 @@ import mobi.devteam.demofalldetector.R;
 public class LoginActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
     private static final int RC_SIGN_IN = 243;
     private final String TAG = "LoginActivity";
-    @BindView(R.id.btnSignIn)
-    Button btnSignIn;
+
     @BindView(R.id.txtUserName)
-    EditText edtUserName;
+    TextInputEditText edtUserName;
+
     @BindView(R.id.txtPassword)
-    EditText edtPassword;
-//    @BindView(R.id.txtForgetPassword)
+    TextInputEditText edtPassword;
+    //    @BindView(R.id.txtForgetPassword)
 //    TextView txtForgetPassword;
     @BindView(R.id.btnSignUp)
-    Button btnSignUp;
+    ActionProcessButton btnSignUp;
+
     @BindView(R.id.btnSignInWithGoogle)
     SignInButton btnSignInWithGoogle;
+
     @BindView(R.id.progressBar)
     ProgressBar progressBar;
+
+    @BindView(R.id.btnSignIn)
+    ActionProcessButton btnSignIn;
 
     private GoogleApiClient mGoogleApiClient;
 
@@ -97,13 +101,17 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             return;
         }
 
-        progressBar.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.GONE);
+
+        btnSignUp.setMode(ActionProcessButton.Mode.PROGRESS);
 
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
+
+                        btnSignUp.setMode(ActionProcessButton.Mode.ENDLESS);
 
                         if (!task.isSuccessful()) {
                             Toast.makeText(LoginActivity.this, R.string.err_invalid_info_login,
@@ -125,11 +133,16 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             return;
         }
 
+        progressBar.setVisibility(View.GONE);
+        btnSignIn.setMode(ActionProcessButton.Mode.PROGRESS);
+
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
+
+                        btnSignIn.setMode(ActionProcessButton.Mode.ENDLESS);
 
                         // If sign in fails, display a message to the user. If sign in succeeds
                         // the auth state listener will be notified and logic to handle the
