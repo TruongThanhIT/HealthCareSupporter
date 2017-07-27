@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.dd.processbutton.iml.ActionProcessButton;
 import com.github.jjobes.slidedaytimepicker.SlideDayTimeListener;
 import com.github.jjobes.slidedaytimepicker.SlideDayTimePicker;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -36,12 +37,14 @@ import com.vansuita.pickimage.bundle.PickSetup;
 import com.vansuita.pickimage.dialog.PickImageDialog;
 import com.vansuita.pickimage.listeners.IPickResult;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import mobi.devteam.demofalldetector.R;
+import mobi.devteam.demofalldetector.model.MyNotification;
 import mobi.devteam.demofalldetector.model.Reminder;
 import mobi.devteam.demofalldetector.utils.ReminderType;
 import mobi.devteam.demofalldetector.utils.Tools;
@@ -65,8 +68,16 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
     EditText edtNote;
     @BindView(R.id.txtTime)
     TextView txtTime;
+
+    @BindView(R.id.btnAddReminder)
+    ActionProcessButton btnAddReminder;
+
+    @BindView(R.id.btnAddAlarm)
+    ActionProcessButton btnAddAlarm;
+
     FirebaseAuth mAuth;
     DatabaseReference reminder_data;
+    ArrayList<MyNotification> myNotificationArrayList;
     private boolean is_add_mode = true;
     private Reminder reminder;
     private Calendar now;
@@ -75,7 +86,6 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
     private Calendar alarm;
     private StorageReference mStorageRef;
     private boolean isImageChanged = false;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,6 +127,8 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
         end = Calendar.getInstance();
         alarm = Calendar.getInstance();
 
+        myNotificationArrayList = new ArrayList<>();
+
         if (!is_add_mode) {
 
             Picasso.with(this)
@@ -137,10 +149,14 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
 
             spinReminderRepeat.setSelection(reminder.getRepeat_type());
 
+            btnAddReminder.setText(R.string.ae_reminder_update_reminder);
+
         } else {
             txtStart.setText(Utils.get_calendar_date(now));
             txtEnd.setText(Utils.get_calendar_date(now));
             txtTime.setText(Utils.get_calendar_time(now));
+
+            btnAddReminder.setText(R.string.ae_reminder_add_reminder);
         }
     }
 
@@ -186,7 +202,7 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
      * Type: week -> get dow & hour
      */
 
-    @OnClick(R.id.txtTime)
+    @OnClick(R.id.btnAddAlarm)
     void pickTime() {
         int selected_reminder = get_selected_reminder();
         if (selected_reminder == ReminderType.TYPE_DAILY || selected_reminder == ReminderType.TYPE_NEVER) {
@@ -196,11 +212,17 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
                     alarm.set(Calendar.HOUR_OF_DAY, hourOfDay);
                     alarm.set(Calendar.MINUTE, minute);
 
-                    txtTime.setText(Utils.get_calendar_time(alarm));
+                    spinReminderRepeat.setClickable(false);
+                    spinReminderRepeat.setAlpha(0.8f);
+//                    txtTime.setText(Utils.get_calendar_time(alarm));
+                    MyNotification myNotification = new MyNotification();
+                    myNotification.setHourAlarm(alarm.getTimeInMillis());
+                    myNotification.setPendingId(Utils.getRandomPendingId());
+                    myNotificationArrayList.add(myNotification);
                 }
             }, now.get(Calendar.HOUR_OF_DAY), now.get(Calendar.MINUTE), true);
             timePickerDialog.show();
-        } else{
+        } else {
             new SlideDayTimePicker.Builder(getSupportFragmentManager())
                     .setListener(new SlideDayTimeListener() {
                         @Override
@@ -210,6 +232,14 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
                             alarm.set(Calendar.MINUTE, minute);
                             String[] dayOfWeek = getResources().getStringArray(R.array.days_array);
                             txtTime.setText(dayOfWeek[day - 1] + ", " + hour + ":" + minute);
+                            spinReminderRepeat.setClickable(false);
+                            spinReminderRepeat.setAlpha(0.8f);
+
+                            MyNotification myNotification = new MyNotification();
+                            myNotification.setHourAlarm(alarm.getTimeInMillis());
+                            myNotification.setPendingId(Utils.getRandomPendingId());
+
+                            myNotificationArrayList.add(myNotification);
                         }
                     })
                     .setInitialDay(alarm.get(Calendar.DAY_OF_WEEK))
