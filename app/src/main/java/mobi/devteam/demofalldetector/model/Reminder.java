@@ -22,11 +22,9 @@ public class Reminder implements Parcelable {
     private String name;
     private long start; //time in ms
     private long end;
-    private long hour_alarm;
     private int repeat_type;
     private String note;
     private String thumb;
-    private int pendingId;
     private ArrayList<MyNotification> alarms;
 
     public Reminder() {
@@ -37,11 +35,10 @@ public class Reminder implements Parcelable {
         name = in.readString();
         start = in.readLong();
         end = in.readLong();
-        hour_alarm = in.readLong();
         repeat_type = in.readInt();
         note = in.readString();
         thumb = in.readString();
-        pendingId = in.readInt();
+        alarms = in.createTypedArrayList(MyNotification.CREATOR);
     }
 
     @Override
@@ -50,11 +47,10 @@ public class Reminder implements Parcelable {
         dest.writeString(name);
         dest.writeLong(start);
         dest.writeLong(end);
-        dest.writeLong(hour_alarm);
         dest.writeInt(repeat_type);
         dest.writeString(note);
         dest.writeString(thumb);
-        dest.writeInt(pendingId);
+        dest.writeTypedList(alarms);
     }
 
     @Override
@@ -94,14 +90,6 @@ public class Reminder implements Parcelable {
         this.end = end;
     }
 
-    public long getHour_alarm() {
-        return hour_alarm;
-    }
-
-    public void setHour_alarm(long hour_alarm) {
-        this.hour_alarm = hour_alarm;
-    }
-
     public int getRepeat_type() {
         return repeat_type;
     }
@@ -126,12 +114,12 @@ public class Reminder implements Parcelable {
         this.thumb = thumb;
     }
 
-    public int getPendingId() {
-        return pendingId;
+    public ArrayList<MyNotification> getAlarms() {
+        return alarms;
     }
 
-    public void setPendingId(int pendingId) {
-        this.pendingId = pendingId;
+    public void setAlarms(ArrayList<MyNotification> alarms) {
+        this.alarms = alarms;
     }
 }
 

@@ -8,6 +8,7 @@ import android.os.Parcelable;
  */
 
 public class MyNotification implements Parcelable {
+
     public static final Creator<MyNotification> CREATOR = new Creator<MyNotification>() {
         @Override
         public MyNotification createFromParcel(Parcel in) {
@@ -21,24 +22,22 @@ public class MyNotification implements Parcelable {
     };
     private int pendingId;
     private long hourAlarm;
+    private boolean enable;
 
     public MyNotification() {
-    }
-
-    public MyNotification(int pendingId, long hourAlarm) {
-        this.pendingId = pendingId;
-        this.hourAlarm = hourAlarm;
     }
 
     protected MyNotification(Parcel in) {
         pendingId = in.readInt();
         hourAlarm = in.readLong();
+        enable = in.readByte() != 0;
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(pendingId);
         dest.writeLong(hourAlarm);
+        dest.writeByte((byte) (enable ? 1 : 0));
     }
 
     @Override
@@ -60,5 +59,13 @@ public class MyNotification implements Parcelable {
 
     public void setHourAlarm(long hourAlarm) {
         this.hourAlarm = hourAlarm;
+    }
+
+    public boolean isEnable() {
+        return enable;
+    }
+
+    public void setEnable(boolean enable) {
+        this.enable = enable;
     }
 }

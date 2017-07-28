@@ -12,6 +12,7 @@ import android.net.NetworkInfo;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import mobi.devteam.demofalldetector.model.MyNotification;
 import mobi.devteam.demofalldetector.model.Reminder;
 import mobi.devteam.demofalldetector.myServices.ReminderService;
 
@@ -19,6 +20,11 @@ public class Utils {
 
     public static String get_calendar_time(Calendar calendar) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm");
+        return simpleDateFormat.format(calendar.getTime());
+    }
+
+    public static String get_calendar_dow(Calendar calendar) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("EEE");
         return simpleDateFormat.format(calendar.getTime());
     }
 
@@ -37,37 +43,40 @@ public class Utils {
         service.setAction(Constants.ACTION.START_SERVICE);
         service.putExtra(Constants.KEY.ITEM_KEY, reminder);
 
-        PendingIntent sender = PendingIntent.getService(activity, reminder.getPendingId(), service, 0);
+        PendingIntent sender = PendingIntent.getService(activity, 123, service, 0);
         AlarmManager alarmManager = (AlarmManager) activity.getBaseContext().
                 getSystemService(Context.ALARM_SERVICE);
         Calendar rem = Calendar.getInstance();
         Calendar temp = Calendar.getInstance();
-        temp.setTimeInMillis(reminder.getHour_alarm());
-        if (reminder.getRepeat_type() == ReminderType.TYPE_DAILY) {
-            if (rem.get(Calendar.HOUR_OF_DAY) > temp.get(Calendar.HOUR_OF_DAY)) {
-                //Miss that hour , shedule for next day
-                rem.add(Calendar.DAY_OF_MONTH, 0);
-            }
 
-            rem.set(Calendar.HOUR_OF_DAY, temp.get(Calendar.HOUR_OF_DAY));
-            rem.set(Calendar.MINUTE, temp.get(Calendar.MINUTE));
-            rem.set(Calendar.SECOND, 30);
-            rem.set(Calendar.MILLISECOND, 30);
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, rem.getTimeInMillis(), AlarmManager.INTERVAL_DAY, sender);
-            //Nhan duoc reminder se set tiep reminder
-        } else {
-            //SHEDULE FOR WEEKLY
-            if (rem.get(Calendar.DAY_OF_WEEK) > temp.get(Calendar.DAY_OF_WEEK)) {
-                //SHEDULE FOR NEXT WEEK
-                rem.add(Calendar.DAY_OF_WEEK, 0);
+        for (MyNotification myNotification : reminder.getAlarms()) {
+            temp.setTimeInMillis(myNotification.getHourAlarm());
+            if (reminder.getRepeat_type() == ReminderType.TYPE_DAILY) {
+                if (rem.get(Calendar.HOUR_OF_DAY) > temp.get(Calendar.HOUR_OF_DAY)) {
+                    //Miss that hour , shedule for next day
+                    rem.add(Calendar.DAY_OF_MONTH, 0);
+                }
+
+                rem.set(Calendar.HOUR_OF_DAY, temp.get(Calendar.HOUR_OF_DAY));
+                rem.set(Calendar.MINUTE, temp.get(Calendar.MINUTE));
+                rem.set(Calendar.SECOND, 30);
+                rem.set(Calendar.MILLISECOND, 30);
+                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, rem.getTimeInMillis(), AlarmManager.INTERVAL_DAY, sender);
+                //Nhan duoc reminder se set tiep reminder
+            } else {
+                //SHEDULE FOR WEEKLY
+                if (rem.get(Calendar.DAY_OF_WEEK) > temp.get(Calendar.DAY_OF_WEEK)) {
+                    //SHEDULE FOR NEXT WEEK
+                    rem.add(Calendar.DAY_OF_WEEK, 0);
 //                rem.add(Calendar.DAY_OF_MONTH, 0);
-            }
+                }
 
-            rem.set(Calendar.HOUR_OF_DAY, temp.get(Calendar.HOUR_OF_DAY));
-            rem.set(Calendar.MINUTE, temp.get(Calendar.MINUTE));
-            rem.set(Calendar.SECOND, 30);
-            rem.set(Calendar.MILLISECOND, 30);
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, rem.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, sender);
+                rem.set(Calendar.HOUR_OF_DAY, temp.get(Calendar.HOUR_OF_DAY));
+                rem.set(Calendar.MINUTE, temp.get(Calendar.MINUTE));
+                rem.set(Calendar.SECOND, 30);
+                rem.set(Calendar.MILLISECOND, 30);
+                alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, rem.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, sender);
+            }
         }
     }
 
@@ -81,7 +90,7 @@ public class Utils {
         Intent service = new Intent(mActivity, ReminderService.class);
         service.setAction(Constants.ACTION.START_SERVICE);
         service.putExtra(Constants.KEY.ITEM_KEY, reminder);
-        PendingIntent sender = PendingIntent.getService(mActivity, reminder.getPendingId(), service,
+        PendingIntent sender = PendingIntent.getService(mActivity, 123, service,
                 0);
         AlarmManager alarmManager = (AlarmManager) mActivity.getBaseContext().
                 getSystemService(Context.ALARM_SERVICE);
