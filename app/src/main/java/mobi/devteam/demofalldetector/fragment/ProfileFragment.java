@@ -231,7 +231,7 @@ public class ProfileFragment extends Fragment implements ValueEventListener {
         sw_allow_find.setChecked(mProfile.isAllow_find());
         sw_fall_detect.setChecked(mProfile.isDetect_fall());
 
-        edtHeight.setText(String.valueOf(mProfile.getHeight()));
+        edtHeight.setText(String.valueOf(mProfile.getHeight() * 100));
         edtWeight.setText(String.valueOf(mProfile.getWeight()));
         edtAge.setText(String.valueOf(mProfile.getAge()));
 
