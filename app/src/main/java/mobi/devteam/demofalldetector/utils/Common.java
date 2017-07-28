@@ -7,7 +7,7 @@ public class Common {
      */
 //    public static final double DEFAULT_THRESHOLD_1 = 4f;
     public static final double DEFAULT_THRESHOLD_1 = 10f;
-    public static final double DEFAULT_THRESHOLD_2 = 7f;
+    public static final double DEFAULT_THRESHOLD_2 = 11f;
 //    public static final double DEFAULT_THRESHOLD_2 = 5f;
     public static final double DEFAULT_THRESHOLD_3 = 120f;
 

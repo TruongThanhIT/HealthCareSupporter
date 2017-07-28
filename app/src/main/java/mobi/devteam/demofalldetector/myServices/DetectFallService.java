@@ -25,6 +25,7 @@ import java.util.ArrayList;
 
 import mobi.devteam.demofalldetector.R;
 import mobi.devteam.demofalldetector.activity.ConfirmFallActivity;
+import mobi.devteam.demofalldetector.activity.MainActivity;
 import mobi.devteam.demofalldetector.model.Accelerator;
 import mobi.devteam.demofalldetector.model.FallDetectionStage;
 import mobi.devteam.demofalldetector.model.Profile;
@@ -176,7 +177,6 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
         if (mProfile == null || service_is_paused) {
             return;
         }
-        long l = event.timestamp - lastTimestamp;
         if (event.timestamp - lastTimestamp < TIME_PER_STAGE) {
             return;
         }
@@ -188,10 +188,12 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
         //Bo loc chuyen dong , cang -> 1 thi bo loc cang giam (van dong nhieu)
         // -> 0 bo loc nhay hay (nguoi gia)
 
+        //Low pass filter
         gravity[0] = ALPHA_CONSTANT * gravity[0] + (1 - ALPHA_CONSTANT) * event.values[0]; //x
         gravity[1] = ALPHA_CONSTANT * gravity[1] + (1 - ALPHA_CONSTANT) * event.values[1]; //y
         gravity[2] = ALPHA_CONSTANT * gravity[2] + (1 - ALPHA_CONSTANT) * event.values[2]; //Z
 
+//        High pass filter
         linear_acceleration[0] = event.values[0] - gravity[0];
         linear_acceleration[1] = event.values[1] - gravity[1];
         linear_acceleration[2] = event.values[2] - gravity[2];
@@ -213,9 +215,17 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
 
     private void detect_fall() {
         double svm_current = calculate_svm(current_accelerator);
-        Log.e("WAITING_FALL", svm_current + "");
+        Log.e("WAITING_FALL", "SVM: " + svm_current);
         if (svm_current >= threshold_1) { //Threshold 1
-            if (current_accelerator.getX() > threshold_2 || current_accelerator.getY() > threshold_2 || current_accelerator.getZ() > threshold_2) { //Threshold 2
+            Log.e("WAITING_FALL", "Threshold 1: " + threshold_1);
+            Log.e("WAITING_FALL",
+                    "Threshold 2: " + threshold_2
+                            + "X: " + current_accelerator.getX()
+                            + "Y: " + current_accelerator.getY()
+                            + "Z: " + current_accelerator.getZ());
+            if (current_accelerator.getX() > threshold_2
+                    || current_accelerator.getY() > threshold_2
+                    || current_accelerator.getZ() > threshold_2) { //Threshold 2
                 //is falling ? saving stage
 
                 fallDetectionStage = new FallDetectionStage();
@@ -347,7 +357,7 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
                 .setSmallIcon(R.drawable.ic_launcher_mini);
 
         // create the pending intent and add to the notification
-        Intent intent = new Intent(context, DetectFallService.class);
+        Intent intent = new Intent(context, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
         m_notificationBuilder.setContentIntent(pendingIntent);
 
