@@ -25,6 +25,7 @@ import java.util.ArrayList;
 
 import mobi.devteam.demofalldetector.R;
 import mobi.devteam.demofalldetector.activity.ConfirmFallActivity;
+import mobi.devteam.demofalldetector.activity.MainActivity;
 import mobi.devteam.demofalldetector.model.Accelerator;
 import mobi.devteam.demofalldetector.model.FallDetectionStage;
 import mobi.devteam.demofalldetector.model.Profile;
@@ -356,7 +357,7 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
                 .setSmallIcon(R.drawable.ic_launcher_mini);
 
         // create the pending intent and add to the notification
-        Intent intent = new Intent(context, DetectFallService.class);
+        Intent intent = new Intent(context, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
         m_notificationBuilder.setContentIntent(pendingIntent);
 
