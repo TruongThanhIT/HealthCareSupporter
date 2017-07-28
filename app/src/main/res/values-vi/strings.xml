@@ -111,4 +111,8 @@
     <string name="request_permissions_desc">Hãy mở quyền để ứng dụng có thể hoạt động tốt nhất\nMở cài đặt -> Phân quyền -> Cho phép tất cả các quyền truy cập</string>
     <string name="request_permissions">Yêu cầu phân quyền</string>
     <string name="request_permissions_deny">Xin lỗi, Bạn vui lòng bật tất cả các quyền được yêu cầu để ứng dụng có thể hoạt động tốt nhất</string>
+    <string name="ae_reminder_add_alarm">Add Alarm</string>
+    <string name="ae_reminder_add_reminder">Add Reminder</string>
+    <string name="ae_reminder_update_reminder">Update Reminder</string>
+    <string name="ae_reminder_alarms_lists">Alarms List:</string>
 </resources>

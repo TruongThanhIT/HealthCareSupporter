@@ -109,4 +109,8 @@
     <string name="request_permissions_desc">We have to request these permissions to get the app working correctly\nOpen Setting -> Permission -> Allow all the request</string>
     <string name="request_permissions">Request permissions</string>
     <string name="request_permissions_deny">Sorry, You have to allow all the permission to get the app working correctly</string>
+    <string name="ae_reminder_add_alarm">Add Alarm</string>
+    <string name="ae_reminder_add_reminder">Add Reminder</string>
+    <string name="ae_reminder_update_reminder">Update Reminder</string>
+    <string name="ae_reminder_alarms_lists">Alarms List:</string>
 </resources>

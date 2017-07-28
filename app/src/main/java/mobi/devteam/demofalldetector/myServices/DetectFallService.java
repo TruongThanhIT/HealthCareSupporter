@@ -70,7 +70,7 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
         @Override
         public void onReceive(Context context, Intent intent) {
             recoveryArrayList.clear();
-//            acceleratorArrayList.clear();
+            acceleratorArrayList.clear();
             service_is_paused = false;
         }
     };
@@ -97,7 +97,7 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
                     return;
 
                 age = mProfile.getAge();
-                bmi = mProfile.getWeight() / Math.sqrt(mProfile.getHeight());
+                bmi = mProfile.getWeight() / (mProfile.getHeight() * mProfile.getHeight());
                 isMale = mProfile.isMale();
                 threshold_1 = mProfile.getThresh1();
                 threshold_2 = mProfile.getThresh2();
@@ -243,6 +243,7 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
 
                 waiting_for_recovery = true;
                 recoveryArrayList.clear();
+                acceleratorArrayList.clear();
             }
         }
     }
@@ -276,7 +277,7 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
                         .setValue(new Accelerator(sum_x, sum_y, sum_z));
                 waiting_for_recovery = false; // ok i'm recovery
                 recoveryArrayList.clear(); // clear recovery stages
-//                acceleratorArrayList.clear();
+                acceleratorArrayList.clear();
             }
 
         } else {
@@ -289,7 +290,7 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
             waiting_for_recovery = false;
             //Didn't get recover after 3s
             recoveryArrayList.clear();
-//            acceleratorArrayList.clear();
+            acceleratorArrayList.clear();
             Intent dialogIntent = new Intent(this, ConfirmFallActivity.class);
             dialogIntent.putExtra("time", fallDetectionStage.getTime());
             dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

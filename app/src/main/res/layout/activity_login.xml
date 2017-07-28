@@ -36,6 +36,7 @@
                 android:id="@+id/txtUserName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:inputType="textEmailAddress"
                 android:hint="@string/userName" />
 
         </android.support.design.widget.TextInputLayout>
@@ -49,6 +50,7 @@
                 android:id="@+id/txtPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:inputType="textPassword"
                 android:hint="@string/password" />
 
         </android.support.design.widget.TextInputLayout>

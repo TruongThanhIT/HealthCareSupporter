@@ -3,6 +3,8 @@ package mobi.devteam.demofalldetector.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.ArrayList;
+
 public class Reminder implements Parcelable {
 
     public static final Creator<Reminder> CREATOR = new Creator<Reminder>() {
@@ -25,20 +27,9 @@ public class Reminder implements Parcelable {
     private String note;
     private String thumb;
     private int pendingId;
+    private ArrayList<MyNotification> alarms;
 
     public Reminder() {
-    }
-
-    public Reminder(long id, String name, long start, long end, long hour_alarm, int repeat_type, String note, String thumb, int pendingId) {
-        this.id = id;
-        this.name = name;
-        this.start = start;
-        this.end = end;
-        this.hour_alarm = hour_alarm;
-        this.repeat_type = repeat_type;
-        this.note = note;
-        this.thumb = thumb;
-        this.pendingId = pendingId;
     }
 
     protected Reminder(Parcel in) {
