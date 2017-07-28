@@ -30,6 +30,7 @@ import butterknife.OnClick;
 import mobi.devteam.demofalldetector.R;
 import mobi.devteam.demofalldetector.activity.MainActivity;
 import mobi.devteam.demofalldetector.model.Profile;
+import mobi.devteam.demofalldetector.myServices.DetectFallService;
 import mobi.devteam.demofalldetector.myServices.GetLocationService;
 import mobi.devteam.demofalldetector.utils.Common;
 
@@ -95,18 +96,18 @@ public class ProfileFragment extends Fragment implements ValueEventListener {
     }
 
     private void addEvents() {
-//        sw_fall_detect.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-//            @Override
-//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-//                Intent intent = new Intent(getActivity(), DetectFallService.class);
-//                if (isChecked) {
-//                    getActivity().startService(intent);
-//                } else {
-//                    //cancel service
-//                    getActivity().stopService(intent);
-//                }
-//            }
-//        });
+        sw_fall_detect.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                Intent intent = new Intent(getActivity(), DetectFallService.class);
+                if (isChecked) {
+                    getActivity().startService(intent);
+                } else {
+                    //cancel service
+                    getActivity().stopService(intent);
+                }
+            }
+        });
 
         sw_allow_find.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
