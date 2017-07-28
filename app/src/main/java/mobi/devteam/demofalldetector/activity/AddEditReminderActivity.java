@@ -7,6 +7,8 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -44,13 +46,15 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import mobi.devteam.demofalldetector.R;
+import mobi.devteam.demofalldetector.adapter.AlarmAdapter;
 import mobi.devteam.demofalldetector.model.MyNotification;
 import mobi.devteam.demofalldetector.model.Reminder;
+import mobi.devteam.demofalldetector.myInterface.OnRecyclerItemClickListener;
 import mobi.devteam.demofalldetector.utils.ReminderType;
 import mobi.devteam.demofalldetector.utils.Tools;
 import mobi.devteam.demofalldetector.utils.Utils;
 
-public class AddEditReminderActivity extends AppCompatActivity implements IPickResult {
+public class AddEditReminderActivity extends AppCompatActivity implements IPickResult, OnRecyclerItemClickListener {
     public static final String TAG = "ReminderActivity";
     public static final String EXTRA_IS_ADD_MODE = "is_add_mode";
     public static final String EXTRA_REMINDER_DATA = "reminder_data";
@@ -75,6 +79,9 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
     @BindView(R.id.btnAddAlarm)
     ActionProcessButton btnAddAlarm;
 
+    @BindView(R.id.rcv_alarms)
+    RecyclerView rcv_alarms;
+
     FirebaseAuth mAuth;
     DatabaseReference reminder_data;
     ArrayList<MyNotification> myNotificationArrayList;
@@ -86,6 +93,8 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
     private Calendar alarm;
     private StorageReference mStorageRef;
     private boolean isImageChanged = false;
+
+    private AlarmAdapter alarmAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,6 +137,11 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
         alarm = Calendar.getInstance();
 
         myNotificationArrayList = new ArrayList<>();
+        alarmAdapter = new AlarmAdapter(this, myNotificationArrayList, this, ReminderType.TYPE_DAILY);
+        rcv_alarms.setAdapter(alarmAdapter);
+
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        rcv_alarms.setLayoutManager(linearLayoutManager);
 
         if (!is_add_mode) {
 
@@ -144,12 +158,16 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
             txtStart.setText(Utils.get_calendar_date(start));
             txtEnd.setText(Utils.get_calendar_date(end));
 
-            alarm.setTimeInMillis(reminder.getHour_alarm());
             txtTime.setText(Utils.get_calendar_time(alarm));
 
             spinReminderRepeat.setSelection(reminder.getRepeat_type());
 
             btnAddReminder.setText(R.string.ae_reminder_update_reminder);
+
+            alarmAdapter.setAlarmType(reminder.getRepeat_type());
+            myNotificationArrayList.addAll(reminder.getAlarms());
+
+            alarmAdapter.notifyDataSetChanged();
 
         } else {
             txtStart.setText(Utils.get_calendar_date(now));
@@ -285,11 +303,8 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
             reminder.setNote(edtNote.getText().toString());
 
             // Using for alarm
-            if (is_add_mode)
-                reminder.setPendingId(Utils.getRandomPendingId());
-
-            reminder.setHour_alarm(alarm.getTimeInMillis());
             reminder.setRepeat_type(get_selected_reminder());
+            reminder.setAlarms(myNotificationArrayList);
 
             if (is_add_mode) {
                 reminder.setId(tsLong);
@@ -342,5 +357,15 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
             Toast.makeText(this, r.getError().getMessage(), Toast.LENGTH_LONG).show();
             isImageChanged = false;
         }
+    }
+
+    @Override
+    public void onRecyclerItemClick(int position) {
+
+    }
+
+    @Override
+    public void onRecyclerItemLongClick(int position) {
+
     }
 }
