@@ -62,12 +62,13 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.Remind
             Calendar dateTime = Calendar.getInstance();
 
             //get next alarm time
-            for (MyNotification myNotification : reminder.getAlarms()) {
-                if (dateTime.getTimeInMillis() <= myNotification.getHourAlarm()) {
-                    dateTime.setTimeInMillis(myNotification.getHourAlarm());
-                    break;
+            if (reminder.getAlarms() != null)
+                for (MyNotification myNotification : reminder.getAlarms()) {
+                    if (dateTime.getTimeInMillis() <= myNotification.getHourAlarm()) {
+                        dateTime.setTimeInMillis(myNotification.getHourAlarm());
+                        break;
+                    }
                 }
-            }
 
             if (reminder.getRepeat_type() == ReminderType.TYPE_DAILY) {
                 holder.txtTime.setText(Utils.get_calendar_time(dateTime));

@@ -237,6 +237,7 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
                     myNotification.setHourAlarm(alarm.getTimeInMillis());
                     myNotification.setPendingId(Utils.getRandomPendingId());
                     myNotificationArrayList.add(myNotification);
+                    alarmAdapter.notifyDataSetChanged();
                 }
             }, now.get(Calendar.HOUR_OF_DAY), now.get(Calendar.MINUTE), true);
             timePickerDialog.show();
@@ -258,6 +259,7 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
                             myNotification.setPendingId(Utils.getRandomPendingId());
 
                             myNotificationArrayList.add(myNotification);
+                            alarmAdapter.notifyDataSetChanged();
                         }
                     })
                     .setInitialDay(alarm.get(Calendar.DAY_OF_WEEK))
@@ -283,7 +285,8 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
         return super.onOptionsItemSelected(item);
     }
 
-    private void save_reminder() {
+    @OnClick(R.id.btnAddReminder)
+    void save_reminder() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         final DatabaseReference child = reminder_data.child(currentUser.getUid());
         final StorageReference reminders_images = mStorageRef.child("reminders_images")
