@@ -300,11 +300,36 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
         Collections.sort(reminderArrayList, new Comparator<Reminder>() {
             @Override
             public int compare(Reminder o1, Reminder o2) {
+                Calendar current = Calendar.getInstance();
+                int current_year = current.get(Calendar.YEAR);
+                int current_month = current.get(Calendar.MONTH);
+                int current_day = current.get(Calendar.DAY_OF_MONTH);
+                int current_dow = current.get(Calendar.DAY_OF_WEEK);
 
                 Calendar c1 = Utils.getNextCalendarBaseCurrentTime(o1);
-                Calendar c2 = Utils.getNextCalendarBaseCurrentTime(o2);
-                Calendar current = Calendar.getInstance();
+                c1.set(Calendar.YEAR, current_year);
+                c1.set(Calendar.MONTH, current_month);
+                c1.set(Calendar.DAY_OF_MONTH, current_day);
 
+                if (o1.getRepeat_type() == ReminderType.TYPE_WEEKLY) {
+                    if (c1.get(Calendar.DAY_OF_WEEK) < current_dow)
+                        c1.add(Calendar.DAY_OF_MONTH, 7);
+                }
+
+                Calendar c2 = Utils.getNextCalendarBaseCurrentTime(o2);
+                c2.set(Calendar.YEAR, current_year);
+                c2.set(Calendar.MONTH, current_month);
+                c2.set(Calendar.DAY_OF_MONTH, current_day);
+
+                if (o2.getRepeat_type() == ReminderType.TYPE_WEEKLY) {
+                    if (c2.get(Calendar.DAY_OF_WEEK) < current_dow)
+                        c2.add(Calendar.DAY_OF_MONTH, 7);
+                }
+
+                return c1.compareTo(c2);
+                //return Utils.compareReminderToCalendarByType(o1.getRepeat_type(),c1,current);
+
+                /*
                 if (o1.getRepeat_type() == o2.getRepeat_type())
                     return Utils.compareReminderToCalendarByType(o1.getRepeat_type(), c1, c2);
 
@@ -315,6 +340,7 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
                 }
 
                 return Utils.compareReminderToCalendarByType(ReminderType.TYPE_WEEKLY, c1, c2);
+                */
             }
         });
 
