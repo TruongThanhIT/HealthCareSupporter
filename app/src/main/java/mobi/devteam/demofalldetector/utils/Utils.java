@@ -149,7 +149,6 @@ public class Utils {
      * @return
      */
     public static int compareReminderToCalendarByType(int reminderType, Calendar c1, Calendar c2) {
-
         if (reminderType == ReminderType.TYPE_DAILY || reminderType == ReminderType.TYPE_NEVER) {
             if (c1.get(Calendar.HOUR_OF_DAY) < c2.get(Calendar.HOUR_OF_DAY))
                 return -1;
@@ -197,20 +196,18 @@ public class Utils {
      * @return
      */
     public static Calendar getNextCalendarBaseCurrentTime(Reminder reminder) {
-        Calendar current = Calendar.getInstance();
         Calendar dateTime = Calendar.getInstance();
         if (reminder.getAlarms() != null) {
-            for (int i = 0; i < reminder.getAlarms().size(); i++) {
-                MyNotification myNotification = reminder.getAlarms().get(i);
-                Calendar reminderCalendar = myNotification.getReminderCalendar();
+            dateTime = reminder.getAlarms().get(0).getReminderCalendarRelateCurrent();
 
-                if (i == 0) {
-                    dateTime = reminderCalendar;
-                } else if (Utils.compareReminderToCalendarByType(reminder.getRepeat_type(), reminderCalendar, current) >= 0) {
+            for (int i = 1; i < reminder.getAlarms().size(); i++) {
+                MyNotification myNotification = reminder.getAlarms().get(i);
+                Calendar reminderCalendar = myNotification.getReminderCalendarRelateCurrent();
+
+                if (dateTime.compareTo(reminderCalendar) > 0) {
                     //in this case all item in the array were sorted
                     //this array is already sorted when add
                     dateTime = reminderCalendar;
-                    break;
                 }
             }
         }

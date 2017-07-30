@@ -255,6 +255,11 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
     }
 
     private void pickTime(final boolean isEdit) {
+        if (isEdit && mLong_click_selected != -1)
+            alarm.setTimeInMillis(myNotificationArrayList.get(mLong_click_selected).getHourAlarm());
+        else
+            alarm.setTimeInMillis(System.currentTimeMillis());
+
         int selected_reminder = get_selected_reminder();
         if (selected_reminder == ReminderType.TYPE_DAILY || selected_reminder == ReminderType.TYPE_NEVER) {
             final TimePickerDialog timePickerDialog = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
@@ -323,7 +328,7 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
         Collections.sort(myNotificationArrayList, new Comparator<MyNotification>() {
             @Override
             public int compare(MyNotification o1, MyNotification o2) {
-                return Utils.compareReminderToCalendarByType(selected_reminder, o1.getReminderCalendar(), o2.getReminderCalendar());
+                return Utils.compareReminderToCalendarByType(selected_reminder, o1.getReminderCalendarClean(), o2.getReminderCalendarClean());
             }
         });
     }

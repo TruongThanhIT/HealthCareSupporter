@@ -67,9 +67,52 @@ public class MyNotification implements Parcelable {
         this.enable = enable;
     }
 
-    public Calendar getReminderCalendar() {
+    /**
+     * This will return the clean method without relating anything
+     *
+     * @return
+     */
+    public Calendar getReminderCalendarClean() {
         Calendar instance = Calendar.getInstance();
         instance.setTimeInMillis(hourAlarm);
         return instance;
+    }
+
+    /**
+     * This method get the parse the reminder relative to the current time
+     *
+     * @return
+     */
+    public Calendar getReminderCalendarRelateCurrent() {
+        Calendar current = Calendar.getInstance();
+
+        Calendar reminder = Calendar.getInstance();
+        reminder.setTimeInMillis(hourAlarm);
+        int dow = reminder.get(Calendar.DAY_OF_WEEK);
+
+        reminder.set(Calendar.YEAR, current.get(Calendar.YEAR));
+        reminder.set(Calendar.MONTH, current.get(Calendar.MONTH));
+        reminder.set(Calendar.DAY_OF_MONTH, current.get(Calendar.DAY_OF_MONTH));
+
+        if (current.get(Calendar.DAY_OF_WEEK) > dow) {
+            reminder.add(Calendar.DAY_OF_MONTH, 7);
+        } else {
+            int hour = reminder.get(Calendar.HOUR_OF_DAY);
+            int minute = reminder.get(Calendar.MINUTE);
+
+            if (dow == current.get(Calendar.DAY_OF_WEEK)) {
+                if (hour < current.get(Calendar.HOUR_OF_DAY)
+                        || (hour == current.get(Calendar.HOUR_OF_DAY) && minute < current.get(Calendar.MINUTE))) {
+                    reminder.add(Calendar.DAY_OF_MONTH, 7);
+                } else {
+                    reminder.add(Calendar.DAY_OF_MONTH, dow - current.get(Calendar.DAY_OF_WEEK));
+                }
+            } else {
+                reminder.add(Calendar.DAY_OF_MONTH, dow - current.get(Calendar.DAY_OF_WEEK));
+            }
+
+        }
+
+        return reminder;
     }
 }

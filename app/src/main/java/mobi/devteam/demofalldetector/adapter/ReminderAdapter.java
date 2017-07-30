@@ -61,9 +61,9 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.Remind
             Calendar dateTime = Utils.getNextCalendarBaseCurrentTime(reminder);
 
             if (reminder.getRepeat_type() == ReminderType.TYPE_DAILY || reminder.getRepeat_type() == ReminderType.TYPE_NEVER) {
-                holder.txtTime.setText(Utils.get_calendar_time(dateTime));
+                holder.txtTime.setText(Utils.get_calendar_date(dateTime) + ", " + Utils.get_calendar_time(dateTime));
             } else if (reminder.getRepeat_type() == ReminderType.TYPE_WEEKLY) {
-                holder.txtTime.setText(Utils.get_calendar_dow(dateTime) + ", " + Utils.get_calendar_time(dateTime));
+                holder.txtTime.setText(Utils.get_calendar_dow(dateTime) + " " + Utils.get_calendar_date(dateTime) + ", " + Utils.get_calendar_time(dateTime));
             }
 
             if (reminder.getName().length() > 0) {
