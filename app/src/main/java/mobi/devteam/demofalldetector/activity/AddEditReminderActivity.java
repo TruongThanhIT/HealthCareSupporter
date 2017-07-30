@@ -1,7 +1,9 @@
 package mobi.devteam.demofalldetector.activity;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -239,6 +241,8 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
                     MyNotification myNotification = new MyNotification();
                     myNotification.setHourAlarm(alarm.getTimeInMillis());
                     myNotification.setPendingId(Utils.getRandomPendingId());
+                    myNotification.setEnable(true);
+
                     myNotificationArrayList.add(myNotification);
                     alarmAdapter.notifyDataSetChanged();
                 }
@@ -260,6 +264,7 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
                             MyNotification myNotification = new MyNotification();
                             myNotification.setHourAlarm(alarm.getTimeInMillis());
                             myNotification.setPendingId(Utils.getRandomPendingId());
+                            myNotification.setEnable(true);
 
                             myNotificationArrayList.add(myNotification);
                             alarmAdapter.notifyDataSetChanged();
@@ -371,7 +376,22 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
     }
 
     @Override
-    public void onRecyclerItemLongClick(int position) {
+    public void onRecyclerItemLongClick(final int position) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(R.string.ae_reminder_confirm_delete_time)
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        myNotificationArrayList.remove(position);
+                        alarmAdapter.notifyItemRemoved(position);
+                    }
+                })
+                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
 
+                    }
+                })
+                .show();
     }
 }

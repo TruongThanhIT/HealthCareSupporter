@@ -84,6 +84,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHol
             ButterKnife.bind(this, itemView);
 
             swStatus.setClickable(false);
+            swStatus.setSelected(false);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
