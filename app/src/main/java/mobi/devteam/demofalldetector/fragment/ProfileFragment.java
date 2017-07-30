@@ -163,7 +163,7 @@ public class ProfileFragment extends Fragment implements ValueEventListener {
         double height = 0;
         int age = 0;
         try {
-            height = Double.parseDouble(edtHeight.getText().toString());
+            height = Double.parseDouble(edtHeight.getText().toString()) / 100;
             weight = Double.parseDouble(edtWeight.getText().toString());
             age = Integer.parseInt(edtAge.getText().toString());
         } catch (Exception e) {
@@ -232,7 +232,7 @@ public class ProfileFragment extends Fragment implements ValueEventListener {
         sw_allow_find.setChecked(mProfile.isAllow_find());
         sw_fall_detect.setChecked(mProfile.isDetect_fall());
 
-        edtHeight.setText(String.valueOf(mProfile.getHeight()));
+        edtHeight.setText(String.valueOf(mProfile.getHeight() * 100));
         edtWeight.setText(String.valueOf(mProfile.getWeight()));
         edtAge.setText(String.valueOf(mProfile.getAge()));
 

@@ -1,12 +1,14 @@
 package mobi.devteam.demofalldetector.fragment;
 
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.Vibrator;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -20,9 +22,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.ScaleAnimation;
 import android.widget.CompoundButton;
 import android.widget.ProgressBar;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -44,7 +49,8 @@ import butterknife.Unbinder;
 import mobi.devteam.demofalldetector.R;
 import mobi.devteam.demofalldetector.activity.AddEditReminderActivity;
 import mobi.devteam.demofalldetector.activity.MainActivity;
-import mobi.devteam.demofalldetector.activity.ReminderDetailsActivity;
+import mobi.devteam.demofalldetector.activity.MyApplication;
+import mobi.devteam.demofalldetector.adapter.AlarmAdapter;
 import mobi.devteam.demofalldetector.adapter.ReminderAdapter;
 import mobi.devteam.demofalldetector.model.Profile;
 import mobi.devteam.demofalldetector.model.Reminder;
@@ -94,10 +100,9 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
             m_service = null;
         }
     };
-    private boolean isWaitingForSettingResult = false;
+    private boolean isWaitingForSettingResult;
 
     public HomeFragment() {
-
     }
 
     public static HomeFragment newInstance() {
@@ -110,9 +115,6 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-
-        }
     }
 
     @Override
@@ -205,12 +207,14 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
     }
 
     private void start_fall_detect_service() {
-        boolean isChecked = sw_allow_find.isChecked();
+        boolean isChecked = sw_fall_detect.isChecked();
         Intent intent = new Intent(getActivity(), DetectFallService.class);
         if (isChecked) {
-            getActivity().startService(intent);
-            getActivity().bindService(intent, m_serviceConnection, BIND_AUTO_CREATE);
-            startBindService = true;
+            if (!Utils.isMyServiceRunning(getActivity(), DetectFallService.class)) {
+                getActivity().startService(intent);
+                getActivity().bindService(intent, m_serviceConnection, BIND_AUTO_CREATE);
+                startBindService = true;
+            }
 
         } else {
             try {
@@ -310,11 +314,79 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
     }
 
     @Override
-    public void onRecyclerItemClick(int position) {
+    public void onRecyclerItemClick(final int position) {
+        /*
         Reminder selected_reminder = reminderArrayList.get(position);
         Intent intent = new Intent(getActivity(), ReminderDetailsActivity.class);
         intent.putExtra(ReminderDetailsActivity.EXTRA_REMINDER, selected_reminder);
         startActivityForResult(intent, ADD_REMINDER_REQUEST);
+        */
+
+        Reminder reminder = reminderArrayList.get(position);
+        if (reminder != null) {
+            final View dialog_view = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_reminder_detail, null);
+
+            TextView txtTitle = (TextView) dialog_view.findViewById(R.id.txtTitle);
+            TextView txtNote = (TextView) dialog_view.findViewById(R.id.txtNote);
+            TextView txtType = (TextView) dialog_view.findViewById(R.id.txtType);
+            final View btnEdit = dialog_view.findViewById(R.id.btnEdit);
+
+            txtTitle.setText(reminder.getName());
+            txtNote.setText(reminder.getNote());
+            try {
+                txtType.setText(MyApplication.reminder_types[reminder.getRepeat_type()]);
+            } catch (Exception ignored) {
+            }
+
+            RecyclerView recyclerView = (RecyclerView) dialog_view.findViewById(R.id.rcv_alarms_time);
+
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+            recyclerView.setLayoutManager(linearLayoutManager);
+
+            AlarmAdapter alarmAdapter = new AlarmAdapter(getActivity(), reminder.getAlarms(), new OnRecyclerItemClickListener() {
+                @Override
+                public void onRecyclerItemClick(int position) {
+                    Vibrator vibrator = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
+                    vibrator.vibrate(300);
+
+                    ScaleAnimation scaleAnimation = new ScaleAnimation(1, 1.5f, 1, 1.5f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+                    scaleAnimation.setDuration(400);
+                    scaleAnimation.setRepeatMode(Animation.REVERSE);
+                    scaleAnimation.setRepeatCount(3);
+
+                    btnEdit.startAnimation(scaleAnimation);
+                }
+
+                @Override
+                public void onRecyclerItemLongClick(int position) {
+
+                }
+            }, reminder.getRepeat_type());
+            alarmAdapter.setHideSwitch(true);
+            recyclerView.setAdapter(alarmAdapter);
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setView(dialog_view);
+
+            final AlertDialog alertDialog = builder.show();
+
+            btnEdit.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Reminder selected_reminder = reminderArrayList.get(position);
+                    Intent intent = new Intent(getActivity(), AddEditReminderActivity.class);
+                    intent.putExtra(AddEditReminderActivity.EXTRA_IS_ADD_MODE, false);
+                    intent.putExtra(AddEditReminderActivity.EXTRA_REMINDER_DATA, selected_reminder);
+                    startActivityForResult(intent, ADD_REMINDER_REQUEST);
+                    alertDialog.dismiss();
+                }
+            });
+
+            if (alertDialog.getWindow() != null)
+                alertDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+
+        }
+
     }
 
     @Override
@@ -358,13 +430,13 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
 
     @Override
     public void onResume() {
+        super.onResume();
         if (isWaitingForSettingResult) {
             isWaitingForSettingResult = false;
             start_fall_detect_service();
             start_allow_find_location_service();
             return;
         }
-        super.onResume();
     }
 
     @Override
@@ -385,11 +457,10 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
         if (requestCode == MY_PERMISSIONS_REQUEST && permissions.length > 0) {
             for (int grant : grantResults) {
                 if (grant != PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(m_service, getString(R.string.request_permissions_deny), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), getString(R.string.request_permissions_deny), Toast.LENGTH_SHORT).show();
                     return;
                 }
             }
-
             start_fall_detect_service();
             start_allow_find_location_service();
         }

@@ -14,7 +14,7 @@
 
     <ImageView
         android:id="@+id/imgUser"
-        android:layout_width="@dimen/size_50"
+        android:layout_width="wrap_content"
         android:layout_height="@dimen/size_50"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
         app:srcCompat="@drawable/ic_launcher" />
@@ -25,7 +25,7 @@
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
         android:text="Thanh Truong"
-        android:textColor="@color/colorPrimary"
+        android:textColor="@color/colorAccent"
         android:textStyle="bold"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
@@ -33,7 +33,7 @@
         android:id="@+id/txtEmailUserNav"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/colorPrimary"
+        android:textColor="@color/colorAccent"
         android:textStyle="bold"
         android:text="thttthanh@tma.com.vn" />
 

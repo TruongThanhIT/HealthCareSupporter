@@ -12,10 +12,6 @@ import android.support.v4.content.ContextCompat;
 import mobi.devteam.demofalldetector.R;
 import mobi.devteam.demofalldetector.myInterface.OnRequestPermissionListener;
 
-/**
- * Created by Administrator on 7/18/2017.
- */
-
 public class AppPermission {
 
     private Activity mActivity;
@@ -45,7 +41,7 @@ public class AppPermission {
                     return false;
             }
         }
-        return false;
+        return true;
     }
 
     /**

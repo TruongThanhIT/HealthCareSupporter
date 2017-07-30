@@ -43,11 +43,8 @@ public class ReminderDetailsActivity extends AppCompatActivity {
     Spinner spinReminderRepeat;
     @BindView(R.id.edtNote)
     EditText edtNote;
-    @BindView(R.id.txtTime)
-    TextView txtTime;
     private Calendar start;
     private Calendar end;
-    private Calendar remind;
     private FirebaseAuth mAuth;
     private DatabaseReference reminder_data;
 
@@ -86,13 +83,13 @@ public class ReminderDetailsActivity extends AppCompatActivity {
         edtReminder.setKeyListener(null);
         start = Calendar.getInstance();
         end = Calendar.getInstance();
-        remind = Calendar.getInstance();
+
         start.setTimeInMillis(reminder.getStart());
         end.setTimeInMillis(reminder.getEnd());
-        remind.setTimeInMillis(reminder.getHour_alarm());
+
         txtStart.setText(Utils.get_calendar_date(start));
         txtEnd.setText(Utils.get_calendar_date(end));
-        txtTime.setText(Utils.get_calendar_time(remind));
+
         spinReminderRepeat.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,
                 MyApplication.reminder_types));
         spinReminderRepeat.setSelection(reminder.getRepeat_type());

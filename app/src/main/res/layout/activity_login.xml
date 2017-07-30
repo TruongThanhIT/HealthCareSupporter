@@ -1,115 +1,111 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="@drawable/bg_app"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_app">
+
     <ImageView
         android:id="@+id/imgHealth"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/size_110"
+        android:layout_height="@dimen/size_150"
         android:layout_gravity="center"
-        android:layout_marginBottom="@dimen/size_110"
-        android:background="@drawable/image_health" />
+        android:background="@drawable/image_health"
+        android:scaleType="centerCrop" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@id/imgHealth"
         android:orientation="vertical"
         android:paddingBottom="@dimen/size_10"
         android:paddingLeft="@dimen/size_10"
         android:paddingRight="@dimen/size_10"
-        tools:context="mobi.devteam.demofalldetector.activity.LoginActivity"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_marginTop="@dimen/size_110"
-        android:layout_alignParentStart="true"
-        android:weightSum="6">
+        android:weightSum="6"
+        tools:context="mobi.devteam.demofalldetector.activity.LoginActivity">
 
-        <LinearLayout
+        <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="horizontal">
+            android:hint="@string/userName">
 
-            <TextView
-                style="@style/tag_login"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="0.6"
-                android:enabled="false"
-                android:gravity="center_vertical"
-                android:text="@string/userName" />
-
-            <EditText
+            <android.support.design.widget.TextInputEditText
                 android:id="@+id/txtUserName"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="0.4"
-                android:gravity="center_vertical"
-                android:inputType="textFilter" />
-        </LinearLayout>
+                android:layout_height="wrap_content"
+                android:inputType="textEmailAddress" />
 
-        <LinearLayout
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="horizontal">
+            android:hint="@string/password">
 
-            <TextView
-                style="@style/tag_login"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="0.6"
-                android:gravity="center_vertical"
-                android:enabled="false"
-                android:text="@string/password" />
-
-            <EditText
+            <android.support.design.widget.TextInputEditText
                 android:id="@+id/txtPassword"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="0.4"
-                android:gravity="center_vertical"
+                android:layout_height="wrap_content"
                 android:inputType="textPassword" />
-        </LinearLayout>
 
-        <Button
+        </android.support.design.widget.TextInputLayout>
+
+        <com.dd.processbutton.iml.ActionProcessButton
             android:id="@+id/btnSignIn"
-            style="@style/buttonColor"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/login" />
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="20dp"
+            android:text="@string/login"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            custom:pb_colorComplete="@color/colorComplete"
+            custom:pb_colorNormal="@color/colorPrimary"
+            custom:pb_colorPressed="@color/colorPrimaryDark"
+            custom:pb_colorProgress="@color/purple_progress"
+            custom:pb_textComplete="@string/label_complete"
+            custom:pb_textProgress="@string/label_loading" />
 
-        <com.google.android.gms.common.SignInButton
-            android:id="@+id/btnSignInWithGoogle"
+        <com.dd.processbutton.iml.ActionProcessButton
+            android:id="@+id/btnSignUp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_centerInParent="true"
-            android:visibility="visible" />
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/signup"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            custom:pb_colorComplete="@color/colorComplete"
+            custom:pb_colorNormal="@color/colorPrimary"
+            custom:pb_colorPressed="@color/colorPrimaryDark"
+            custom:pb_colorProgress="@color/purple_progress"
+            custom:pb_textComplete="@string/label_complete"
+            custom:pb_textProgress="@string/label_loading" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_weight="1"
             android:gravity="center"
             android:text="@string/or"
-            android:layout_weight="1"
             android:textAlignment="center" />
 
-        <Button
-            android:id="@+id/btnSignUp"
+        <com.google.android.gms.common.SignInButton
+            android:id="@+id/btnSignInWithGoogle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/signup" />
+            android:layout_centerInParent="true" />
     </LinearLayout>
+
     <ProgressBar
         android:id="@+id/progressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"/>
+        android:layout_centerInParent="true" />
 </RelativeLayout>
