@@ -40,6 +40,9 @@ import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 
 import butterknife.BindView;
@@ -59,6 +62,7 @@ import mobi.devteam.demofalldetector.myInterface.OnRequestPermissionListener;
 import mobi.devteam.demofalldetector.myServices.DetectFallService;
 import mobi.devteam.demofalldetector.myServices.GetLocationService;
 import mobi.devteam.demofalldetector.utils.AppPermission;
+import mobi.devteam.demofalldetector.utils.ReminderType;
 import mobi.devteam.demofalldetector.utils.Utils;
 
 import static android.content.Context.BIND_AUTO_CREATE;
@@ -276,7 +280,9 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
                 reminderArrayList.clear();
                 if (value != null) {
                     reminderArrayList.addAll(value.values());
-                    handler_empty_list();
+                    smartSortReminder();
+                    if (reminderArrayList.size() == 0)
+                        handler_empty_list();
                 }
 
                 reminderAdapter.notifyDataSetChanged();
@@ -288,6 +294,30 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
 
             }
         });
+    }
+
+    private void smartSortReminder() {
+        Collections.sort(reminderArrayList, new Comparator<Reminder>() {
+            @Override
+            public int compare(Reminder o1, Reminder o2) {
+
+                Calendar c1 = Utils.getNextCalendarBaseCurrentTime(o1);
+                Calendar c2 = Utils.getNextCalendarBaseCurrentTime(o2);
+                Calendar current = Calendar.getInstance();
+
+                if (o1.getRepeat_type() == o2.getRepeat_type())
+                    return Utils.compareReminderToCalendarByType(o1.getRepeat_type(), c1, c2);
+
+                if (o1.getRepeat_type() == ReminderType.TYPE_WEEKLY) {
+                    c2.set(Calendar.DAY_OF_WEEK, current.get(Calendar.DAY_OF_WEEK));
+                } else {
+                    c1.set(Calendar.DAY_OF_WEEK, current.get(Calendar.DAY_OF_WEEK));
+                }
+
+                return Utils.compareReminderToCalendarByType(ReminderType.TYPE_WEEKLY, c1, c2);
+            }
+        });
+
     }
 
     private void handler_empty_list() {

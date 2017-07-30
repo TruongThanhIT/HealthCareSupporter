@@ -19,7 +19,6 @@ import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 import mobi.devteam.demofalldetector.R;
 import mobi.devteam.demofalldetector.activity.MyApplication;
-import mobi.devteam.demofalldetector.model.MyNotification;
 import mobi.devteam.demofalldetector.model.Reminder;
 import mobi.devteam.demofalldetector.myInterface.OnRecyclerItemClickListener;
 import mobi.devteam.demofalldetector.utils.ReminderType;
@@ -59,25 +58,9 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.Remind
                 holder.txtRepeat.setText(MyApplication.reminder_types[2]);
             }
 
-            Calendar dateTime = Calendar.getInstance();
-            Calendar current = Calendar.getInstance();
-            //get next alarm time
-            if (reminder.getAlarms() != null)
-                for (int i = 0; i < reminder.getAlarms().size(); i++) {
-                    MyNotification myNotification = reminder.getAlarms().get(i);
-                    Calendar reminderCalendar = myNotification.getReminderCalendar();
+            Calendar dateTime = Utils.getNextCalendarBaseCurrentTime(reminder);
 
-                    if (i == 0) {
-                        dateTime = reminderCalendar;
-                    } else if (Utils.compareReminderToCalendarByType(reminder.getRepeat_type(), reminderCalendar, current) >= 0) {
-                        //in this case all item in the array were sorted
-                        //this array is already sorted when add
-                        dateTime = reminderCalendar;
-                        break;
-                    }
-                }
-
-            if (reminder.getRepeat_type() == ReminderType.TYPE_DAILY) {
+            if (reminder.getRepeat_type() == ReminderType.TYPE_DAILY || reminder.getRepeat_type() == ReminderType.TYPE_NEVER) {
                 holder.txtTime.setText(Utils.get_calendar_time(dateTime));
             } else if (reminder.getRepeat_type() == ReminderType.TYPE_WEEKLY) {
                 holder.txtTime.setText(Utils.get_calendar_dow(dateTime) + ", " + Utils.get_calendar_time(dateTime));

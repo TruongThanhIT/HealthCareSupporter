@@ -189,4 +189,31 @@ public class Utils {
 
         return -1;
     }
+
+    /**
+     * This method will get the next calendar which nearest to current time
+     *
+     * @param reminder
+     * @return
+     */
+    public static Calendar getNextCalendarBaseCurrentTime(Reminder reminder) {
+        Calendar current = Calendar.getInstance();
+        Calendar dateTime = Calendar.getInstance();
+        if (reminder.getAlarms() != null) {
+            for (int i = 0; i < reminder.getAlarms().size(); i++) {
+                MyNotification myNotification = reminder.getAlarms().get(i);
+                Calendar reminderCalendar = myNotification.getReminderCalendar();
+
+                if (i == 0) {
+                    dateTime = reminderCalendar;
+                } else if (Utils.compareReminderToCalendarByType(reminder.getRepeat_type(), reminderCalendar, current) >= 0) {
+                    //in this case all item in the array were sorted
+                    //this array is already sorted when add
+                    dateTime = reminderCalendar;
+                    break;
+                }
+            }
+        }
+        return dateTime;
+    }
 }
