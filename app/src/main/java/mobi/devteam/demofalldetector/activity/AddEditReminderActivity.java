@@ -2,10 +2,8 @@ package mobi.devteam.demofalldetector.activity;
 
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
-import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -16,7 +14,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
@@ -106,6 +106,7 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
     private boolean isImageChanged = false;
 
     private AlarmAdapter alarmAdapter;
+    private int mLong_click_selected = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -149,6 +150,7 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
 
         myNotificationArrayList = new ArrayList<>();
         alarmAdapter = new AlarmAdapter(this, myNotificationArrayList, this, ReminderType.TYPE_DAILY);
+        rcv_alarms.setOnCreateContextMenuListener(this);
         rcv_alarms.setAdapter(alarmAdapter);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
@@ -248,7 +250,11 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
      */
 
     @OnClick(R.id.btnAddAlarm)
-    void pickTime() {
+    void addAlarmOnClick() {
+        pickTime(false);
+    }
+
+    private void pickTime(final boolean isEdit) {
         int selected_reminder = get_selected_reminder();
         if (selected_reminder == ReminderType.TYPE_DAILY || selected_reminder == ReminderType.TYPE_NEVER) {
             final TimePickerDialog timePickerDialog = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
@@ -260,14 +266,15 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
                     alarm.set(Calendar.HOUR_OF_DAY, hourOfDay);
                     alarm.set(Calendar.MINUTE, minute);
 
-//                    spinReminderRepeat.setClickable(false);
-//                    spinReminderRepeat.setAlpha(0.8f);
-//                    txtTime.setText(Utils.get_calendar_time(alarm));
                     MyNotification myNotification = new MyNotification();
                     myNotification.setHourAlarm(alarm.getTimeInMillis());
                     myNotification.setPendingId(Utils.getRandomPendingId());
                     myNotification.setEnable(true);
 
+                    if (isEdit) {
+                        myNotificationArrayList.remove(mLong_click_selected);
+                        mLong_click_selected = -1;
+                    }
                     myNotificationArrayList.add(myNotification);
                     sortTimeArray();
                     alarmAdapter.notifyDataSetChanged();
@@ -285,13 +292,16 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
                             alarm.set(Calendar.MINUTE, minute);
                             String[] dayOfWeek = getResources().getStringArray(R.array.days_array);
                             txtTime.setText(dayOfWeek[day - 1] + ", " + hour + ":" + minute);
-//                            spinReminderRepeat.setClickable(false);
-//                            spinReminderRepeat.setAlpha(0.8f);
 
                             MyNotification myNotification = new MyNotification();
                             myNotification.setHourAlarm(alarm.getTimeInMillis());
                             myNotification.setPendingId(Utils.getRandomPendingId());
                             myNotification.setEnable(true);
+
+                            if (isEdit) {
+                                myNotificationArrayList.remove(mLong_click_selected);
+                                mLong_click_selected = -1;
+                            }
 
                             myNotificationArrayList.add(myNotification);
                             sortTimeArray();
@@ -461,22 +471,31 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
     }
 
     @Override
-    public void onRecyclerItemLongClick(final int position) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(R.string.ae_reminder_confirm_delete_time)
-                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        myNotificationArrayList.remove(position);
-                        alarmAdapter.notifyItemRemoved(position);
-                    }
-                })
-                .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+    public void onRecyclerItemLongClick(int position) {
+        mLong_click_selected = position;
+    }
 
-                    }
-                })
-                .show();
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.actions_relatives_list, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        if (mLong_click_selected == -1)
+            return true;
+
+        switch (item.getItemId()) {
+            case R.id.mnuEdit:
+                pickTime(true);
+                break;
+            case R.id.mnuDelete:
+                myNotificationArrayList.remove(mLong_click_selected);
+                alarmAdapter.notifyItemRemoved(mLong_click_selected);
+                break;
+        }
+        return true;
     }
 }

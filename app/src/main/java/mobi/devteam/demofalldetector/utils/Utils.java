@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.util.Log;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -81,7 +82,8 @@ public class Utils {
                 if (hour < current.get(Calendar.HOUR_OF_DAY)
                         || (hour == current.get(Calendar.HOUR_OF_DAY) && minute < current.get(Calendar.MINUTE))
                         ) {
-                    rem.add(Calendar.HOUR_OF_DAY, 1);
+                    Log.e("keep_next_day", Utils.get_calendar_time(rem));
+                    rem.add(Calendar.DAY_OF_MONTH, 1);
                 }
 
                 alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, rem.getTimeInMillis(), AlarmManager.INTERVAL_DAY, sender);
@@ -137,7 +139,9 @@ public class Utils {
     }
 
     /**
-     * This method will compare 2 reminder by type
+     * This method will compare 2 reminder calendar by type
+     * Type Daily just compare hour and minute
+     * Type Week will compare dow,hour,minute
      *
      * @param reminderType {#ReminderType}
      * @param c1
