@@ -304,8 +304,11 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
 
     @OnClick(R.id.btnAddReminder)
     void save_reminder() {
-        if (!validate_form())
+        if (!validate_form()) {
+            Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+            vibrator.vibrate(300);
             return;
+        }
 
         FirebaseUser currentUser = mAuth.getCurrentUser();
         final DatabaseReference child = reminder_data.child(currentUser.getUid());
@@ -363,9 +366,6 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
      * @return boolean
      */
     private boolean validate_form() {
-        Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
-        vibrator.vibrate(300);
-
         if (edtReminder.getText().toString().equals("")) {
             ObjectAnimator translationX = ObjectAnimator.ofFloat(edtReminder, "translationX", 0, 50);
             translationX.setDuration(500);

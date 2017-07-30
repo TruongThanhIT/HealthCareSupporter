@@ -4,6 +4,7 @@ public class Constants {
     //Use public => Outside package
     public interface KEY {
         String ITEM_KEY = "mobi.devteam.itemkey";
+        String PENDING_ID = "mobi.devteam.id";
     }
 
     public interface ACTION {

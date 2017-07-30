@@ -26,6 +26,7 @@ public class ReminderService extends Service {
     private static final int TIME_SNOOZE = 10 * 60 * 1000;
     private static Reminder reminder;
     private static NotificationManager notificationManager;
+    private int pendingId;
 
     @Nullable
     @Override
@@ -40,9 +41,13 @@ public class ReminderService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.e("received", "notify");
+
+        pendingId = intent.getIntExtra(Constants.KEY.PENDING_ID, 0);
         reminder = intent.getParcelableExtra(Constants.KEY.ITEM_KEY);
         if (reminder == null) {
             Log.e(getClass().getName(), "Reminder is null");
+            return START_NOT_STICKY;
         }
         Calendar endDate = Calendar.getInstance();
         endDate.setTimeInMillis(reminder.getEnd());
@@ -95,44 +100,44 @@ public class ReminderService extends Service {
                 | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         notificationIntent.putExtra(Constants.KEY.ITEM_KEY, reminder);
         try {
-            for (MyNotification myNotification : reminder.getAlarms()) {
-                if(myNotification.isEnable() == false) return;
-                PendingIntent pendingIntent = PendingIntent.getActivity(this, myNotification.getPendingId(),
-                        notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-                if (pendingIntent == null)
-                    return;
-                //Dismiss action intent
-                Intent dismissIntent = new Intent(this, ReminderService.class);
-                dismissIntent.setAction(Constants.ACTION.DISMISS_ACTION);
-                dismissIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                dismissIntent.putExtra(Constants.KEY.ITEM_KEY, reminder);
-                PendingIntent dismissPendingIntent = PendingIntent.getService(this, myNotification.getPendingId(),
-                        dismissIntent, PendingIntent.FLAG_CANCEL_CURRENT);
-                //Snooze action intent
-                Intent snoozeIntent = new Intent(this, ReminderService.class);
-                snoozeIntent.setAction(Constants.ACTION.SNOOZE_ACTION);
-                snoozeIntent.putExtra(Constants.KEY.ITEM_KEY, reminder);
-                PendingIntent snoozePendingIntent = PendingIntent.getService(this, myNotification.getPendingId(),
-                        snoozeIntent, PendingIntent.FLAG_CANCEL_CURRENT);
-                //Create notification builder
-                Notification notification = new NotificationCompat.Builder(this)
-                        .setContentTitle(reminder.getName())
-                        .setTicker(reminder.getName())
-                        .setSubText(Utils.get_calendar_date(Calendar.getInstance()))
-                        .setContentText(reminder.getNote())
-                        .setSmallIcon(R.drawable.ic_launcher_mini)
-                        .setOngoing(true)
-                        .setAutoCancel(true)
-                        .setContentIntent(pendingIntent)
-                        .addAction(android.R.drawable.ic_menu_close_clear_cancel, "Dismiss",
-                                dismissPendingIntent)
-                        .addAction(android.R.drawable.ic_popup_reminder, "Snooze", snoozePendingIntent)
-                        .build();
-                notification.flags |= Notification.FLAG_AUTO_CANCEL;
-                notification.defaults |= Notification.DEFAULT_SOUND | Notification.DEFAULT_LIGHTS;
-                //Show notification with notification manager
-                notificationManager.notify(myNotification.getPendingId(), notification);
-            }
+            Log.e("pending_id", pendingId + "");
+
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, pendingId,
+                    notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            if (pendingIntent == null)
+                return;
+            //Dismiss action intent
+            Intent dismissIntent = new Intent(this, ReminderService.class);
+            dismissIntent.setAction(Constants.ACTION.DISMISS_ACTION);
+            dismissIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            dismissIntent.putExtra(Constants.KEY.ITEM_KEY, reminder);
+            PendingIntent dismissPendingIntent = PendingIntent.getService(this, pendingId,
+                    dismissIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+            //Snooze action intent
+            Intent snoozeIntent = new Intent(this, ReminderService.class);
+            snoozeIntent.setAction(Constants.ACTION.SNOOZE_ACTION);
+            snoozeIntent.putExtra(Constants.KEY.ITEM_KEY, reminder);
+            PendingIntent snoozePendingIntent = PendingIntent.getService(this, pendingId,
+                    snoozeIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+            //Create notification builder
+            Notification notification = new NotificationCompat.Builder(this)
+                    .setContentTitle(reminder.getName())
+                    .setTicker(reminder.getName())
+                    .setSubText(Utils.get_calendar_date(Calendar.getInstance()))
+                    .setContentText(reminder.getNote())
+                    .setSmallIcon(R.drawable.ic_launcher_mini)
+                    .setOngoing(true)
+                    .setAutoCancel(true)
+                    .setContentIntent(pendingIntent)
+                    .addAction(android.R.drawable.ic_menu_close_clear_cancel, "Dismiss",
+                            dismissPendingIntent)
+                    .addAction(android.R.drawable.ic_popup_reminder, "Snooze", snoozePendingIntent)
+                    .build();
+            notification.flags |= Notification.FLAG_AUTO_CANCEL;
+            notification.defaults |= Notification.DEFAULT_SOUND | Notification.DEFAULT_LIGHTS;
+            //Show notification with notification manager
+            notificationManager.notify(pendingId, notification);
+
         } catch (Exception e) {
             Log.e("PendingId: ", e.toString());
         }

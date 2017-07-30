@@ -34,8 +34,7 @@ public class Utils {
     }
 
     public static int getRandomPendingId() {
-        int id = Tools.getRandomInt();
-        return id;
+        return Tools.getRandomInt();
     }
 
     public static void scheduleNotification(Activity activity, Reminder reminder) {
@@ -49,37 +48,60 @@ public class Utils {
 //        Calendar rem = Calendar.getInstance();
 //        Calendar temp = Calendar.getInstance();
 
+
+        final AlarmManager alarmManager = (AlarmManager) activity.getBaseContext().
+                getSystemService(Context.ALARM_SERVICE);
+
         for (MyNotification myNotification : reminder.getAlarms()) {
-            PendingIntent sender = PendingIntent.getService(activity, 123, service, 0);
-            AlarmManager alarmManager = (AlarmManager) activity.getBaseContext().
-                    getSystemService(Context.ALARM_SERVICE);
-            Calendar rem = Calendar.getInstance();
+            if (!myNotification.isEnable())
+                return;
+
+            service.putExtra(Constants.KEY.PENDING_ID, myNotification.getPendingId());
+            final PendingIntent sender = PendingIntent.getService(activity, myNotification.getPendingId(), service, 0);
+            final Calendar rem = Calendar.getInstance();
+            Calendar current = Calendar.getInstance();
+
             Calendar temp = Calendar.getInstance();
             temp.setTimeInMillis(myNotification.getHourAlarm());
+
+            int dow = temp.get(Calendar.DAY_OF_WEEK);
+            int hour = temp.get(Calendar.HOUR_OF_DAY);
+            int minute = temp.get(Calendar.MINUTE);
+
+            /**
+             * Note:
+             * Tren api 21 alarm ko duoc < 1m
+             * Cac alarm add co thoi gian < thoi gian hien tai se duoc shedule vao gio alarm tiep theo
+             */
             if (reminder.getRepeat_type() == ReminderType.TYPE_DAILY) {
-                if (rem.get(Calendar.HOUR_OF_DAY) > temp.get(Calendar.HOUR_OF_DAY)) {
-                    //Miss that hour , shedule for next day
-                    rem.add(Calendar.DAY_OF_MONTH, 0);
+
+                rem.set(Calendar.HOUR_OF_DAY, hour);
+                rem.set(Calendar.MINUTE, minute);
+                rem.set(Calendar.SECOND, 0);
+
+                if (hour < current.get(Calendar.HOUR_OF_DAY)
+                        || (hour == current.get(Calendar.HOUR_OF_DAY) && minute < current.get(Calendar.MINUTE))
+                        ) {
+                    rem.add(Calendar.HOUR_OF_DAY, 1);
                 }
 
-                rem.set(Calendar.HOUR_OF_DAY, temp.get(Calendar.HOUR_OF_DAY));
-                rem.set(Calendar.MINUTE, temp.get(Calendar.MINUTE));
-                rem.set(Calendar.SECOND, 30);
-                rem.set(Calendar.MILLISECOND, 30);
                 alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, rem.getTimeInMillis(), AlarmManager.INTERVAL_DAY, sender);
-                //Nhan duoc reminder se set tiep reminder
             } else {
                 //SHEDULE FOR WEEKLY
-                if (rem.get(Calendar.DAY_OF_WEEK) > temp.get(Calendar.DAY_OF_WEEK)) {
-                    //SHEDULE FOR NEXT WEEK
-                    rem.add(Calendar.DAY_OF_WEEK, 0);
-//                rem.add(Calendar.DAY_OF_MONTH, 0);
-                }
 
-                rem.set(Calendar.HOUR_OF_DAY, temp.get(Calendar.HOUR_OF_DAY));
-                rem.set(Calendar.MINUTE, temp.get(Calendar.MINUTE));
-                rem.set(Calendar.SECOND, 30);
-                rem.set(Calendar.MILLISECOND, 30);
+                rem.set(Calendar.DAY_OF_WEEK, dow);
+                rem.set(Calendar.HOUR_OF_DAY, hour);
+                rem.set(Calendar.MINUTE, minute);
+                rem.set(Calendar.SECOND, 0);
+
+                if (dow < current.get(Calendar.DAY_OF_WEEK)
+                        ||
+                        (dow == current.get(Calendar.DAY_OF_WEEK)
+                                && hour == current.get(Calendar.HOUR_OF_DAY)
+                                && minute < current.get(Calendar.MINUTE))
+                        )
+                    rem.add(Calendar.DAY_OF_WEEK, 1);
+
                 alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, rem.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, sender);
             }
         }
@@ -95,11 +117,14 @@ public class Utils {
         Intent service = new Intent(mActivity, ReminderService.class);
         service.setAction(Constants.ACTION.START_SERVICE);
         service.putExtra(Constants.KEY.ITEM_KEY, reminder);
-        PendingIntent sender = PendingIntent.getService(mActivity, 123, service,
-                0);
-        AlarmManager alarmManager = (AlarmManager) mActivity.getBaseContext().
-                getSystemService(Context.ALARM_SERVICE);
-        alarmManager.cancel(sender);
+
+        for (MyNotification myNotification : reminder.getAlarms()) {
+            PendingIntent sender = PendingIntent.getService(mActivity, myNotification.getPendingId(), service,
+                    0);
+            AlarmManager alarmManager = (AlarmManager) mActivity.getBaseContext().
+                    getSystemService(Context.ALARM_SERVICE);
+            alarmManager.cancel(sender);
+        }
     }
 
     public static boolean isMyServiceRunning(Context context, Class<?> serviceClass) {
