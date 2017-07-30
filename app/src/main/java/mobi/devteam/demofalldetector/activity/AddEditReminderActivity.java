@@ -145,10 +145,11 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
 
         if (!is_add_mode) {
 
-            Picasso.with(this)
-                    .load(reminder.getThumb())
-                    .resize(300, 300)
-                    .into(imgThumb);
+            if (reminder.getThumb() != null)
+                Picasso.with(this)
+                        .load(reminder.getThumb())
+                        .resize(300, 300)
+                        .into(imgThumb);
 
             start.setTimeInMillis(reminder.getStart());
             end.setTimeInMillis(reminder.getEnd());
@@ -165,7 +166,9 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
             btnAddReminder.setText(R.string.ae_reminder_update_reminder);
 
             alarmAdapter.setAlarmType(reminder.getRepeat_type());
-            myNotificationArrayList.addAll(reminder.getAlarms());
+
+            if (reminder.getAlarms() != null)
+                myNotificationArrayList.addAll(reminder.getAlarms());
 
             alarmAdapter.notifyDataSetChanged();
 

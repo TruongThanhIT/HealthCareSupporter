@@ -74,7 +74,8 @@
             android:name=".activity.AddEditReminderActivity"
             android:hardwareAccelerated="true"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".activity.ConfirmFallActivity"
             android:screenOrientation="portrait"

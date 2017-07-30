@@ -54,7 +54,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHol
 
             String strTime = Utils.get_calendar_time(dateTime);
 
-            if (alarmType == ReminderType.TYPE_DAILY) {
+            if (alarmType == ReminderType.TYPE_DAILY || alarmType == ReminderType.TYPE_NEVER) {
                 holder.txtTime.setText(strTime);
             } else if (alarmType == ReminderType.TYPE_WEEKLY) {
                 holder.txtTime.setText(Utils.get_calendar_dow(dateTime) + ", " + strTime);
