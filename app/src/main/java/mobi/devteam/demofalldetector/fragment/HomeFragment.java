@@ -310,7 +310,7 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
     }
 
     @Override
-    public void onRecyclerItemClick(int position) {
+    public void onRecyclerItemClick(final int position) {
         /*
         Reminder selected_reminder = reminderArrayList.get(position);
         Intent intent = new Intent(getActivity(), ReminderDetailsActivity.class);
@@ -320,7 +320,7 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
 
         Reminder reminder = reminderArrayList.get(position);
         if (reminder != null) {
-            View dialog_view = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_reminder_detail, null);
+            final View dialog_view = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_reminder_detail, null);
 
             TextView txtTitle = (TextView) dialog_view.findViewById(R.id.txtTitle);
             TextView txtNote = (TextView) dialog_view.findViewById(R.id.txtNote);
@@ -355,8 +355,19 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setView(dialog_view);
 
+            final AlertDialog alertDialog = builder.show();
 
-            AlertDialog alertDialog = builder.show();
+            dialog_view.findViewById(R.id.btnEdit).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Reminder selected_reminder = reminderArrayList.get(position);
+                    Intent intent = new Intent(getActivity(), AddEditReminderActivity.class);
+                    intent.putExtra(AddEditReminderActivity.EXTRA_IS_ADD_MODE, false);
+                    intent.putExtra(AddEditReminderActivity.EXTRA_REMINDER_DATA, selected_reminder);
+                    startActivityForResult(intent, ADD_REMINDER_REQUEST);
+                    alertDialog.dismiss();
+                }
+            });
 
             if (alertDialog.getWindow() != null)
                 alertDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
