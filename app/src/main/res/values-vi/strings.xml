@@ -116,4 +116,6 @@
     <string name="ae_reminder_update_reminder">Update Reminder</string>
     <string name="ae_reminder_alarms_lists">Alarms List:</string>
     <string name="ae_reminder_confirm_delete_time">Are you sure you want to delete this alarm time?</string>
+    <string name="ae_reminder_require_alarm_time">You should have at least 1 alarm time by Add Alarm</string>
+    <string name="err_empty_note_reminder">Please type your note</string>
 </resources>

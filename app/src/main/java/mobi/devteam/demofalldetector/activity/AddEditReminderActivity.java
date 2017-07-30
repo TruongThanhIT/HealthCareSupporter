@@ -1,5 +1,7 @@
 package mobi.devteam.demofalldetector.activity;
 
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
@@ -8,6 +10,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,6 +18,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.animation.Animation;
+import android.view.animation.ScaleAnimation;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -295,6 +300,9 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
 
     @OnClick(R.id.btnAddReminder)
     void save_reminder() {
+        if (!validate_form())
+            return;
+
         FirebaseUser currentUser = mAuth.getCurrentUser();
         final DatabaseReference child = reminder_data.child(currentUser.getUid());
         final StorageReference reminders_images = mStorageRef.child("reminders_images")
@@ -305,46 +313,89 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
         if (reminder == null)
             reminder = new Reminder();
 
-        if (edtReminder.getText().toString().equals("")) {
-            Toast.makeText(this, R.string.err_empty_name_reminder, Toast.LENGTH_SHORT).show();
+
+        reminder.setStart(start.getTimeInMillis());
+        reminder.setEnd(end.getTimeInMillis()); // start -> end
+        reminder.setName(edtReminder.getText().toString());
+        reminder.setNote(edtNote.getText().toString());
+
+        // Using for alarm
+        reminder.setRepeat_type(get_selected_reminder());
+        reminder.setAlarms(myNotificationArrayList);
+
+        if (is_add_mode) {
+            reminder.setId(tsLong);
+            child.child(tsLong + "").setValue(reminder);
         } else {
-            reminder.setStart(start.getTimeInMillis());
-            reminder.setEnd(end.getTimeInMillis()); // start -> end
-            reminder.setName(edtReminder.getText().toString());
-            reminder.setNote(edtNote.getText().toString());
-
-            // Using for alarm
-            reminder.setRepeat_type(get_selected_reminder());
-            reminder.setAlarms(myNotificationArrayList);
-
-            if (is_add_mode) {
-                reminder.setId(tsLong);
-                child.child(tsLong + "").setValue(reminder);
-            } else {
-                //update
-                child.child(reminder.getId() + "").setValue(reminder);
-            }
-            // Add notification
-            Utils.scheduleNotification(this, reminder);
-            try {
-                if (isImageChanged) {
-                    Bitmap bitmapAvatar = Tools.convertImageViewToBitmap(imgThumb);
-                    byte[] bytes = Tools.convertBitmapToByteAray(bitmapAvatar);
-                    reminders_images.child(reminder.getId() + "").putBytes(bytes)
-                            .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                                @Override
-                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                    @SuppressWarnings("VisibleForTests")
-                                    Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                                    child.child(reminder.getId() + "").child("thumb").setValue(downloadUrl.toString());
-                                }
-                            });
-                }
-            } catch (NullPointerException e) {
-                Log.e(TAG, e.toString());
-            }
-            finish();
+            //update
+            child.child(reminder.getId() + "").setValue(reminder);
         }
+        // Add notification
+        Utils.scheduleNotification(this, reminder);
+        try {
+            if (isImageChanged) {
+                Bitmap bitmapAvatar = Tools.convertImageViewToBitmap(imgThumb);
+                byte[] bytes = Tools.convertBitmapToByteAray(bitmapAvatar);
+                reminders_images.child(reminder.getId() + "").putBytes(bytes)
+                        .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                @SuppressWarnings("VisibleForTests")
+                                Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                                child.child(reminder.getId() + "").child("thumb").setValue(downloadUrl.toString());
+                            }
+                        });
+            }
+        } catch (NullPointerException e) {
+            Log.e(TAG, e.toString());
+        }
+        finish();
+
+    }
+
+    /**
+     * Do the form validator here
+     *
+     * @return boolean
+     */
+    private boolean validate_form() {
+        Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+        vibrator.vibrate(300);
+
+        if (edtReminder.getText().toString().equals("")) {
+            ObjectAnimator translationX = ObjectAnimator.ofFloat(edtReminder, "translationX", 0, 50);
+            translationX.setDuration(500);
+            translationX.setRepeatMode(ValueAnimator.REVERSE);
+            translationX.setRepeatCount(3);
+            translationX.start();
+
+            Toast.makeText(this, R.string.err_empty_name_reminder, Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        if (edtNote.getText().toString().equals("")) {
+            ObjectAnimator translationX = ObjectAnimator.ofFloat(edtNote, "translationX", 0, 50);
+            translationX.setDuration(500);
+            translationX.setRepeatMode(ValueAnimator.REVERSE);
+            translationX.setRepeatCount(3);
+            translationX.start();
+
+            Toast.makeText(this, R.string.err_empty_note_reminder, Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        if (myNotificationArrayList.size() == 0) {
+            //should have at least 1 alarm time
+            ScaleAnimation scaleAnimation = new ScaleAnimation(1, 1.5f, 1, 1.5f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+            scaleAnimation.setDuration(500);
+            scaleAnimation.setRepeatMode(Animation.REVERSE);
+            scaleAnimation.setRepeatCount(3);
+            Toast.makeText(this, R.string.ae_reminder_require_alarm_time, Toast.LENGTH_SHORT).show();
+            btnAddAlarm.startAnimation(scaleAnimation);
+            return false;
+        }
+
+        return true;
     }
 
     private int get_selected_reminder() {
