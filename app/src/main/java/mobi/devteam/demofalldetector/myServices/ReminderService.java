@@ -96,7 +96,7 @@ public class ReminderService extends Service {
         notificationIntent.putExtra(Constants.KEY.ITEM_KEY, reminder);
         try {
             for (MyNotification myNotification : reminder.getAlarms()) {
-
+                if(myNotification.isEnable() == false) return;
                 PendingIntent pendingIntent = PendingIntent.getActivity(this, myNotification.getPendingId(),
                         notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
                 if (pendingIntent == null)

@@ -234,9 +234,12 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
     void pickTime() {
         int selected_reminder = get_selected_reminder();
         if (selected_reminder == ReminderType.TYPE_DAILY || selected_reminder == ReminderType.TYPE_NEVER) {
-            TimePickerDialog timePickerDialog = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
+            final TimePickerDialog timePickerDialog = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
                 @Override
                 public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                    if (!view.isShown())
+                        return;
+
                     alarm.set(Calendar.HOUR_OF_DAY, hourOfDay);
                     alarm.set(Calendar.MINUTE, minute);
 
@@ -250,6 +253,7 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
 
                     myNotificationArrayList.add(myNotification);
                     alarmAdapter.notifyDataSetChanged();
+
                 }
             }, now.get(Calendar.HOUR_OF_DAY), now.get(Calendar.MINUTE), true);
             timePickerDialog.show();
