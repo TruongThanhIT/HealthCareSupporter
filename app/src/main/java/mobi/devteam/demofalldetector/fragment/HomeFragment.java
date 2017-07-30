@@ -23,6 +23,7 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.ProgressBar;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -44,7 +45,8 @@ import butterknife.Unbinder;
 import mobi.devteam.demofalldetector.R;
 import mobi.devteam.demofalldetector.activity.AddEditReminderActivity;
 import mobi.devteam.demofalldetector.activity.MainActivity;
-import mobi.devteam.demofalldetector.activity.ReminderDetailsActivity;
+import mobi.devteam.demofalldetector.activity.MyApplication;
+import mobi.devteam.demofalldetector.adapter.AlarmAdapter;
 import mobi.devteam.demofalldetector.adapter.ReminderAdapter;
 import mobi.devteam.demofalldetector.model.Profile;
 import mobi.devteam.demofalldetector.model.Reminder;
@@ -309,10 +311,58 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
 
     @Override
     public void onRecyclerItemClick(int position) {
+        /*
         Reminder selected_reminder = reminderArrayList.get(position);
         Intent intent = new Intent(getActivity(), ReminderDetailsActivity.class);
         intent.putExtra(ReminderDetailsActivity.EXTRA_REMINDER, selected_reminder);
         startActivityForResult(intent, ADD_REMINDER_REQUEST);
+        */
+
+        Reminder reminder = reminderArrayList.get(position);
+        if (reminder != null) {
+            View dialog_view = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_reminder_detail, null);
+
+            TextView txtTitle = (TextView) dialog_view.findViewById(R.id.txtTitle);
+            TextView txtNote = (TextView) dialog_view.findViewById(R.id.txtNote);
+            TextView txtType = (TextView) dialog_view.findViewById(R.id.txtType);
+
+            txtTitle.setText(reminder.getName());
+            txtNote.setText(reminder.getNote());
+            try {
+                txtType.setText(MyApplication.reminder_types[reminder.getRepeat_type()]);
+            } catch (Exception ignored) {
+            }
+
+            RecyclerView recyclerView = (RecyclerView) dialog_view.findViewById(R.id.rcv_alarms_time);
+
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+            recyclerView.setLayoutManager(linearLayoutManager);
+
+            AlarmAdapter alarmAdapter = new AlarmAdapter(getActivity(), reminder.getAlarms(), new OnRecyclerItemClickListener() {
+                @Override
+                public void onRecyclerItemClick(int position) {
+
+                }
+
+                @Override
+                public void onRecyclerItemLongClick(int position) {
+
+                }
+            }, reminder.getRepeat_type());
+            alarmAdapter.setHideSwitch(true);
+            recyclerView.setAdapter(alarmAdapter);
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setView(dialog_view);
+
+
+            AlertDialog alertDialog = builder.show();
+
+            if (alertDialog.getWindow() != null)
+                alertDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+
+        }
+
     }
 
     @Override

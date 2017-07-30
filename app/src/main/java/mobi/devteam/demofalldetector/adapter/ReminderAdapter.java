@@ -94,6 +94,7 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.Remind
                             .into(holder.imgThumb);
                 }
             }
+
         }
     }
 

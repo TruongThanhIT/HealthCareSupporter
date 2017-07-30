@@ -30,6 +30,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHol
     private ArrayList<MyNotification> myNotificationArrayList;
     private OnRecyclerItemClickListener listener;
     private int alarmType;
+    private boolean hideSwitch = false;
 
     public AlarmAdapter(Context context, ArrayList<MyNotification> myNotificationArrayList, OnRecyclerItemClickListener listener, int alarmType) {
         this.context = context;
@@ -71,6 +72,10 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHol
         this.alarmType = alarmType;
     }
 
+    public void setHideSwitch(boolean hideSwitch) {
+        this.hideSwitch = hideSwitch;
+    }
+
     class AlarmViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.txtTime)
@@ -89,9 +94,11 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHol
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    swStatus.setChecked(!swStatus.isChecked());
-                    myNotificationArrayList.get(getAdapterPosition())
-                            .setEnable(swStatus.isChecked());
+                    if (!hideSwitch) {
+                        swStatus.setChecked(!swStatus.isChecked());
+                        myNotificationArrayList.get(getAdapterPosition())
+                                .setEnable(swStatus.isChecked());
+                    }
 
                     if (listener != null) {
                         listener.onRecyclerItemClick(getAdapterPosition());
