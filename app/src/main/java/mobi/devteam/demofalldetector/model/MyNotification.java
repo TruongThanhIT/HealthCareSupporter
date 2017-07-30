@@ -3,10 +3,6 @@ package mobi.devteam.demofalldetector.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-/**
- * Created by Administrator on 7/27/2017.
- */
-
 public class MyNotification implements Parcelable {
 
     public static final Creator<MyNotification> CREATOR = new Creator<MyNotification>() {

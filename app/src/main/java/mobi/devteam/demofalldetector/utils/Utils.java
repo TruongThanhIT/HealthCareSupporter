@@ -43,13 +43,18 @@ public class Utils {
         service.setAction(Constants.ACTION.START_SERVICE);
         service.putExtra(Constants.KEY.ITEM_KEY, reminder);
 
-        PendingIntent sender = PendingIntent.getService(activity, 123, service, 0);
-        AlarmManager alarmManager = (AlarmManager) activity.getBaseContext().
-                getSystemService(Context.ALARM_SERVICE);
-        Calendar rem = Calendar.getInstance();
-        Calendar temp = Calendar.getInstance();
+//        PendingIntent sender = PendingIntent.getService(activity, 123, service, 0);
+//        AlarmManager alarmManager = (AlarmManager) activity.getBaseContext().
+//                getSystemService(Context.ALARM_SERVICE);
+//        Calendar rem = Calendar.getInstance();
+//        Calendar temp = Calendar.getInstance();
 
         for (MyNotification myNotification : reminder.getAlarms()) {
+            PendingIntent sender = PendingIntent.getService(activity, 123, service, 0);
+            AlarmManager alarmManager = (AlarmManager) activity.getBaseContext().
+                    getSystemService(Context.ALARM_SERVICE);
+            Calendar rem = Calendar.getInstance();
+            Calendar temp = Calendar.getInstance();
             temp.setTimeInMillis(myNotification.getHourAlarm());
             if (reminder.getRepeat_type() == ReminderType.TYPE_DAILY) {
                 if (rem.get(Calendar.HOUR_OF_DAY) > temp.get(Calendar.HOUR_OF_DAY)) {
