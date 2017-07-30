@@ -135,4 +135,54 @@ public class Utils {
         }
         return false;
     }
+
+    /**
+     * This method will compare 2 reminder by type
+     *
+     * @param reminderType {#ReminderType}
+     * @param c1
+     * @param c2
+     * @return
+     */
+    public static int compareReminderToCalendarByType(int reminderType, Calendar c1, Calendar c2) {
+
+        if (reminderType == ReminderType.TYPE_DAILY || reminderType == ReminderType.TYPE_NEVER) {
+            if (c1.get(Calendar.HOUR_OF_DAY) < c2.get(Calendar.HOUR_OF_DAY))
+                return -1;
+
+            if (c1.get(Calendar.HOUR_OF_DAY) == c2.get(Calendar.HOUR_OF_DAY)) {
+                if (c1.get(Calendar.MINUTE) < c2.get(Calendar.MINUTE))
+                    return -1;
+                else if (c1.get(Calendar.MINUTE) == c2.get(Calendar.MINUTE))
+                    return 0;
+            }
+
+            return 1;
+        } else if (reminderType == ReminderType.TYPE_WEEKLY) {
+            //compare week
+            if (c1.get(Calendar.DAY_OF_WEEK) < c2.get(Calendar.DAY_OF_WEEK)) {
+                return -1;
+            } else if (c1.get(Calendar.DAY_OF_WEEK) > c2.get(Calendar.DAY_OF_WEEK))
+                return 1;
+            else {
+                //compare hour
+                if (c1.get(Calendar.HOUR_OF_DAY) < c2.get(Calendar.HOUR_OF_DAY)) {
+                    return -1;
+                } else if (c1.get(Calendar.HOUR_OF_DAY) > c2.get(Calendar.HOUR_OF_DAY)) {
+                    return 1;
+                } else {
+                    //compare minute
+                    if (c1.get(Calendar.MINUTE) < c2.get(Calendar.MINUTE)) {
+                        return -1;
+                    } else if (c1.get(Calendar.MINUTE) > c2.get(Calendar.MINUTE)) {
+                        return 1;
+                    }
+                    //all are equal
+                    return 0;
+                }
+            }
+        }
+
+        return -1;
+    }
 }

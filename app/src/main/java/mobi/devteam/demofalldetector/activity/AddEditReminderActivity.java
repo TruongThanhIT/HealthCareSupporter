@@ -18,8 +18,10 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -48,6 +50,8 @@ import com.vansuita.pickimage.listeners.IPickResult;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -179,6 +183,19 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
 
             alarmAdapter.notifyDataSetChanged();
 
+            spinReminderRepeat.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    alarmAdapter.setAlarmType(get_selected_reminder());
+                    alarmAdapter.notifyDataSetChanged();
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+
+                }
+            });
+
         } else {
             txtStart.setText(Utils.get_calendar_date(now));
             txtEnd.setText(Utils.get_calendar_date(now));
@@ -243,8 +260,8 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
                     alarm.set(Calendar.HOUR_OF_DAY, hourOfDay);
                     alarm.set(Calendar.MINUTE, minute);
 
-                    spinReminderRepeat.setClickable(false);
-                    spinReminderRepeat.setAlpha(0.8f);
+//                    spinReminderRepeat.setClickable(false);
+//                    spinReminderRepeat.setAlpha(0.8f);
 //                    txtTime.setText(Utils.get_calendar_time(alarm));
                     MyNotification myNotification = new MyNotification();
                     myNotification.setHourAlarm(alarm.getTimeInMillis());
@@ -252,6 +269,7 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
                     myNotification.setEnable(true);
 
                     myNotificationArrayList.add(myNotification);
+                    sortTimeArray();
                     alarmAdapter.notifyDataSetChanged();
 
                 }
@@ -267,8 +285,8 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
                             alarm.set(Calendar.MINUTE, minute);
                             String[] dayOfWeek = getResources().getStringArray(R.array.days_array);
                             txtTime.setText(dayOfWeek[day - 1] + ", " + hour + ":" + minute);
-                            spinReminderRepeat.setClickable(false);
-                            spinReminderRepeat.setAlpha(0.8f);
+//                            spinReminderRepeat.setClickable(false);
+//                            spinReminderRepeat.setAlpha(0.8f);
 
                             MyNotification myNotification = new MyNotification();
                             myNotification.setHourAlarm(alarm.getTimeInMillis());
@@ -276,6 +294,7 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
                             myNotification.setEnable(true);
 
                             myNotificationArrayList.add(myNotification);
+                            sortTimeArray();
                             alarmAdapter.notifyDataSetChanged();
                         }
                     })
@@ -286,6 +305,17 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
                     .build()
                     .show();
         }
+    }
+
+    private void sortTimeArray() {
+        final int selected_reminder = get_selected_reminder();
+
+        Collections.sort(myNotificationArrayList, new Comparator<MyNotification>() {
+            @Override
+            public int compare(MyNotification o1, MyNotification o2) {
+                return Utils.compareReminderToCalendarByType(selected_reminder, o1.getReminderCalendar(), o2.getReminderCalendar());
+            }
+        });
     }
 
     @Override

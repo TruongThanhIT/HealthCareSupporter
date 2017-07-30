@@ -129,7 +129,7 @@ public class RelativeListFragment extends Fragment implements OnRecyclerItemClic
 
         FirebaseUser currentUser = mAuth.getCurrentUser();
         progressBarRelative.setVisibility(View.VISIBLE);
-        relative_data.child(currentUser.getUid()).addValueEventListener(new ValueEventListener() {
+        relative_data.child(currentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (!isAdded())
@@ -150,8 +150,10 @@ public class RelativeListFragment extends Fragment implements OnRecyclerItemClic
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Toast.makeText(getActivity(), "Error when getting data : " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
-                progressBarRelative.setVisibility(View.GONE);
+                if (isDetached()) {
+                    Toast.makeText(getActivity(), "Error when getting data : " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                    progressBarRelative.setVisibility(View.GONE);
+                }
             }
         });
 

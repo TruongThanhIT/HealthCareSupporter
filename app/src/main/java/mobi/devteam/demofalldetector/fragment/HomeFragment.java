@@ -1,12 +1,14 @@
 package mobi.devteam.demofalldetector.fragment;
 
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.Vibrator;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -20,6 +22,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.ScaleAnimation;
 import android.widget.CompoundButton;
 import android.widget.ProgressBar;
 import android.widget.Switch;
@@ -325,6 +329,7 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
             TextView txtTitle = (TextView) dialog_view.findViewById(R.id.txtTitle);
             TextView txtNote = (TextView) dialog_view.findViewById(R.id.txtNote);
             TextView txtType = (TextView) dialog_view.findViewById(R.id.txtType);
+            final View btnEdit = dialog_view.findViewById(R.id.btnEdit);
 
             txtTitle.setText(reminder.getName());
             txtNote.setText(reminder.getNote());
@@ -341,7 +346,15 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
             AlarmAdapter alarmAdapter = new AlarmAdapter(getActivity(), reminder.getAlarms(), new OnRecyclerItemClickListener() {
                 @Override
                 public void onRecyclerItemClick(int position) {
+                    Vibrator vibrator = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
+                    vibrator.vibrate(300);
 
+                    ScaleAnimation scaleAnimation = new ScaleAnimation(1, 1.5f, 1, 1.5f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+                    scaleAnimation.setDuration(400);
+                    scaleAnimation.setRepeatMode(Animation.REVERSE);
+                    scaleAnimation.setRepeatCount(3);
+
+                    btnEdit.startAnimation(scaleAnimation);
                 }
 
                 @Override
@@ -357,7 +370,7 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
 
             final AlertDialog alertDialog = builder.show();
 
-            dialog_view.findViewById(R.id.btnEdit).setOnClickListener(new View.OnClickListener() {
+            btnEdit.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Reminder selected_reminder = reminderArrayList.get(position);

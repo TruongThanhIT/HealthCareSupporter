@@ -3,6 +3,8 @@ package mobi.devteam.demofalldetector.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.Calendar;
+
 public class MyNotification implements Parcelable {
 
     public static final Creator<MyNotification> CREATOR = new Creator<MyNotification>() {
@@ -63,5 +65,11 @@ public class MyNotification implements Parcelable {
 
     public void setEnable(boolean enable) {
         this.enable = enable;
+    }
+
+    public Calendar getReminderCalendar() {
+        Calendar instance = Calendar.getInstance();
+        instance.setTimeInMillis(hourAlarm);
+        return instance;
     }
 }

@@ -60,12 +60,19 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.Remind
             }
 
             Calendar dateTime = Calendar.getInstance();
-
+            Calendar current = Calendar.getInstance();
             //get next alarm time
             if (reminder.getAlarms() != null)
-                for (MyNotification myNotification : reminder.getAlarms()) {
-                    if (dateTime.getTimeInMillis() <= myNotification.getHourAlarm()) {
-                        dateTime.setTimeInMillis(myNotification.getHourAlarm());
+                for (int i = 0; i < reminder.getAlarms().size(); i++) {
+                    MyNotification myNotification = reminder.getAlarms().get(i);
+                    Calendar reminderCalendar = myNotification.getReminderCalendar();
+
+                    if (i == 0) {
+                        dateTime = reminderCalendar;
+                    } else if (Utils.compareReminderToCalendarByType(reminder.getRepeat_type(), reminderCalendar, current) >= 0) {
+                        //in this case all item in the array were sorted
+                        //this array is already sorted when add
+                        dateTime = reminderCalendar;
                         break;
                     }
                 }
