@@ -17,7 +17,6 @@ import java.util.Calendar;
 
 import mobi.devteam.demofalldetector.R;
 import mobi.devteam.demofalldetector.activity.MainActivity;
-import mobi.devteam.demofalldetector.model.MyNotification;
 import mobi.devteam.demofalldetector.model.Reminder;
 import mobi.devteam.demofalldetector.utils.Constants;
 import mobi.devteam.demofalldetector.utils.Utils;
@@ -65,17 +64,11 @@ public class ReminderService extends Service {
                 break;
             case Constants.ACTION.DISMISS_ACTION:
                 //Cancel notification with PendingId
-                for (MyNotification myNotification : reminder.getAlarms()) {
-                    notificationManager.cancel(myNotification.getPendingId());
-                }
-
+                notificationManager.cancel(pendingId);
                 break;
             case Constants.ACTION.SNOOZE_ACTION:
                 // Handling snooze
-                for (MyNotification myNotification : reminder.getAlarms()) {
-                    notificationManager.cancel(myNotification.getPendingId());
-                }
-
+                notificationManager.cancel(pendingId);
                 setSnooze(reminder);
                 break;
             case Constants.ACTION.STOP_SERVICE:

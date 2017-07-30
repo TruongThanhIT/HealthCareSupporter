@@ -37,8 +37,8 @@ public class Utils {
         return Tools.getRandomInt();
     }
 
-    public static void scheduleNotification(Activity activity, Reminder reminder) {
-        Intent service = new Intent(activity, ReminderService.class);
+    public static void scheduleNotification(Context context, Reminder reminder) {
+        Intent service = new Intent(context, ReminderService.class);
         service.setAction(Constants.ACTION.START_SERVICE);
         service.putExtra(Constants.KEY.ITEM_KEY, reminder);
 
@@ -49,15 +49,15 @@ public class Utils {
 //        Calendar temp = Calendar.getInstance();
 
 
-        final AlarmManager alarmManager = (AlarmManager) activity.getBaseContext().
+        final AlarmManager alarmManager = (AlarmManager) context.
                 getSystemService(Context.ALARM_SERVICE);
 
         for (MyNotification myNotification : reminder.getAlarms()) {
             if (!myNotification.isEnable())
-                return;
+                continue;
 
             service.putExtra(Constants.KEY.PENDING_ID, myNotification.getPendingId());
-            final PendingIntent sender = PendingIntent.getService(activity, myNotification.getPendingId(), service, 0);
+            final PendingIntent sender = PendingIntent.getService(context, myNotification.getPendingId(), service, 0);
             final Calendar rem = Calendar.getInstance();
             Calendar current = Calendar.getInstance();
 
@@ -74,7 +74,6 @@ public class Utils {
              * Cac alarm add co thoi gian < thoi gian hien tai se duoc shedule vao gio alarm tiep theo
              */
             if (reminder.getRepeat_type() == ReminderType.TYPE_DAILY) {
-
                 rem.set(Calendar.HOUR_OF_DAY, hour);
                 rem.set(Calendar.MINUTE, minute);
                 rem.set(Calendar.SECOND, 0);
