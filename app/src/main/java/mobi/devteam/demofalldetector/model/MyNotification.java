@@ -98,14 +98,24 @@ public class MyNotification implements Parcelable {
         int minute = reminder.get(Calendar.MINUTE);
 
         reminder = (Calendar) current.clone();
-        reminder.set(Calendar.DAY_OF_WEEK, dow);
 
-        if (reminderType == ReminderType.TYPE_WEEKLY && reminder.compareTo(current) >= 0) {
-            reminder.add(Calendar.WEEK_OF_MONTH, 1);
+        if (reminderType == ReminderType.TYPE_WEEKLY) {
+            reminder.set(Calendar.DAY_OF_WEEK, dow);
+
+            if (reminder.compareTo(current) < 0) {
+                reminder.add(Calendar.WEEK_OF_MONTH, 1);
+            }
+
+            reminder.set(Calendar.HOUR_OF_DAY, hour);
+            reminder.set(Calendar.MINUTE, minute);
+        } else if (reminderType == ReminderType.TYPE_DAILY || reminderType == ReminderType.TYPE_NEVER) {
+            reminder.set(Calendar.HOUR_OF_DAY, hour);
+            reminder.set(Calendar.MINUTE, minute);
+
+            if (reminder.compareTo(current) < 0) {
+                reminder.add(Calendar.DAY_OF_MONTH, 1);
+            }
         }
-
-        reminder.set(Calendar.HOUR_OF_DAY, hour);
-        reminder.set(Calendar.MINUTE, minute);
 
         return reminder;
     }
