@@ -89,7 +89,7 @@ public class Utils {
                 alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, rem.getTimeInMillis(), AlarmManager.INTERVAL_DAY, sender);
             } else {
                 //SHEDULE FOR WEEKLY
-                rem = myNotification.getReminderCalendarRelateCurrent();
+                rem = myNotification.getReminderCalendarRelateCurrent(reminder.getRepeat_type());
 
                 alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, rem.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, sender);
             }
@@ -189,11 +189,11 @@ public class Utils {
     public static Calendar getNextCalendarBaseCurrentTime(Reminder reminder) {
         Calendar dateTime = Calendar.getInstance();
         if (reminder.getAlarms() != null) {
-            dateTime = reminder.getAlarms().get(0).getReminderCalendarRelateCurrent();
+            dateTime = reminder.getAlarms().get(0).getReminderCalendarRelateCurrent(reminder.getRepeat_type());
 
             for (int i = 1; i < reminder.getAlarms().size(); i++) {
                 MyNotification myNotification = reminder.getAlarms().get(i);
-                Calendar reminderCalendar = myNotification.getReminderCalendarRelateCurrent();
+                Calendar reminderCalendar = myNotification.getReminderCalendarRelateCurrent(reminder.getRepeat_type());
 
                 if (dateTime.compareTo(reminderCalendar) > 0) {
                     //in this case all item in the array were sorted

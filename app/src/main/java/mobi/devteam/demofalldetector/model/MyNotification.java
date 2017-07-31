@@ -5,6 +5,8 @@ import android.os.Parcelable;
 
 import java.util.Calendar;
 
+import mobi.devteam.demofalldetector.utils.ReminderType;
+
 public class MyNotification implements Parcelable {
 
     public static final Creator<MyNotification> CREATOR = new Creator<MyNotification>() {
@@ -83,10 +85,10 @@ public class MyNotification implements Parcelable {
      * <p>
      * reference: https://stackoverflow.com/questions/6722542/java-calendar-date-is-unpredictable-after-setting-day-of-week
      * YEAR + MONTH + WEEK_OF_MONTH + DAY_OF_WEEK
-
+     *
      * @return
      */
-    public Calendar getReminderCalendarRelateCurrent() {
+    public Calendar getReminderCalendarRelateCurrent(int reminderType) {
         Calendar current = Calendar.getInstance();
 
         Calendar reminder = Calendar.getInstance();
@@ -98,14 +100,13 @@ public class MyNotification implements Parcelable {
         reminder = (Calendar) current.clone();
         reminder.set(Calendar.DAY_OF_WEEK, dow);
 
-        if (reminder.compareTo(current) >= 0) {
-            reminder.set(Calendar.HOUR_OF_DAY, hour);
-            reminder.set(Calendar.MINUTE, minute);
-        } else {
+        if (reminderType == ReminderType.TYPE_WEEKLY && reminder.compareTo(current) >= 0) {
             reminder.add(Calendar.WEEK_OF_MONTH, 1);
-            reminder.set(Calendar.HOUR_OF_DAY, hour);
-            reminder.set(Calendar.MINUTE, minute);
         }
+
+        reminder.set(Calendar.HOUR_OF_DAY, hour);
+        reminder.set(Calendar.MINUTE, minute);
+
         return reminder;
     }
 }

@@ -301,7 +301,7 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
             public int compare(Reminder o1, Reminder o2) {
                 Calendar c1 = Utils.getNextCalendarBaseCurrentTime(o1);
                 Calendar c2 = Utils.getNextCalendarBaseCurrentTime(o2);
-                return c1.compareTo(c2);
+                return c1.compareTo(Calendar.getInstance());
             }
         });
 
