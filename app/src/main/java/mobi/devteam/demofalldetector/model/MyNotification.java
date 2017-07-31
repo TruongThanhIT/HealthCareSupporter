@@ -82,7 +82,8 @@ public class MyNotification implements Parcelable {
      * This method get the parse the reminder relative to the current time
      * <p>
      * reference: https://stackoverflow.com/questions/6722542/java-calendar-date-is-unpredictable-after-setting-day-of-week
-     *
+     * YEAR + MONTH + WEEK_OF_MONTH + DAY_OF_WEEK
+
      * @return
      */
     public Calendar getReminderCalendarRelateCurrent() {
