@@ -80,6 +80,8 @@ public class MyNotification implements Parcelable {
 
     /**
      * This method get the parse the reminder relative to the current time
+     * <p>
+     * reference: https://stackoverflow.com/questions/6722542/java-calendar-date-is-unpredictable-after-setting-day-of-week
      *
      * @return
      */
@@ -89,30 +91,20 @@ public class MyNotification implements Parcelable {
         Calendar reminder = Calendar.getInstance();
         reminder.setTimeInMillis(hourAlarm);
         int dow = reminder.get(Calendar.DAY_OF_WEEK);
+        int hour = reminder.get(Calendar.HOUR_OF_DAY);
+        int minute = reminder.get(Calendar.MINUTE);
 
-        reminder.set(Calendar.YEAR, current.get(Calendar.YEAR));
-        reminder.set(Calendar.MONTH, current.get(Calendar.MONTH));
-        reminder.set(Calendar.DAY_OF_MONTH, current.get(Calendar.DAY_OF_MONTH));
+        reminder = (Calendar) current.clone();
+        reminder.set(Calendar.DAY_OF_WEEK, dow);
 
-        if (current.get(Calendar.DAY_OF_WEEK) > dow) {
-            reminder.add(Calendar.DAY_OF_MONTH, 7);
+        if (reminder.compareTo(current) >= 0) {
+            reminder.set(Calendar.HOUR_OF_DAY, hour);
+            reminder.set(Calendar.MINUTE, minute);
         } else {
-            int hour = reminder.get(Calendar.HOUR_OF_DAY);
-            int minute = reminder.get(Calendar.MINUTE);
-
-            if (dow == current.get(Calendar.DAY_OF_WEEK)) {
-                if (hour < current.get(Calendar.HOUR_OF_DAY)
-                        || (hour == current.get(Calendar.HOUR_OF_DAY) && minute < current.get(Calendar.MINUTE))) {
-                    reminder.add(Calendar.DAY_OF_MONTH, 7);
-                } else {
-                    reminder.add(Calendar.DAY_OF_MONTH, dow - current.get(Calendar.DAY_OF_WEEK));
-                }
-            } else {
-                reminder.add(Calendar.DAY_OF_MONTH, dow - current.get(Calendar.DAY_OF_WEEK));
-            }
-
+            reminder.add(Calendar.WEEK_OF_MONTH, 1);
+            reminder.set(Calendar.HOUR_OF_DAY, hour);
+            reminder.set(Calendar.MINUTE, minute);
         }
-
         return reminder;
     }
 }
