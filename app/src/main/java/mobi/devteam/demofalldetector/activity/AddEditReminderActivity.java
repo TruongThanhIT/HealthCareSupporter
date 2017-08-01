@@ -19,6 +19,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.ScaleAnimation;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
@@ -114,7 +116,7 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
         ButterKnife.bind(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        this.setTitle(R.string.nav_relatives_list);
+        this.setTitle(R.string.reminder_list);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -461,16 +463,16 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
 //            return false;
 //        }
 
-        if (myNotificationArrayList.size() == 0) {
-            //should have at least 1 alarm time
-            ScaleAnimation scaleAnimation = new ScaleAnimation(1, 1.5f, 1, 1.5f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-            scaleAnimation.setDuration(500);
-            scaleAnimation.setRepeatMode(Animation.REVERSE);
-            scaleAnimation.setRepeatCount(3);
-            Toast.makeText(this, R.string.ae_reminder_require_alarm_time, Toast.LENGTH_SHORT).show();
-            btnAddAlarm.startAnimation(scaleAnimation);
-            return false;
-        }
+//        if (myNotificationArrayList.size() == 0) {
+//            //should have at least 1 alarm time
+//            ScaleAnimation scaleAnimation = new ScaleAnimation(1, 1.5f, 1, 1.5f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+//            scaleAnimation.setDuration(500);
+//            scaleAnimation.setRepeatMode(Animation.REVERSE);
+//            scaleAnimation.setRepeatCount(3);
+//            Toast.makeText(this, R.string.ae_reminder_require_alarm_time, Toast.LENGTH_SHORT).show();
+//            btnAddAlarm.startAnimation(scaleAnimation);
+//            return false;
+//        }
 
         return true;
     }

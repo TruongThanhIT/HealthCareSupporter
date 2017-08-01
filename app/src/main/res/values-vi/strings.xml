@@ -52,7 +52,8 @@
     <string name="daily">Hằng ngày</string>
     <string name="never">Không bao giờ</string>
     <string name="weekly">Hằng tuần</string>
-
+    <string name="reminder">Nhắc nhở</string>
+    <string name="reminder_list">Quản lý nhắc nhở</string>
 
 
     <string name="my_web_client_id">828026602604-bp4fq1gj71lh7h5po9gnotblq8sia4to.apps.googleusercontent.com</string>

@@ -65,6 +65,8 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.AlarmViewHol
 
     @Override
     public int getItemCount() {
+        if(myNotificationArrayList == null)
+            return 0;
         return myNotificationArrayList.size();
     }
 
