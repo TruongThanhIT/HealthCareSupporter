@@ -39,12 +39,13 @@
     <!--Relatives-->
     <string name="edit">Chỉnh sửa</string>
     <string name="delete">Xóa</string>
+    <string name="deleted">Đã xóa</string>
     <string name="title_activity_add_edit_task">Thêm/Chỉnh sửa công việc</string>
 
     <!-- Reminder -->
     <string name="ae_reminder_name">Công việc</string>
-    <string name="ae_reminder_start">Ngày bắt đầu</string>
-    <string name="ae_reminder_end">Ngày kết thúc</string>
+    <string name="ae_reminder_start">Bắt đầu</string>
+    <string name="ae_reminder_end">Kết thúc</string>
     <string name="ae_reminder_repeat">Lặp lại</string>
     <string name="ae_reminder_note">Ghi chú</string>
     <string name="snoozeAlert">Nhắc nhở sẽ được thông báo lại sau 10 phút</string>

@@ -433,16 +433,16 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
 //            return false;
 //        }
 
-//        if (myNotificationArrayList.size() == 0) {
-//            //should have at least 1 alarm time
-//            ScaleAnimation scaleAnimation = new ScaleAnimation(1, 1.5f, 1, 1.5f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-//            scaleAnimation.setDuration(500);
-//            scaleAnimation.setRepeatMode(Animation.REVERSE);
-//            scaleAnimation.setRepeatCount(3);
-//            Toast.makeText(this, R.string.ae_reminder_require_alarm_time, Toast.LENGTH_SHORT).show();
-//            btnAddAlarm.startAnimation(scaleAnimation);
-//            return false;
-//        }
+        if (myNotificationArrayList.size() == 0) {
+            //should have at least 1 alarm time
+            ScaleAnimation scaleAnimation = new ScaleAnimation(1, 1.5f, 1, 1.5f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+            scaleAnimation.setDuration(500);
+            scaleAnimation.setRepeatMode(Animation.REVERSE);
+            scaleAnimation.setRepeatCount(3);
+            Toast.makeText(this, R.string.ae_reminder_require_alarm_time, Toast.LENGTH_SHORT).show();
+            btnAddAlarm.startAnimation(scaleAnimation);
+            return false;
+        }
 
         return true;
     }

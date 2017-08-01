@@ -475,6 +475,8 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
     private void make_a_call_to_list() {
         if (relativeArrayList.size() == 0) {
             Log.e(LOG_TAG, "Relative list is zero");
+            isCallEmergency = true;
+            call_to_number(EMERGENCY_TEL);
             return;
         }
         if (current_call_position > relativeArrayList.size() - 1) {
@@ -513,7 +515,7 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
         int c_number = c.getColumnIndex(CallLog.Calls.NUMBER);
         int c_date = c.getColumnIndex(CallLog.Calls.DATE);
         int c_duration = c.getColumnIndex(CallLog.Calls.DURATION);
-        while (c.moveToLast()) { //get last 10 calls log
+        while (c.moveToNext()) { //get last 10 calls log
             try {
                 String phNumber = c.getString(c_number);
                 Date callDayTime = new Date(Long.valueOf(c.getString(c_date)));

@@ -56,9 +56,7 @@
         <com.dd.processbutton.iml.ActionProcessButton
             android:id="@+id/btnSignIn"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
+            android:layout_height="55dp"
             android:layout_marginTop="20dp"
             android:text="@string/login"
             android:textColor="@android:color/white"
@@ -73,9 +71,7 @@
         <com.dd.processbutton.iml.ActionProcessButton
             android:id="@+id/btnSignUp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
+            android:layout_height="55dp"
             android:layout_marginTop="8dp"
             android:text="@string/signup"
             android:textColor="@android:color/white"
