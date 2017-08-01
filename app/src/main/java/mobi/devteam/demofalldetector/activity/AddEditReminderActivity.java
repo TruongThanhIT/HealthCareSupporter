@@ -9,6 +9,8 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -85,7 +87,9 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
     TextView txtTime;
 
     @BindView(R.id.btnAddReminder)
-    ActionProcessButton btnAddReminder;
+    FloatingActionButton btnAddReminder;
+    @BindView(R.id.scrollView)
+    NestedScrollView nestedScrollView;
 
     @BindView(R.id.btnAddAlarm)
     ActionProcessButton btnAddAlarm;
@@ -119,6 +123,16 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
         this.setTitle(R.string.reminder_list);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        nestedScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                if (scrollY > oldScrollY) {
+                    btnAddReminder.hide();
+                } else {
+                    btnAddReminder.show();
+                }
+            }
+        });
 
         if (getIntent().hasExtra(EXTRA_IS_ADD_MODE)) {
             Intent intent = getIntent();
@@ -140,7 +154,7 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
         reminder_data = database.getReference("reminders");
         mStorageRef = FirebaseStorage.getInstance().getReference();
 
-        spinReminderRepeat.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,
+        spinReminderRepeat.setAdapter(new ArrayAdapter<>(this, R.layout.spinner_layout,
                 MyApplication.reminder_types));
         spinReminderRepeat.setSelection(0);
 
@@ -177,7 +191,7 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
 
             spinReminderRepeat.setSelection(reminder.getRepeat_type());
 
-            btnAddReminder.setText(R.string.ae_reminder_update_reminder);
+            btnAddReminder.setImageResource(R.drawable.ic_update);
 
             alarmAdapter.setAlarmType(reminder.getRepeat_type());
 
@@ -213,7 +227,7 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
             txtEnd.setText(Utils.get_calendar_date(now));
             txtTime.setText(Utils.get_calendar_time(now));
 
-            btnAddReminder.setText(R.string.ae_reminder_add_reminder);
+            btnAddReminder.setImageResource(R.drawable.ic_check);
         }
     }
 
@@ -317,13 +331,13 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
                             myNotification.setPendingId(Utils.getRandomPendingId());
                             myNotification.setEnable(true);
 
+                            if (checkDuplicateReminder(myNotification)) {
+                                return;
+                            }
+
                             if (isEdit) {
                                 myNotificationArrayList.remove(mLong_click_selected);
                                 mLong_click_selected = -1;
-                            }
-
-                            if (checkDuplicateReminder(myNotification)) {
-                                return;
                             }
 
                             myNotificationArrayList.add(myNotification);
@@ -463,16 +477,16 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
 //            return false;
 //        }
 
-//        if (myNotificationArrayList.size() == 0) {
-//            //should have at least 1 alarm time
-//            ScaleAnimation scaleAnimation = new ScaleAnimation(1, 1.5f, 1, 1.5f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-//            scaleAnimation.setDuration(500);
-//            scaleAnimation.setRepeatMode(Animation.REVERSE);
-//            scaleAnimation.setRepeatCount(3);
-//            Toast.makeText(this, R.string.ae_reminder_require_alarm_time, Toast.LENGTH_SHORT).show();
-//            btnAddAlarm.startAnimation(scaleAnimation);
-//            return false;
-//        }
+        if (myNotificationArrayList.size() == 0 && get_selected_reminder() != ReminderType.TYPE_NEVER) {
+            //should have at least 1 alarm time
+            ScaleAnimation scaleAnimation = new ScaleAnimation(1, 1.5f, 1, 1.5f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+            scaleAnimation.setDuration(500);
+            scaleAnimation.setRepeatMode(Animation.REVERSE);
+            scaleAnimation.setRepeatCount(3);
+            Toast.makeText(this, R.string.ae_reminder_require_alarm_time, Toast.LENGTH_SHORT).show();
+            btnAddAlarm.startAnimation(scaleAnimation);
+            return false;
+        }
 
         return true;
     }
