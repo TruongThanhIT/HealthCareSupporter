@@ -120,4 +120,5 @@
     <string name="ae_reminder_require_alarm_time">You should have at least 1 alarm time by Add Alarm</string>
     <string name="err_empty_note_reminder">Please type your note</string>
     <string name="duplicate_reminder">This alarm time is exist</string>
+    <string name="check_alarm_time">Sorry, please check your alarms time to ensure no duplicate time</string>
 </resources>
