@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:custom="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -9,53 +9,25 @@
     tools:context="mobi.devteam.demofalldetector.activity.AddEditReminderActivity"
     tools:showIn="@layout/activity_add_edit_reminder">
 
-    <com.dd.processbutton.iml.ActionProcessButton
-        android:id="@+id/btnAddReminder"
-        android:layout_width="240dp"
-        android:layout_height="48dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-
-        android:text="@string/ae_reminder_add_reminder"
-        android:textColor="@android:color/white"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        custom:pb_colorNormal="@color/colorPrimary"
-        custom:pb_colorPressed="@color/colorPrimaryDark"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp" />
-
     <android.support.v4.widget.NestedScrollView
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_marginBottom="8dp"
-        android:requiresFadingEdge="vertical"
-        app:layout_constraintBottom_toTopOf="@+id/btnAddReminder"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0">
+        android:requiresFadingEdge="vertical">
 
-        <android.support.constraint.ConstraintLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:layout_editor_absoluteX="0dp"
-            tools:layout_editor_absoluteY="0dp">
+            android:orientation="vertical">
 
             <ImageView
                 android:id="@+id/imgThumb"
                 android:layout_width="150dp"
+                android:layout_gravity="center"
                 android:layout_height="150dp"
                 android:layout_marginTop="10dp"
                 android:scaleType="centerCrop"
-                app:layout_constraintHorizontal_bias="0.482"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/image_camera" />
 
             <TextView
@@ -67,26 +39,55 @@
                 android:layout_marginTop="@dimen/size_16"
                 android:text="@string/ae_reminder_name"
                 android:textStyle="bold"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toLeftOf="@+id/guideline2"
-                app:layout_constraintTop_toBottomOf="@+id/imgThumb" />
+                android:textColor="@color/color_white"/>
+
+
+            <EditText
+                android:id="@+id/edtReminder"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_rec"
+                android:textColorHint="@color/color_white"
+                android:textColor="@color/color_white"
+                android:layout_marginEnd="@dimen/size_8"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="@dimen/size_8"
+                android:layout_marginStart="@dimen/size_4"
+                android:hint="@string/ae_reminder_hint"
+                android:maxLines="1"
+                android:text="" />
 
             <TextView
                 android:id="@+id/textView7"
+                android:gravity="center"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/size_0"
-                android:layout_marginStart="@dimen/size_0"
-                android:layout_marginTop="@dimen/size_8"
+                android:textColor="@color/color_white"
+                android:layout_marginLeft="@dimen/size_8"
+                android:layout_marginStart="@dimen/size_8"
+                android:layout_marginTop="@dimen/size_16"
                 android:text="@string/ae_reminder_start"
-                android:textStyle="bold"
-                app:layout_constraintLeft_toLeftOf="@+id/textView6"
-                app:layout_constraintTop_toBottomOf="@+id/edtReminder" />
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/txtStart"
+                android:layout_width="match_parent"
+                android:background="@drawable/bg_rec"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/size_8"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="@dimen/size_8"
+                android:layout_marginStart="@dimen/size_4"
+                android:text="TextView"
+                android:textColor="@color/color_white" />
 
             <TextView
                 android:id="@+id/textView8"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@color/color_white"
+                android:layout_marginLeft="@dimen/size_8"
+                android:layout_marginStart="@dimen/size_8"
                 android:layout_marginTop="@dimen/size_16"
                 android:text="@string/ae_reminder_end"
                 android:textStyle="bold"
@@ -94,145 +95,72 @@
                 app:layout_constraintTop_toBottomOf="@+id/textView7" />
 
             <TextView
-                android:id="@+id/textView9"
-                android:layout_width="0dp"
+                android:id="@+id/txtEnd"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginTop="8dp"
-                android:text="@string/ae_reminder_picktime"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@+id/btnAddAlarm"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintLeft_toLeftOf="@+id/textView10"
-                app:layout_constraintRight_toLeftOf="@+id/guideline2"
-                app:layout_constraintTop_toTopOf="@+id/btnAddAlarm"
-                app:layout_constraintVertical_bias="0.428"
-                android:layout_marginEnd="8dp" />
-
-            <TextView
-                android:id="@+id/textView10"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="3dp"
-                android:layout_marginTop="8dp"
-                android:text="@string/ae_reminder_note"
-                android:textStyle="bold"
-                app:layout_constraintLeft_toLeftOf="@+id/textView3"
-                app:layout_constraintTop_toBottomOf="@+id/spinReminderRepeat"
-                android:layout_marginStart="3dp" />
-
-            <Spinner
-                android:id="@+id/spinReminderRepeat"
-                style="@style/MyCustomSpinner"
-                android:layout_width="150dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/size_8"
-                android:layout_marginLeft="@dimen/size_0"
-                android:layout_marginRight="@dimen/size_8"
-                android:layout_marginStart="@dimen/size_0"
-                android:layout_marginTop="@dimen/size_10"
-                app:layout_constraintBottom_toBottomOf="@+id/textView3"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintLeft_toLeftOf="@+id/txtEnd"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/textView3" />
-
-            <EditText
-                android:id="@+id/edtReminder"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:text="TextView"
+                android:background="@drawable/bg_rec"
+                android:textColor="@color/color_white"
                 android:layout_marginEnd="@dimen/size_8"
                 android:layout_marginLeft="4dp"
                 android:layout_marginRight="@dimen/size_8"
-                android:layout_marginStart="@dimen/size_4"
-                android:hint="@string/ae_reminder_hint"
-                android:maxLines="1"
-                android:text=""
-                app:layout_constraintBottom_toBottomOf="@+id/textView6"
-                app:layout_constraintHorizontal_bias="1.0"
-                app:layout_constraintLeft_toLeftOf="@+id/guideline2"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/textView6" />
-
-            <TextView
-                android:id="@+id/txtStart"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/size_10"
-                android:layout_marginStart="@dimen/size_10"
-                android:text="TextView"
-                android:textColor="@color/color_black"
-                app:layout_constraintBottom_toBottomOf="@+id/textView7"
-                app:layout_constraintLeft_toLeftOf="@+id/edtReminder"
-                app:layout_constraintTop_toTopOf="@+id/textView7" />
-
-            <TextView
-                android:id="@+id/txtEnd"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="TextView"
-                android:textColor="@color/color_black"
-                app:layout_constraintBottom_toBottomOf="@+id/textView8"
-                app:layout_constraintLeft_toLeftOf="@+id/txtStart"
-                app:layout_constraintTop_toTopOf="@+id/textView8" />
-
-            <android.support.v7.widget.CardView
-                android:id="@+id/cardView"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/size_8"
-                android:layout_marginRight="@dimen/size_12"
-                android:layout_marginTop="@dimen/size_0"
-                app:cardCornerRadius="5dp"
-                app:cardElevation="5dp"
-                app:contentPadding="5dp"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintLeft_toLeftOf="@+id/spinReminderRepeat"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/textView10">
-
-                <EditText
-                    android:id="@+id/edtNote"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/size_5"
-                    android:background="@null"
-                    android:ems="10"
-                    android:hint="@string/ae_reminder_note_hint"
-                    android:inputType="textMultiLine" />
-            </android.support.v7.widget.CardView>
-
-            <android.support.constraint.Guideline
-                android:id="@+id/guideline2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.3"
-                tools:layout_editor_absoluteX="115dp"
-                tools:layout_editor_absoluteY="81dp" />
+                android:layout_marginStart="@dimen/size_4" />
 
             <TextView
                 android:id="@+id/textView3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/size_0"
-                android:layout_marginStart="@dimen/size_0"
+                android:textColor="@color/color_white"
+                android:layout_marginLeft="@dimen/size_8"
+                android:layout_marginStart="@dimen/size_8"
                 android:layout_marginTop="@dimen/size_16"
                 android:text="@string/ae_reminder_repeat"
-                android:textStyle="bold"
-                app:layout_constraintLeft_toLeftOf="@+id/textView8"
-                app:layout_constraintTop_toBottomOf="@+id/textView8" />
+                android:textStyle="bold" />
+
+            <Spinner
+                android:id="@+id/spinReminderRepeat"
+                style="@style/MyCustomSpinner"
+                android:layout_width="match_parent"
+                android:popupBackground="@drawable/bg_spinner"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/size_8"
+                android:layout_marginStart="@dimen/size_8"
+                android:layout_marginTop="@dimen/size_16" />
+
 
             <TextView
-                android:id="@+id/txtTime"
+                android:id="@+id/textView10"
                 android:layout_width="wrap_content"
+                android:textColor="@color/color_white"
                 android:layout_height="wrap_content"
-                android:text="TextView"
-                android:textColor="@color/color_black"
-                android:visibility="gone"
-                tools:layout_editor_absoluteX="145dp"
-                tools:layout_editor_absoluteY="778dp" />
+                android:layout_marginLeft="@dimen/size_8"
+                android:layout_marginStart="@dimen/size_8"
+                android:layout_marginTop="@dimen/size_16"
+                android:text="@string/ae_reminder_note"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/edtNote"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/size_5"
+                android:background="@drawable/bg_rec"
+                android:textColor="@color/color_white"
+                android:textColorHint="@color/color_white"
+                android:ems="10"
+                android:hint="@string/ae_reminder_note_hint"
+                android:inputType="textMultiLine" />
+
+            <TextView
+                android:id="@+id/textView9"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/color_white"
+                android:layout_marginLeft="@dimen/size_8"
+                android:layout_marginStart="@dimen/size_8"
+                android:layout_marginTop="@dimen/size_16"
+                android:text="@string/ae_reminder_picktime"
+                android:textStyle="bold" />
 
             <com.dd.processbutton.iml.ActionProcessButton
                 android:id="@+id/btnAddAlarm"
@@ -242,41 +170,50 @@
                 android:text="@string/ae_reminder_add_alarm"
                 android:textColor="@android:color/white"
                 android:textSize="14sp"
-                app:layout_constraintLeft_toLeftOf="@+id/cardView"
-
-                app:layout_constraintTop_toBottomOf="@+id/cardView"
                 custom:pb_colorNormal="@color/colorPrimary"
                 custom:pb_colorPressed="@color/colorPrimaryDark" />
 
-            <TextView
-                android:id="@+id/textView15"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/size_8"
-                android:layout_marginRight="@dimen/size_8"
-                android:layout_marginTop="@dimen/size_8"
-                android:text="@string/ae_reminder_alarms_lists"
-                android:textStyle="bold"
-                android:gravity="center"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintLeft_toLeftOf="@+id/textView9"
-                app:layout_constraintRight_toLeftOf="@+id/guideline2"
-                app:layout_constraintTop_toBottomOf="@+id/btnAddAlarm"
-                android:layout_marginStart="@dimen/size_8"
-                android:layout_marginEnd="@dimen/size_8" />
-
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/rcv_alarms"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:nestedScrollingEnabled="false"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView15" />
-        </android.support.constraint.ConstraintLayout>
+                android:nestedScrollingEnabled="false" />
+
+
+            <android.support.constraint.Guideline
+                android:id="@+id/guideline2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.3"
+                tools:layout_editor_absoluteX="108dp"
+                tools:layout_editor_absoluteY="81dp" />
+
+
+            <TextView
+                android:id="@+id/txtTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="TextView"
+                android:textColor="@color/color_black"
+                android:visibility="gone" />
+
+        </LinearLayout>
 
     </android.support.v4.widget.NestedScrollView>
 
-</android.support.constraint.ConstraintLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/btnAddReminder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="@dimen/fab_margin"
+        android:layout_marginEnd="@dimen/fab_margin"
+        android:layout_marginRight="@dimen/fab_margin"
+        app:backgroundTint="@color/colorPrimary"
+        app:rippleColor="@color/fab_riper_color"
+        app:srcCompat="@drawable/ic_check" />
+
+</android.support.design.widget.CoordinatorLayout>

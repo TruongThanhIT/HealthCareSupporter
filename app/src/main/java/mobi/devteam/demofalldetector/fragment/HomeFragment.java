@@ -433,7 +433,12 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
                 startActivityForResult(intent, ADD_REMINDER_REQUEST);
                 break;
             case R.id.mnuDelete:
-                Utils.cancelAlarmWakeUp(getActivity(), selected_reminder);
+                try{
+                    Utils.cancelAlarmWakeUp(getActivity(), selected_reminder);
+                }catch (Exception e){
+
+                }
+
                 FirebaseUser currentUser = mAuth.getCurrentUser();
                 DatabaseReference child = reminder_data.child(currentUser.getUid());
                 DatabaseReference remind = child.child(selected_reminder.getId() + "");
