@@ -4,14 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_app">
+    android:background="@drawable/bg_sign_in"
+    tools:context="mobi.devteam.demofalldetector.activity.LoginActivity">
 
     <ImageView
         android:id="@+id/imgHealth"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/size_150"
+        android:layout_width="@dimen/size_200"
+        android:layout_height="@dimen/size_60"
+        android:layout_centerHorizontal="true"
         android:layout_gravity="center"
-        android:background="@drawable/image_health"
+        android:layout_marginTop="@dimen/size_20"
+        android:background="@drawable/logo"
         android:scaleType="centerCrop" />
 
     <LinearLayout
@@ -19,23 +22,25 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@id/imgHealth"
+        android:layout_below="@+id/imgHealth"
+        android:layout_marginTop="@dimen/size_20"
         android:orientation="vertical"
         android:paddingBottom="@dimen/size_10"
         android:paddingLeft="@dimen/size_10"
         android:paddingRight="@dimen/size_10"
-        android:weightSum="6"
-        tools:context="mobi.devteam.demofalldetector.activity.LoginActivity">
+        android:weightSum="6">
 
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/userName">
+            android:hint="@string/userName"
+            android:textColorHint="#ffffff">
 
             <android.support.design.widget.TextInputEditText
                 android:id="@+id/txtUserName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/bg_rec"
                 android:inputType="textEmailAddress" />
 
         </android.support.design.widget.TextInputLayout>
@@ -43,12 +48,14 @@
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/password">
+            android:hint="@string/password"
+            android:textColorHint="#ffffff">
 
             <android.support.design.widget.TextInputEditText
                 android:id="@+id/txtPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/bg_rec"
                 android:inputType="textPassword" />
 
         </android.support.design.widget.TextInputLayout>
@@ -56,9 +63,7 @@
         <com.dd.processbutton.iml.ActionProcessButton
             android:id="@+id/btnSignIn"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
+            android:layout_height="55dp"
             android:layout_marginTop="20dp"
             android:text="@string/login"
             android:textColor="@android:color/white"
@@ -73,9 +78,7 @@
         <com.dd.processbutton.iml.ActionProcessButton
             android:id="@+id/btnSignUp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
+            android:layout_height="55dp"
             android:layout_marginTop="8dp"
             android:text="@string/signup"
             android:textColor="@android:color/white"
@@ -90,17 +93,19 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
             android:layout_weight="1"
-            android:gravity="center"
+            android:padding="@dimen/size_10"
             android:text="@string/or"
-            android:textAlignment="center" />
+            android:textAlignment="center"
+            android:textColor="@color/color_white"
+            android:textStyle="bold" />
 
         <com.google.android.gms.common.SignInButton
             android:id="@+id/btnSignInWithGoogle"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true" />
+            android:layout_height="60dp"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center" />
     </LinearLayout>
 
     <ProgressBar

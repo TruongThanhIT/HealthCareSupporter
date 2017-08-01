@@ -240,7 +240,7 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
                         MainActivity activity = (MainActivity) getActivity();
                         activity.navItemSelected(R.id.nav_profile);
                     }
-                });
+                }).setCancelable(false);
         builder.show();
 
     }
