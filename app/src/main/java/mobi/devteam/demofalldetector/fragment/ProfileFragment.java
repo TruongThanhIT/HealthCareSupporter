@@ -107,6 +107,11 @@ public class ProfileFragment extends Fragment implements ValueEventListener {
                     //cancel service
                     getActivity().stopService(intent);
                 }
+
+                try {
+                    profile_data.child("detect_fall").setValue(isChecked);
+                } catch (Exception ignored) {
+                }
             }
         });
 
@@ -119,6 +124,11 @@ public class ProfileFragment extends Fragment implements ValueEventListener {
                 } else {
                     //cancel service
                     getActivity().stopService(intent);
+                }
+
+                try {
+                    profile_data.child("allow_find").setValue(isChecked);
+                } catch (Exception ignored) {
                 }
             }
         });

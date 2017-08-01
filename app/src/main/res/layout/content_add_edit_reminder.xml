@@ -166,6 +166,7 @@
                 android:id="@+id/btnAddAlarm"
                 android:layout_width="@dimen/size_150"
                 android:layout_height="48dp"
+                android:layout_marginLeft="8dp"
                 android:layout_marginTop="16dp"
                 android:text="@string/ae_reminder_add_alarm"
                 android:textColor="@android:color/white"
