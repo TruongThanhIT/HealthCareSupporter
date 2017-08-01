@@ -126,7 +126,7 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
         nestedScrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
             @Override
             public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-                if (scrollY > oldScrollY) {
+                if (scrollY == 0) {
                     btnAddReminder.hide();
                 } else {
                     btnAddReminder.show();
@@ -205,6 +205,7 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     for (MyNotification n : myNotificationArrayList) {
                         if (checkDuplicateReminder(n)) {
+                            Toast.makeText(AddEditReminderActivity.this, getString(R.string.check_alarm_time), Toast.LENGTH_SHORT).show();
                             spinReminderRepeat.setSelection(old_spiner_position);
                             return;
                         }
@@ -286,7 +287,7 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
 
         int selected_reminder = get_selected_reminder();
         if (selected_reminder == ReminderType.TYPE_DAILY || selected_reminder == ReminderType.TYPE_NEVER) {
-            final TimePickerDialog timePickerDialog = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
+            final TimePickerDialog timePickerDialog = new TimePickerDialog(this, R.style.TimePickerStyle, new TimePickerDialog.OnTimeSetListener() {
                 @Override
                 public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                     if (!view.isShown())
@@ -301,6 +302,7 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
                     myNotification.setEnable(true);
 
                     if (checkDuplicateReminder(myNotification)) {
+                        Toast.makeText(AddEditReminderActivity.this, getString(R.string.duplicate_reminder), Toast.LENGTH_SHORT).show();
                         return;
                     }
 
@@ -332,6 +334,7 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
                             myNotification.setEnable(true);
 
                             if (checkDuplicateReminder(myNotification)) {
+                                Toast.makeText(AddEditReminderActivity.this, getString(R.string.duplicate_reminder), Toast.LENGTH_SHORT).show();
                                 return;
                             }
 
@@ -362,7 +365,6 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
 
             Calendar c2 = myNotification.getReminderCalendarRelateCurrent(get_selected_reminder());
             if (c1.compareTo(c2) == 0) {
-                Toast.makeText(this, getString(R.string.duplicate_reminder), Toast.LENGTH_SHORT).show();
                 return true;
             }
         }
