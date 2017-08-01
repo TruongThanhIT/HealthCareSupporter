@@ -71,4 +71,8 @@
         <item name="colorControlNormal">#fff</item>
         <item name="colorControlActivated">#fff</item>
     </style>
+
+    <style name="TimePickerStyle" parent="AppTheme">
+        <item name="android:windowIsFloating">true</item>
+    </style>
 </resources>

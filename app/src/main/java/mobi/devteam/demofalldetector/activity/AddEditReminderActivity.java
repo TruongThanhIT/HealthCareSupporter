@@ -287,7 +287,7 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
 
         int selected_reminder = get_selected_reminder();
         if (selected_reminder == ReminderType.TYPE_DAILY || selected_reminder == ReminderType.TYPE_NEVER) {
-            final TimePickerDialog timePickerDialog = new TimePickerDialog(this, R.style.AppTheme, new TimePickerDialog.OnTimeSetListener() {
+            final TimePickerDialog timePickerDialog = new TimePickerDialog(this, R.style.TimePickerStyle, new TimePickerDialog.OnTimeSetListener() {
                 @Override
                 public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                     if (!view.isShown())
