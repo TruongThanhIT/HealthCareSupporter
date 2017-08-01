@@ -346,6 +346,7 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
             TextView txtTitle = (TextView) dialog_view.findViewById(R.id.txtTitle);
             TextView txtNote = (TextView) dialog_view.findViewById(R.id.txtNote);
             TextView txtType = (TextView) dialog_view.findViewById(R.id.txtType);
+
             final View btnEdit = dialog_view.findViewById(R.id.btnEdit);
 
             txtTitle.setText(reminder.getName());
@@ -433,9 +434,9 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
                 startActivityForResult(intent, ADD_REMINDER_REQUEST);
                 break;
             case R.id.mnuDelete:
-                try{
+                try {
                     Utils.cancelAlarmWakeUp(getActivity(), selected_reminder);
-                }catch (Exception e){
+                } catch (Exception e) {
 
                 }
 

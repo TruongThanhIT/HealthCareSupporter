@@ -11,6 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:background="#ffff8d"
         android:padding="5dp">
 
         <android.support.constraint.ConstraintLayout
@@ -108,7 +109,7 @@
             app:layout_constraintLeft_toLeftOf="@+id/cardView"
 
             app:layout_constraintTop_toBottomOf="@+id/cardView"
-            custom:pb_colorNormal="@color/colorPrimary"
-            custom:pb_colorPressed="@color/colorPrimaryDark" />
+            custom:pb_colorNormal="#cacc5d"
+            custom:pb_colorPressed="#FF8B8C45" />
     </LinearLayout>
 </android.support.v7.widget.CardView>
