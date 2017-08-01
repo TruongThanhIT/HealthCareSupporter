@@ -2,6 +2,7 @@ package mobi.devteam.demofalldetector.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -49,7 +50,7 @@ public class ProfileFragment extends Fragment implements ValueEventListener {
     @BindView(R.id.rdo_male)
     RadioButton rdo_male;
     @BindView(R.id.btnUpdate)
-    ActionProcessButton btnUpdate;
+    FloatingActionButton btnUpdate;
     @BindView(R.id.edtAge)
     EditText edtAge;
 
@@ -194,13 +195,13 @@ public class ProfileFragment extends Fragment implements ValueEventListener {
             profile.setThresh3(Common.DEFAULT_THRESHOLD_3 + Common.DEFAULT_THRESHOLD_3 * percent);//max + 50%
             //}
 
-            btnUpdate.setMode(ActionProcessButton.Mode.PROGRESS);
-            profile_data.setValue(profile).addOnSuccessListener(new OnSuccessListener<Void>() {
-                @Override
-                public void onSuccess(Void aVoid) {
-                    btnUpdate.setMode(ActionProcessButton.Mode.ENDLESS);
-                }
-            });
+//            btnUpdate.setMode(ActionProcessButton.Mode.PROGRESS);
+//            profile_data.setValue(profile).addOnSuccessListener(new OnSuccessListener<Void>() {
+//                @Override
+//                public void onSuccess(Void aVoid) {
+////                    btnUpdate.setMode(ActionProcessButton.Mode.ENDLESS);
+//                }
+//            });
             Toast.makeText(this.getActivity(), R.string.update_success, Toast.LENGTH_SHORT).show();
             MainActivity activity = (MainActivity) getActivity();
             activity.navItemSelected(R.id.nav_home);
