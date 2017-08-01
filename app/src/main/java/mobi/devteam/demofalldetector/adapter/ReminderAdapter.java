@@ -22,7 +22,6 @@ import mobi.devteam.demofalldetector.activity.MyApplication;
 import mobi.devteam.demofalldetector.model.Reminder;
 import mobi.devteam.demofalldetector.myInterface.OnRecyclerItemClickListener;
 import mobi.devteam.demofalldetector.utils.ReminderType;
-import mobi.devteam.demofalldetector.utils.Tools;
 import mobi.devteam.demofalldetector.utils.Utils;
 
 public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.ReminderViewHolder> {
@@ -55,13 +54,18 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.Remind
                 holder.txtRepeat.setText(MyApplication.reminder_types[0]);
             } else if (reminder.getRepeat_type() == ReminderType.TYPE_DAILY) {
                 holder.txtRepeat.setText(MyApplication.reminder_types[1]);
-            }
-            else{
+            } else {
                 holder.txtRepeat.setText(MyApplication.reminder_types[2]);
             }
 
-            Calendar dateTime = Tools.convertLongToCalendar(reminder.getHour_alarm());
-            holder.txtTime.setText(Utils.get_calendar_date(dateTime) + ", " + Utils.get_calendar_time(dateTime));
+            Calendar dateTime = Utils.getNextCalendarBaseCurrentTime(reminder);
+
+            if (reminder.getRepeat_type() == ReminderType.TYPE_DAILY || reminder.getRepeat_type() == ReminderType.TYPE_NEVER) {
+                holder.txtTime.setText(Utils.get_calendar_date(dateTime) + ", " + Utils.get_calendar_time(dateTime));
+            } else if (reminder.getRepeat_type() == ReminderType.TYPE_WEEKLY) {
+                holder.txtTime.setText(Utils.get_calendar_dow(dateTime) + " " + Utils.get_calendar_date(dateTime) + ", " + Utils.get_calendar_time(dateTime));
+            }
+
             if (reminder.getName().length() > 0) {
 
                 TextDrawable textDrawable = TextDrawable.builder()
@@ -80,6 +84,7 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.Remind
                             .into(holder.imgThumb);
                 }
             }
+
         }
     }
 

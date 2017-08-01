@@ -150,8 +150,10 @@ public class RelativeListFragment extends Fragment implements OnRecyclerItemClic
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Toast.makeText(getActivity(), "Error when getting data : " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
-                progressBarRelative.setVisibility(View.GONE);
+                if (isDetached()) {
+                    Toast.makeText(getActivity(), "Error when getting data : " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                    progressBarRelative.setVisibility(View.GONE);
+                }
             }
         });
 

@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <!-- request -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -32,6 +33,7 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
+        android:largeHeap="true"
         android:roundIcon="@drawable/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
@@ -50,14 +52,15 @@
             android:name=".activity.TestActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:launchMode="singleTop"
             android:name=".activity.MainActivity"
             android:label="@string/title_activity_main"
+            android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activity.LoginActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -66,11 +69,29 @@
         </activity>
         <activity
             android:name=".activity.CreateUpdateRelativeActivity"
+            android:hardwareAccelerated="true"
             android:screenOrientation="portrait" />
         <activity
             android:name=".activity.AddEditReminderActivity"
+            android:hardwareAccelerated="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".activity.ConfirmFallActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/FullScreen" />
+        <activity
+            android:name=".activity.ReminderDetailsActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
+
+        <receiver android:name=".myBroadcasts.SmsReceiver" />
+        <receiver android:name=".myBroadcasts.PhoneRebootReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
 
         <service
             android:name=".myServices.ReminderService"
@@ -80,21 +101,10 @@
                 <action android:name=".utils.ReminderService" />
             </intent-filter>
         </service>
-
-        <activity
-            android:name=".activity.ConfirmFallActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/FullScreen" />
-
-        <receiver android:name=".myBroadcasts.SmsReceiver" />
-
         <service android:name=".myServices.DetectFallService" />
         <service android:name=".myServices.GetLocationService" />
 
-        <activity
-            android:name=".activity.ReminderDetailsActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+
     </application>
 
 </manifest>

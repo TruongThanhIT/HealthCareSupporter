@@ -39,18 +39,21 @@
     <!--Relatives-->
     <string name="edit">Chỉnh sửa</string>
     <string name="delete">Xóa</string>
+    <string name="deleted">Đã xóa</string>
     <string name="title_activity_add_edit_task">Thêm/Chỉnh sửa công việc</string>
 
     <!-- Reminder -->
     <string name="ae_reminder_name">Công việc</string>
-    <string name="ae_reminder_start">Ngày bắt đầu</string>
-    <string name="ae_reminder_end">Ngày kết thúc</string>
+    <string name="ae_reminder_start">Bắt đầu</string>
+    <string name="ae_reminder_end">Kết thúc</string>
     <string name="ae_reminder_repeat">Lặp lại</string>
     <string name="ae_reminder_note">Ghi chú</string>
     <string name="snoozeAlert">Nhắc nhở sẽ được thông báo lại sau 10 phút</string>
     <string name="daily">Hằng ngày</string>
     <string name="never">Không bao giờ</string>
     <string name="weekly">Hằng tuần</string>
+    <string name="reminder">Nhắc nhở</string>
+    <string name="reminder_list">Quản lý nhắc nhở</string>
 
 
     <string name="my_web_client_id">828026602604-bp4fq1gj71lh7h5po9gnotblq8sia4to.apps.googleusercontent.com</string>
@@ -74,7 +77,7 @@
     <string name="calling_emergency_service">Đang gọi cấp cứu</string>
     <string name="home_enable_fall_detect">Bật phát hiện té ngã</string>
     <string name="home_allow_tracking">Cho phép truy cập vị trí</string>
-    <string name="profile_height">Chiều cao (m)</string>
+    <string name="profile_height">Chiều cao (cm)</string>
     <string name="profile_weight">Cân nặng (kg)</string>
     <string name="profile_is_male">Nam</string>
     <string name="profile_is_female">Nữ</string>
@@ -107,8 +110,16 @@
     <string name="friday">Thứ sáu</string>
     <string name="saturday">Thứ bảy</string>
 
-    <string name="profile_sensitive">Do nhay</string>
-    <string name="request_permissions_desc">We have to request these permissions to get the app working correctly\nOpen Setting -> Permission -> Allow all the request</string>
-    <string name="request_permissions">Request permissions</string>
-    <string name="request_permissions_deny">Sorry, You have to allow all the permission to get the app working correctly</string>
+    <string name="profile_sensitive">Độ nhạy</string>
+    <string name="request_permissions_desc">Hãy mở quyền để ứng dụng có thể hoạt động tốt nhất\nMở cài đặt -> Phân quyền -> Cho phép tất cả các quyền truy cập</string>
+    <string name="request_permissions">Yêu cầu phân quyền</string>
+    <string name="request_permissions_deny">Xin lỗi, Bạn vui lòng bật tất cả các quyền được yêu cầu để ứng dụng có thể hoạt động tốt nhất</string>
+    <string name="ae_reminder_add_alarm">Thêm thời gian</string>
+    <string name="ae_reminder_add_reminder">Lưu nhắc nhở</string>
+    <string name="ae_reminder_update_reminder">Chỉnh sửa nhắc nhở</string>
+    <string name="ae_reminder_alarms_lists">Danh sách thời gian thông báo</string>
+    <string name="ae_reminder_confirm_delete_time">Bạn có thật sự muốn xóa nhắc nhở này?</string>
+    <string name="ae_reminder_require_alarm_time">Xin hãy thêm giờ thông báo</string>
+    <string name="err_empty_note_reminder">Please type your note</string>
+    <string name="duplicate_reminder">This alarm time is exist</string>
 </resources>

@@ -1,16 +1,27 @@
 package mobi.devteam.demofalldetector.activity;
 
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.ScaleAnimation;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -20,6 +31,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.dd.processbutton.iml.ActionProcessButton;
 import com.github.jjobes.slidedaytimepicker.SlideDayTimeListener;
 import com.github.jjobes.slidedaytimepicker.SlideDayTimePicker;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -36,18 +48,24 @@ import com.vansuita.pickimage.bundle.PickSetup;
 import com.vansuita.pickimage.dialog.PickImageDialog;
 import com.vansuita.pickimage.listeners.IPickResult;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import mobi.devteam.demofalldetector.R;
+import mobi.devteam.demofalldetector.adapter.AlarmAdapter;
+import mobi.devteam.demofalldetector.model.MyNotification;
 import mobi.devteam.demofalldetector.model.Reminder;
+import mobi.devteam.demofalldetector.myInterface.OnRecyclerItemClickListener;
 import mobi.devteam.demofalldetector.utils.ReminderType;
 import mobi.devteam.demofalldetector.utils.Tools;
 import mobi.devteam.demofalldetector.utils.Utils;
 
-public class AddEditReminderActivity extends AppCompatActivity implements IPickResult {
+public class AddEditReminderActivity extends AppCompatActivity implements IPickResult, OnRecyclerItemClickListener {
     public static final String TAG = "ReminderActivity";
     public static final String EXTRA_IS_ADD_MODE = "is_add_mode";
     public static final String EXTRA_REMINDER_DATA = "reminder_data";
@@ -65,8 +83,19 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
     EditText edtNote;
     @BindView(R.id.txtTime)
     TextView txtTime;
+
+    @BindView(R.id.btnAddReminder)
+    ActionProcessButton btnAddReminder;
+
+    @BindView(R.id.btnAddAlarm)
+    ActionProcessButton btnAddAlarm;
+
+    @BindView(R.id.rcv_alarms)
+    RecyclerView rcv_alarms;
+
     FirebaseAuth mAuth;
     DatabaseReference reminder_data;
+    ArrayList<MyNotification> myNotificationArrayList;
     private boolean is_add_mode = true;
     private Reminder reminder;
     private Calendar now;
@@ -76,6 +105,9 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
     private StorageReference mStorageRef;
     private boolean isImageChanged = false;
 
+    private AlarmAdapter alarmAdapter;
+    private int mLong_click_selected = -1;
+    private int old_spiner_position = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,7 +116,7 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
         ButterKnife.bind(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        this.setTitle(R.string.nav_relatives_list);
+        this.setTitle(R.string.reminder_list);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -117,12 +149,21 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
         end = Calendar.getInstance();
         alarm = Calendar.getInstance();
 
+        myNotificationArrayList = new ArrayList<>();
+        alarmAdapter = new AlarmAdapter(this, myNotificationArrayList, this, ReminderType.TYPE_DAILY);
+        rcv_alarms.setOnCreateContextMenuListener(this);
+        rcv_alarms.setAdapter(alarmAdapter);
+
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        rcv_alarms.setLayoutManager(linearLayoutManager);
+
         if (!is_add_mode) {
 
-            Picasso.with(this)
-                    .load(reminder.getThumb())
-                    .resize(300, 300)
-                    .into(imgThumb);
+            if (reminder.getThumb() != null)
+                Picasso.with(this)
+                        .load(reminder.getThumb())
+                        .resize(300, 300)
+                        .into(imgThumb);
 
             start.setTimeInMillis(reminder.getStart());
             end.setTimeInMillis(reminder.getEnd());
@@ -132,15 +173,47 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
             txtStart.setText(Utils.get_calendar_date(start));
             txtEnd.setText(Utils.get_calendar_date(end));
 
-            alarm.setTimeInMillis(reminder.getHour_alarm());
             txtTime.setText(Utils.get_calendar_time(alarm));
 
             spinReminderRepeat.setSelection(reminder.getRepeat_type());
+
+            btnAddReminder.setText(R.string.ae_reminder_update_reminder);
+
+            alarmAdapter.setAlarmType(reminder.getRepeat_type());
+
+            if (reminder.getAlarms() != null)
+                myNotificationArrayList.addAll(reminder.getAlarms());
+
+            alarmAdapter.notifyDataSetChanged();
+
+            spinReminderRepeat.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    for (MyNotification n : myNotificationArrayList) {
+                        if (checkDuplicateReminder(n)) {
+                            spinReminderRepeat.setSelection(old_spiner_position);
+                            return;
+                        }
+                    }
+
+                    old_spiner_position = position;
+
+                    alarmAdapter.setAlarmType(get_selected_reminder());
+                    alarmAdapter.notifyDataSetChanged();
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+
+                }
+            });
 
         } else {
             txtStart.setText(Utils.get_calendar_date(now));
             txtEnd.setText(Utils.get_calendar_date(now));
             txtTime.setText(Utils.get_calendar_time(now));
+
+            btnAddReminder.setText(R.string.ae_reminder_add_reminder);
         }
     }
 
@@ -186,21 +259,49 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
      * Type: week -> get dow & hour
      */
 
-    @OnClick(R.id.txtTime)
-    void pickTime() {
+    @OnClick(R.id.btnAddAlarm)
+    void addAlarmOnClick() {
+        pickTime(false);
+    }
+
+    private void pickTime(final boolean isEdit) {
+        if (isEdit && mLong_click_selected != -1)
+            alarm.setTimeInMillis(myNotificationArrayList.get(mLong_click_selected).getHourAlarm());
+        else
+            alarm.setTimeInMillis(System.currentTimeMillis());
+
         int selected_reminder = get_selected_reminder();
         if (selected_reminder == ReminderType.TYPE_DAILY || selected_reminder == ReminderType.TYPE_NEVER) {
-            TimePickerDialog timePickerDialog = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
+            final TimePickerDialog timePickerDialog = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
                 @Override
                 public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                    if (!view.isShown())
+                        return;
+
                     alarm.set(Calendar.HOUR_OF_DAY, hourOfDay);
                     alarm.set(Calendar.MINUTE, minute);
 
-                    txtTime.setText(Utils.get_calendar_time(alarm));
+                    MyNotification myNotification = new MyNotification();
+                    myNotification.setHourAlarm(alarm.getTimeInMillis());
+                    myNotification.setPendingId(Utils.getRandomPendingId());
+                    myNotification.setEnable(true);
+
+                    if (checkDuplicateReminder(myNotification)) {
+                        return;
+                    }
+
+                    if (isEdit) {
+                        myNotificationArrayList.remove(mLong_click_selected);
+                        mLong_click_selected = -1;
+                    }
+                    myNotificationArrayList.add(myNotification);
+                    sortTimeArray();
+                    alarmAdapter.notifyDataSetChanged();
+
                 }
             }, now.get(Calendar.HOUR_OF_DAY), now.get(Calendar.MINUTE), true);
             timePickerDialog.show();
-        } else{
+        } else {
             new SlideDayTimePicker.Builder(getSupportFragmentManager())
                     .setListener(new SlideDayTimeListener() {
                         @Override
@@ -210,6 +311,24 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
                             alarm.set(Calendar.MINUTE, minute);
                             String[] dayOfWeek = getResources().getStringArray(R.array.days_array);
                             txtTime.setText(dayOfWeek[day - 1] + ", " + hour + ":" + minute);
+
+                            MyNotification myNotification = new MyNotification();
+                            myNotification.setHourAlarm(alarm.getTimeInMillis());
+                            myNotification.setPendingId(Utils.getRandomPendingId());
+                            myNotification.setEnable(true);
+
+                            if (isEdit) {
+                                myNotificationArrayList.remove(mLong_click_selected);
+                                mLong_click_selected = -1;
+                            }
+
+                            if (checkDuplicateReminder(myNotification)) {
+                                return;
+                            }
+
+                            myNotificationArrayList.add(myNotification);
+                            sortTimeArray();
+                            alarmAdapter.notifyDataSetChanged();
                         }
                     })
                     .setInitialDay(alarm.get(Calendar.DAY_OF_WEEK))
@@ -219,6 +338,29 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
                     .build()
                     .show();
         }
+    }
+
+    private boolean checkDuplicateReminder(MyNotification n) {
+        Calendar c1 = n.getReminderCalendarRelateCurrent(get_selected_reminder());
+        for (MyNotification myNotification : myNotificationArrayList) {
+            Calendar c2 = myNotification.getReminderCalendarRelateCurrent(get_selected_reminder());
+            if (c1.compareTo(c2) == 0) {
+                Toast.makeText(this, getString(R.string.duplicate_reminder), Toast.LENGTH_SHORT).show();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void sortTimeArray() {
+        final int selected_reminder = get_selected_reminder();
+
+        Collections.sort(myNotificationArrayList, new Comparator<MyNotification>() {
+            @Override
+            public int compare(MyNotification o1, MyNotification o2) {
+                return Utils.compareReminderToCalendarByType(selected_reminder, o1.getReminderCalendarClean(), o2.getReminderCalendarClean());
+            }
+        });
     }
 
     @Override
@@ -235,7 +377,14 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
         return super.onOptionsItemSelected(item);
     }
 
-    private void save_reminder() {
+    @OnClick(R.id.btnAddReminder)
+    void save_reminder() {
+        if (!validate_form()) {
+            Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+            vibrator.vibrate(300);
+            return;
+        }
+
         FirebaseUser currentUser = mAuth.getCurrentUser();
         final DatabaseReference child = reminder_data.child(currentUser.getUid());
         final StorageReference reminders_images = mStorageRef.child("reminders_images")
@@ -246,49 +395,86 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
         if (reminder == null)
             reminder = new Reminder();
 
-        if (edtReminder.getText().toString().equals("")) {
-            Toast.makeText(this, R.string.err_empty_name_reminder, Toast.LENGTH_SHORT).show();
+
+        reminder.setStart(start.getTimeInMillis());
+        reminder.setEnd(end.getTimeInMillis()); // start -> end
+        reminder.setName(edtReminder.getText().toString());
+        reminder.setNote(edtNote.getText().toString());
+
+        // Using for alarm
+        reminder.setRepeat_type(get_selected_reminder());
+        reminder.setAlarms(myNotificationArrayList);
+
+        if (is_add_mode) {
+            reminder.setId(tsLong);
+            child.child(tsLong + "").setValue(reminder);
         } else {
-            reminder.setStart(start.getTimeInMillis());
-            reminder.setEnd(end.getTimeInMillis()); // start -> end
-            reminder.setName(edtReminder.getText().toString());
-            reminder.setNote(edtNote.getText().toString());
-
-            // Using for alarm
-            if (is_add_mode)
-                reminder.setPendingId(Utils.getRandomPendingId());
-
-            reminder.setHour_alarm(alarm.getTimeInMillis());
-            reminder.setRepeat_type(get_selected_reminder());
-
-            if (is_add_mode) {
-                reminder.setId(tsLong);
-                child.child(tsLong + "").setValue(reminder);
-            } else {
-                //update
-                child.child(reminder.getId() + "").setValue(reminder);
-            }
-            // Add notification
-            Utils.scheduleNotification(this, reminder);
-            try {
-                if (isImageChanged) {
-                    Bitmap bitmapAvatar = Tools.convertImageViewToBitmap(imgThumb);
-                    byte[] bytes = Tools.convertBitmapToByteAray(bitmapAvatar);
-                    reminders_images.child(reminder.getId() + "").putBytes(bytes)
-                            .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                                @Override
-                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                    @SuppressWarnings("VisibleForTests")
-                                    Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                                    child.child(reminder.getId() + "").child("thumb").setValue(downloadUrl.toString());
-                                }
-                            });
-                }
-            } catch (NullPointerException e) {
-                Log.e(TAG, e.toString());
-            }
-            finish();
+            //update
+            child.child(reminder.getId() + "").setValue(reminder);
         }
+        // Add notification
+        Utils.scheduleNotification(this, reminder);
+        try {
+            if (isImageChanged) {
+                Bitmap bitmapAvatar = Tools.convertImageViewToBitmap(imgThumb);
+                byte[] bytes = Tools.convertBitmapToByteAray(bitmapAvatar);
+                reminders_images.child(reminder.getId() + "").putBytes(bytes)
+                        .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                @SuppressWarnings("VisibleForTests")
+                                Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                                child.child(reminder.getId() + "").child("thumb").setValue(downloadUrl.toString());
+                            }
+                        });
+            }
+        } catch (NullPointerException e) {
+            Log.e(TAG, e.toString());
+        }
+        finish();
+
+    }
+
+    /**
+     * Do the form validator here
+     *
+     * @return boolean
+     */
+    private boolean validate_form() {
+        if (edtReminder.getText().toString().equals("")) {
+            ObjectAnimator translationX = ObjectAnimator.ofFloat(edtReminder, "translationX", 0, 50);
+            translationX.setDuration(500);
+            translationX.setRepeatMode(ValueAnimator.REVERSE);
+            translationX.setRepeatCount(3);
+            translationX.start();
+
+            Toast.makeText(this, R.string.err_empty_name_reminder, Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+//        if (edtNote.getText().toString().equals("")) {
+//            ObjectAnimator translationX = ObjectAnimator.ofFloat(edtNote, "translationX", 0, 50);
+//            translationX.setDuration(500);
+//            translationX.setRepeatMode(ValueAnimator.REVERSE);
+//            translationX.setRepeatCount(3);
+//            translationX.start();
+//
+//            Toast.makeText(this, R.string.err_empty_note_reminder, Toast.LENGTH_SHORT).show();
+//            return false;
+//        }
+
+//        if (myNotificationArrayList.size() == 0) {
+//            //should have at least 1 alarm time
+//            ScaleAnimation scaleAnimation = new ScaleAnimation(1, 1.5f, 1, 1.5f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+//            scaleAnimation.setDuration(500);
+//            scaleAnimation.setRepeatMode(Animation.REVERSE);
+//            scaleAnimation.setRepeatCount(3);
+//            Toast.makeText(this, R.string.ae_reminder_require_alarm_time, Toast.LENGTH_SHORT).show();
+//            btnAddAlarm.startAnimation(scaleAnimation);
+//            return false;
+//        }
+
+        return true;
     }
 
     private int get_selected_reminder() {
@@ -312,5 +498,39 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
             Toast.makeText(this, r.getError().getMessage(), Toast.LENGTH_LONG).show();
             isImageChanged = false;
         }
+    }
+
+    @Override
+    public void onRecyclerItemClick(int position) {
+
+    }
+
+    @Override
+    public void onRecyclerItemLongClick(int position) {
+        mLong_click_selected = position;
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.actions_relatives_list, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        if (mLong_click_selected == -1)
+            return true;
+
+        switch (item.getItemId()) {
+            case R.id.mnuEdit:
+                pickTime(true);
+                break;
+            case R.id.mnuDelete:
+                myNotificationArrayList.remove(mLong_click_selected);
+                alarmAdapter.notifyItemRemoved(mLong_click_selected);
+                break;
+        }
+        return true;
     }
 }

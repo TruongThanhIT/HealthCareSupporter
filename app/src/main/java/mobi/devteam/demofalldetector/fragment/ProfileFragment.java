@@ -163,7 +163,7 @@ public class ProfileFragment extends Fragment implements ValueEventListener {
         double height = 0;
         int age = 0;
         try {
-            height = Double.parseDouble(edtHeight.getText().toString());
+            height = Double.parseDouble(edtHeight.getText().toString()) / 100;
             weight = Double.parseDouble(edtWeight.getText().toString());
             age = Integer.parseInt(edtAge.getText().toString());
         } catch (Exception e) {
@@ -191,7 +191,7 @@ public class ProfileFragment extends Fragment implements ValueEventListener {
 
             profile.setThresh1(Common.DEFAULT_THRESHOLD_1 + Common.DEFAULT_THRESHOLD_1 * percent);//max + 50%
             profile.setThresh2(Common.DEFAULT_THRESHOLD_2 + Common.DEFAULT_THRESHOLD_2 * percent);//max + 50%
-            profile.setThresh3(Common.DEFAULT_THRESHOLD_3 + Common.DEFAULT_THRESHOLD_3 * percent/10);//max + 10%
+            profile.setThresh3(Common.DEFAULT_THRESHOLD_3 + Common.DEFAULT_THRESHOLD_3 * percent);//max + 50%
             //}
 
             btnUpdate.setMode(ActionProcessButton.Mode.PROGRESS);
@@ -232,7 +232,7 @@ public class ProfileFragment extends Fragment implements ValueEventListener {
         sw_allow_find.setChecked(mProfile.isAllow_find());
         sw_fall_detect.setChecked(mProfile.isDetect_fall());
 
-        edtHeight.setText(String.valueOf(mProfile.getHeight()));
+        edtHeight.setText(String.valueOf(mProfile.getHeight() * 100));
         edtWeight.setText(String.valueOf(mProfile.getWeight()));
         edtAge.setText(String.valueOf(mProfile.getAge()));
 

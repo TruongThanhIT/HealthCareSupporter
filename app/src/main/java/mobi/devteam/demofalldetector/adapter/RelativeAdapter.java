@@ -114,7 +114,6 @@ public class RelativeAdapter extends RecyclerView.Adapter<RelativeAdapter.Relati
                     Intent intent = new Intent(context, CreateUpdateRelativeActivity.class);
                     intent.putExtra(CreateUpdateRelativeActivity.EXTRA_RELATIVE_DATA, mRelative);
                     intent.putExtra(CreateUpdateRelativeActivity.EXTRA_IS_ADD_MODE, false);
-
                     context.startActivity(intent);
                     return true;
 
@@ -122,7 +121,7 @@ public class RelativeAdapter extends RecyclerView.Adapter<RelativeAdapter.Relati
                     child.removeValue(new DatabaseReference.CompletionListener() {
                         @Override
                         public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                            Toast.makeText(context, context.getString(R.string.delete), Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(context, context.getString(R.string.deleted), Toast.LENGTH_SHORT).show();
                         }
                     });
                     return true;

@@ -1,5 +1,6 @@
 package mobi.devteam.demofalldetector.activity;
 
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -50,27 +51,25 @@ public class MainActivity extends AppCompatActivity
         initData();
 
 
-
         startService(new Intent(this, GetLocationService.class));
     }
 
     private void initData() {
         txtUserEmail.setText(user.getEmail());
         String userName = user.getDisplayName();
-        try{
-            if(userName.equals("")){
+        try {
+            if (userName.equals("")) {
                 String[] strName = txtUserEmail.getText().toString().split("@");
                 userName = strName[0];
             }
             txtUserName.setText(userName);
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
         Uri uriImageUser = user.getPhotoUrl();
-        if(uriImageUser == null){
+        if (uriImageUser == null) {
             imgUser.setImageResource(R.drawable.ic_launcher);
-        }
-        else{
+        } else {
             Picasso.with(this).load(uriImageUser).into(imgUser);
         }
         onNavigationItemSelected(navigationView.getMenu().getItem(0));// select home for default
@@ -146,7 +145,7 @@ public class MainActivity extends AppCompatActivity
                 navigationView.getMenu().getItem(1).setChecked(true);
                 break;
             case R.id.nav_logout:
-                try{
+                try {
                     mAuth.signOut();
                     Intent detectService = new Intent(this, DetectFallService.class);
                     Intent getLocationService = new Intent(this, GetLocationService.class);
@@ -156,7 +155,7 @@ public class MainActivity extends AppCompatActivity
                     stopService(reminderService);
                     startActivity(new Intent(MainActivity.this, LoginActivity.class));
                     finish();
-                }catch (Exception e){
+                } catch (Exception e) {
                     Log.e(this.getLocalClassName(), e.toString());
                 }
                 break;
@@ -165,6 +164,35 @@ public class MainActivity extends AppCompatActivity
                 fragmentTransaction.replace(R.id.frame_container, ProfileFragment.newInstance());
                 fragmentTransaction.commit();
                 navigationView.getMenu().getItem(2).setChecked(true);
+                break;
+            case R.id.nav_rate:
+                Uri uri = Uri.parse("market://details?id=" + getPackageName());
+                Intent goToMarket = new Intent(Intent.ACTION_VIEW, uri);
+                // To count with Play market backstack, After pressing back button,
+                // to taken back to our application, we need to add following flags to intent.
+                goToMarket.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY |
+                        Intent.FLAG_ACTIVITY_NEW_DOCUMENT |
+                        Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+                try {
+                    startActivity(goToMarket);
+                } catch (ActivityNotFoundException e) {
+                    startActivity(new Intent(Intent.ACTION_VIEW,
+                            Uri.parse("http://play.google.com/store/apps/details?id=" + getPackageName())));
+                }
+                break;
+            case R.id.nav_share:
+                Intent sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_SEND);
+                sendIntent.putExtra(Intent.EXTRA_TEXT, "Spending more time to take care of your relatives by downloading this app : https://play.google.com/store/apps/details?id=" + getPackageName());
+                sendIntent.setType("text/plain");
+                startActivity(sendIntent);
+                break;
+            case R.id.nav_feedback:
+                Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
+                        "mailto", "healthcare_app@gmail.com", null));
+                emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Healthcare Supporter");
+                emailIntent.putExtra(Intent.EXTRA_TEXT, "Please give us your feedback to improve our application.");
+                startActivity(Intent.createChooser(emailIntent, "Feedback..."));
                 break;
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

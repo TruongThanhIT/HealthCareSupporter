@@ -3,8 +3,10 @@ package mobi.devteam.demofalldetector.myServices;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -23,6 +25,7 @@ import java.util.ArrayList;
 
 import mobi.devteam.demofalldetector.R;
 import mobi.devteam.demofalldetector.activity.ConfirmFallActivity;
+import mobi.devteam.demofalldetector.activity.MainActivity;
 import mobi.devteam.demofalldetector.model.Accelerator;
 import mobi.devteam.demofalldetector.model.FallDetectionStage;
 import mobi.devteam.demofalldetector.model.Profile;
@@ -32,8 +35,10 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
 
     private static final int LIMIT_SIZE_OF_STATE = 30;//3s
     private static final int LIMIT_SIZE_OF_STATE_RECOVERY = 60;//6s
-    private static final long TIME_PER_STAGE = 120; //ms
+    private static final long TIME_PER_STAGE = 100 * 1000000; //ms - 1000000 is nano second
     private static final float ALPHA_CONSTANT = 0.8f;
+
+    public static final String MY_UNPAUSED_SERVICE_ACTION = "my_unpaused_service_action";
 
     private double[] gravity = new double[3];
     private double[] linear_acceleration = new double[3];
@@ -60,6 +65,16 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
     private FallDetectionStage fallDetectionStage;
     private Notification.Builder m_notificationBuilder;
 
+    private boolean service_is_paused = false;
+
+    private BroadcastReceiver myReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            recoveryArrayList.clear();
+            acceleratorArrayList.clear();
+            service_is_paused = false;
+        }
+    };
 
     public DetectFallService() {
     }
@@ -83,7 +98,7 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
                     return;
 
                 age = mProfile.getAge();
-                bmi = mProfile.getWeight() / Math.sqrt(mProfile.getHeight());
+                bmi = mProfile.getWeight() / (mProfile.getHeight() * mProfile.getHeight());
                 isMale = mProfile.isMale();
                 threshold_1 = mProfile.getThresh1();
                 threshold_2 = mProfile.getThresh2();
@@ -147,16 +162,21 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
 
     @Override
     public void onDestroy() {
-        mSensorManager.unregisterListener(this);
+        try {
+            mSensorManager.unregisterListener(this);
+            unregisterReceiver(myReceiver);
+        } catch (Exception e) {
+
+        }
+
         super.onDestroy();
     }
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        if (mProfile == null) {
+        if (mProfile == null || service_is_paused) {
             return;
         }
-
         if (event.timestamp - lastTimestamp < TIME_PER_STAGE) {
             return;
         }
@@ -168,10 +188,12 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
         //Bo loc chuyen dong , cang -> 1 thi bo loc cang giam (van dong nhieu)
         // -> 0 bo loc nhay hay (nguoi gia)
 
+        //Low pass filter
         gravity[0] = ALPHA_CONSTANT * gravity[0] + (1 - ALPHA_CONSTANT) * event.values[0]; //x
         gravity[1] = ALPHA_CONSTANT * gravity[1] + (1 - ALPHA_CONSTANT) * event.values[1]; //y
         gravity[2] = ALPHA_CONSTANT * gravity[2] + (1 - ALPHA_CONSTANT) * event.values[2]; //Z
 
+//        High pass filter
         linear_acceleration[0] = event.values[0] - gravity[0];
         linear_acceleration[1] = event.values[1] - gravity[1];
         linear_acceleration[2] = event.values[2] - gravity[2];
@@ -193,9 +215,17 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
 
     private void detect_fall() {
         double svm_current = calculate_svm(current_accelerator);
-        Log.e("WAITING_FALL", svm_current + "");
+        Log.e("WAITING_FALL", "SVM: " + svm_current);
         if (svm_current >= threshold_1) { //Threshold 1
-            if (current_accelerator.getX() > threshold_2 || current_accelerator.getY() > threshold_2 || current_accelerator.getZ() > threshold_2) { //Threshold 2
+            Log.e("WAITING_FALL", "Threshold 1: " + threshold_1);
+            Log.e("WAITING_FALL",
+                    "Threshold 2: " + threshold_2
+                            + "X: " + current_accelerator.getX()
+                            + "Y: " + current_accelerator.getY()
+                            + "Z: " + current_accelerator.getZ());
+            if (current_accelerator.getX() > threshold_2
+                    || current_accelerator.getY() > threshold_2
+                    || current_accelerator.getZ() > threshold_2) { //Threshold 2
                 //is falling ? saving stage
 
                 fallDetectionStage = new FallDetectionStage();
@@ -205,7 +235,7 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
                 fallDetectionStage.setConfirm_ok(false);
                 fallDetectionStage.setRecovery(false);
                 fallDetectionStage.setTime(System.currentTimeMillis());
-                fallDetectionStage.setAccelerator_log(acceleratorArrayList);
+                fallDetectionStage.setAccelerator_log(current_accelerator);
 
                 mDatabase.getReference("fall_detection_logs")
                         .child(currentUser.getUid())
@@ -214,6 +244,7 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
 
                 waiting_for_recovery = true;
                 recoveryArrayList.clear();
+                acceleratorArrayList.clear();
             }
         }
     }
@@ -245,8 +276,6 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
                         .child(fallDetectionStage.getTime() + "")
                         .child("recovery_sum")
                         .setValue(new Accelerator(sum_x, sum_y, sum_z));
-
-
                 waiting_for_recovery = false; // ok i'm recovery
                 recoveryArrayList.clear(); // clear recovery stages
                 acceleratorArrayList.clear();
@@ -267,10 +296,7 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
             dialogIntent.putExtra("time", fallDetectionStage.getTime());
             dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(dialogIntent);
-
-            //TODO: should handler this by pause the service then we can send the broadcast to start the serv
-            stopForeground(true);
-
+            service_is_paused = true;
         }
 
     }
@@ -304,6 +330,10 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
         Log.e("onstartcommand", "onstart");
         addNotifiddcation(this);
         startForeground(5363, m_notificationBuilder.build());
+
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(MY_UNPAUSED_SERVICE_ACTION);
+        registerReceiver(myReceiver, intentFilter);
         return START_STICKY;
     }
 
@@ -327,7 +357,7 @@ public class DetectFallService extends RelativeBaseService implements SensorEven
                 .setSmallIcon(R.drawable.ic_launcher_mini);
 
         // create the pending intent and add to the notification
-        Intent intent = new Intent(context, DetectFallService.class);
+        Intent intent = new Intent(context, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
         m_notificationBuilder.setContentIntent(pendingIntent);
 

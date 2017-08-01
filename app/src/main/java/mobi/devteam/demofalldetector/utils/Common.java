@@ -6,10 +6,10 @@ public class Common {
      * Reference to : https://docs.google.com/document/d/10oyGD1t4b-33Hpn5z-S2A6N89S5ptq18Yzw1KPywlE0
      */
 //    public static final double DEFAULT_THRESHOLD_1 = 4f;
-    public static final double DEFAULT_THRESHOLD_1 = 5f;
-    public static final double DEFAULT_THRESHOLD_2 = 7f;
+    public static final double DEFAULT_THRESHOLD_1 = 10f;
+    public static final double DEFAULT_THRESHOLD_2 = 11f;
 //    public static final double DEFAULT_THRESHOLD_2 = 5f;
-    public static final double DEFAULT_THRESHOLD_3 = 120f;
+    public static final double DEFAULT_THRESHOLD_3 = 80f;
 
     //Threshold 1
     public static final float T1_AGE_LT_60 = 0.5f;
