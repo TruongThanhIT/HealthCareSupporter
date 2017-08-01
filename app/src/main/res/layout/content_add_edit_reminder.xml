@@ -248,13 +248,14 @@
 
             <TextView
                 android:id="@+id/textView15"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="0dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginLeft="@dimen/size_8"
+                android:layout_marginRight="@dimen/size_8"
+                android:layout_marginTop="@dimen/size_8"
                 android:text="@string/ae_reminder_alarms_lists"
                 android:textStyle="bold"
+                android:gravity="center"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintLeft_toLeftOf="@+id/textView9"
                 app:layout_constraintRight_toLeftOf="@+id/guideline2"
