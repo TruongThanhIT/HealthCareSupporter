@@ -142,6 +142,7 @@ public class ReminderService extends Service {
         Intent service = new Intent(context, ReminderService.class);
         service.setAction(Constants.ACTION.START_SERVICE);
         service.putExtra(Constants.KEY.ITEM_KEY, reminder);
+        service.putExtra(Constants.KEY.PENDING_ID, pendingId);
         PendingIntent sender = PendingIntent.getService(context, 123, service, 0);
         AlarmManager alarmManager = (AlarmManager) context.
                 getSystemService(Context.ALARM_SERVICE);
