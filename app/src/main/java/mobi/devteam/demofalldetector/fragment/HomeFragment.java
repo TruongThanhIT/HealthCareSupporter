@@ -40,6 +40,9 @@ import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 
 import butterknife.BindView;
@@ -237,7 +240,7 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
                         MainActivity activity = (MainActivity) getActivity();
                         activity.navItemSelected(R.id.nav_profile);
                     }
-                });
+                }).setCancelable(false);
         builder.show();
 
     }
@@ -276,7 +279,9 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
                 reminderArrayList.clear();
                 if (value != null) {
                     reminderArrayList.addAll(value.values());
-                    handler_empty_list();
+                    smartSortReminder();
+                    if (reminderArrayList.size() == 0)
+                        handler_empty_list();
                 }
 
                 reminderAdapter.notifyDataSetChanged();
@@ -288,6 +293,18 @@ public class HomeFragment extends Fragment implements OnRecyclerItemClickListene
 
             }
         });
+    }
+
+    private void smartSortReminder() {
+        Collections.sort(reminderArrayList, new Comparator<Reminder>() {
+            @Override
+            public int compare(Reminder o1, Reminder o2) {
+                Calendar c1 = Utils.getNextCalendarBaseCurrentTime(o1);
+                Calendar c2 = Utils.getNextCalendarBaseCurrentTime(o2);
+                return c1.compareTo(c2);
+            }
+        });
+
     }
 
     private void handler_empty_list() {

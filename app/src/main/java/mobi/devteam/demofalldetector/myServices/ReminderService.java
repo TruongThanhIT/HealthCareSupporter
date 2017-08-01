@@ -103,12 +103,14 @@ public class ReminderService extends Service {
             Intent dismissIntent = new Intent(this, ReminderService.class);
             dismissIntent.setAction(Constants.ACTION.DISMISS_ACTION);
             dismissIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            dismissIntent.putExtra(Constants.KEY.PENDING_ID, pendingId);
             dismissIntent.putExtra(Constants.KEY.ITEM_KEY, reminder);
             PendingIntent dismissPendingIntent = PendingIntent.getService(this, pendingId,
                     dismissIntent, PendingIntent.FLAG_CANCEL_CURRENT);
             //Snooze action intent
             Intent snoozeIntent = new Intent(this, ReminderService.class);
             snoozeIntent.setAction(Constants.ACTION.SNOOZE_ACTION);
+            snoozeIntent.putExtra(Constants.KEY.PENDING_ID, pendingId);
             snoozeIntent.putExtra(Constants.KEY.ITEM_KEY, reminder);
             PendingIntent snoozePendingIntent = PendingIntent.getService(this, pendingId,
                     snoozeIntent, PendingIntent.FLAG_CANCEL_CURRENT);
@@ -142,6 +144,7 @@ public class ReminderService extends Service {
         Intent service = new Intent(context, ReminderService.class);
         service.setAction(Constants.ACTION.START_SERVICE);
         service.putExtra(Constants.KEY.ITEM_KEY, reminder);
+        service.putExtra(Constants.KEY.PENDING_ID, pendingId);
         PendingIntent sender = PendingIntent.getService(context, 123, service, 0);
         AlarmManager alarmManager = (AlarmManager) context.
                 getSystemService(Context.ALARM_SERVICE);

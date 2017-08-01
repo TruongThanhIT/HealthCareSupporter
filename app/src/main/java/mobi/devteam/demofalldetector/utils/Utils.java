@@ -59,7 +59,7 @@ public class Utils {
 
             service.putExtra(Constants.KEY.PENDING_ID, myNotification.getPendingId());
             final PendingIntent sender = PendingIntent.getService(context, myNotification.getPendingId(), service, 0);
-            final Calendar rem = Calendar.getInstance();
+            Calendar rem = Calendar.getInstance();
             Calendar current = Calendar.getInstance();
 
             Calendar temp = Calendar.getInstance();
@@ -89,19 +89,7 @@ public class Utils {
                 alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, rem.getTimeInMillis(), AlarmManager.INTERVAL_DAY, sender);
             } else {
                 //SHEDULE FOR WEEKLY
-
-                rem.set(Calendar.DAY_OF_WEEK, dow);
-                rem.set(Calendar.HOUR_OF_DAY, hour);
-                rem.set(Calendar.MINUTE, minute);
-                rem.set(Calendar.SECOND, 0);
-
-                if (dow < current.get(Calendar.DAY_OF_WEEK)
-                        ||
-                        (dow == current.get(Calendar.DAY_OF_WEEK)
-                                && hour == current.get(Calendar.HOUR_OF_DAY)
-                                && minute < current.get(Calendar.MINUTE))
-                        )
-                    rem.add(Calendar.DAY_OF_WEEK, 1);
+                rem = myNotification.getReminderCalendarRelateCurrent(reminder.getRepeat_type());
 
                 alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, rem.getTimeInMillis(), AlarmManager.INTERVAL_DAY * 7, sender);
             }
@@ -142,14 +130,16 @@ public class Utils {
      * This method will compare 2 reminder calendar by type
      * Type Daily just compare hour and minute
      * Type Week will compare dow,hour,minute
+     * <p>
+     * Don't use this method to compare 2 Calendar , use #Calendar.compare instead
      *
      * @param reminderType {#ReminderType}
      * @param c1
      * @param c2
      * @return
      */
+    @Deprecated
     public static int compareReminderToCalendarByType(int reminderType, Calendar c1, Calendar c2) {
-
         if (reminderType == ReminderType.TYPE_DAILY || reminderType == ReminderType.TYPE_NEVER) {
             if (c1.get(Calendar.HOUR_OF_DAY) < c2.get(Calendar.HOUR_OF_DAY))
                 return -1;
@@ -188,5 +178,30 @@ public class Utils {
         }
 
         return -1;
+    }
+
+    /**
+     * This method will get the next calendar which nearest to current time
+     *
+     * @param reminder
+     * @return
+     */
+    public static Calendar getNextCalendarBaseCurrentTime(Reminder reminder) {
+        Calendar dateTime = Calendar.getInstance();
+        if (reminder.getAlarms() != null) {
+            dateTime = reminder.getAlarms().get(0).getReminderCalendarRelateCurrent(reminder.getRepeat_type());
+
+            for (int i = 1; i < reminder.getAlarms().size(); i++) {
+                MyNotification myNotification = reminder.getAlarms().get(i);
+                Calendar reminderCalendar = myNotification.getReminderCalendarRelateCurrent(reminder.getRepeat_type());
+
+                if (dateTime.compareTo(reminderCalendar) > 0) {
+                    //in this case all item in the array were sorted
+                    //this array is already sorted when add
+                    dateTime = reminderCalendar;
+                }
+            }
+        }
+        return dateTime;
     }
 }

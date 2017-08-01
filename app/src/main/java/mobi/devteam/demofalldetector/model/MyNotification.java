@@ -5,6 +5,8 @@ import android.os.Parcelable;
 
 import java.util.Calendar;
 
+import mobi.devteam.demofalldetector.utils.ReminderType;
+
 public class MyNotification implements Parcelable {
 
     public static final Creator<MyNotification> CREATOR = new Creator<MyNotification>() {
@@ -67,9 +69,54 @@ public class MyNotification implements Parcelable {
         this.enable = enable;
     }
 
-    public Calendar getReminderCalendar() {
+    /**
+     * This will return the clean method without relating anything
+     *
+     * @return
+     */
+    public Calendar getReminderCalendarClean() {
         Calendar instance = Calendar.getInstance();
         instance.setTimeInMillis(hourAlarm);
         return instance;
+    }
+
+    /**
+     * This method get the parse the reminder relative to the current time
+     * <p>
+     * reference: https://stackoverflow.com/questions/6722542/java-calendar-date-is-unpredictable-after-setting-day-of-week
+     * YEAR + MONTH + WEEK_OF_MONTH + DAY_OF_WEEK
+     *
+     * @return
+     */
+    public Calendar getReminderCalendarRelateCurrent(int reminderType) {
+        Calendar current = Calendar.getInstance();
+
+        Calendar reminder = Calendar.getInstance();
+        reminder.setTimeInMillis(hourAlarm);
+        int dow = reminder.get(Calendar.DAY_OF_WEEK);
+        int hour = reminder.get(Calendar.HOUR_OF_DAY);
+        int minute = reminder.get(Calendar.MINUTE);
+
+        reminder = (Calendar) current.clone();
+
+        if (reminderType == ReminderType.TYPE_WEEKLY) {
+            reminder.set(Calendar.DAY_OF_WEEK, dow);
+
+            if (reminder.compareTo(current) < 0) {
+                reminder.add(Calendar.WEEK_OF_MONTH, 1);
+            }
+
+            reminder.set(Calendar.HOUR_OF_DAY, hour);
+            reminder.set(Calendar.MINUTE, minute);
+        } else if (reminderType == ReminderType.TYPE_DAILY || reminderType == ReminderType.TYPE_NEVER) {
+            reminder.set(Calendar.HOUR_OF_DAY, hour);
+            reminder.set(Calendar.MINUTE, minute);
+
+            if (reminder.compareTo(current) < 0) {
+                reminder.add(Calendar.DAY_OF_MONTH, 1);
+            }
+        }
+
+        return reminder;
     }
 }

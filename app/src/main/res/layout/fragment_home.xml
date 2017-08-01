@@ -1,43 +1,118 @@
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_app"
+    android:background="@drawable/bg_sign_in"
     tools:context="mobi.devteam.demofalldetector.fragment.HomeFragment">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/home_enable_fall_detect"
-        android:textSize="@dimen/size_text_15"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="8dp"
-        android:layout_marginLeft="8dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:id="@+id/textView2" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="@dimen/size_2">
 
-    <Switch
-        android:id="@+id/sw_fall_detect"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="8dp"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/textView2"
-        android:layout_marginTop="0dp"
-        app:layout_constraintBottom_toBottomOf="@+id/textView2"
-        android:layout_marginBottom="0dp" />
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/size_2">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rcv_reminders"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="8dp"
-        android:requiresFadingEdge="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/sw_allow_find" />
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/size_2"
+                android:layout_marginStart="@dimen/size_2"
+                android:layout_marginTop="@dimen/size_5"
+                android:text="@string/home_enable_fall_detect"
+                android:textColor="@color/color_white"
+                android:textSize="@dimen/size_text_15"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Switch
+                android:id="@+id/sw_fall_detect"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:shadowColor="@color/color_white" />
+
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_gravity="bottom"
+            android:background="@color/color_white" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/size_2">
+
+            <TextView
+                android:id="@+id/textView4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/size_2"
+                android:layout_marginStart="@dimen/size_2"
+                android:layout_marginTop="@dimen/size_5"
+                android:text="@string/home_allow_tracking"
+                android:textColor="@color/color_white"
+                android:textSize="@dimen/size_text_15"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/sw_fall_detect" />
+
+            <Switch
+                android:id="@+id/sw_allow_find"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:shadowColor="@color/color_white"
+                app:layout_constraintVertical_bias="0.555" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_gravity="bottom"
+            android:background="@color/color_white" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:background="@drawable/bg_reminder"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textView16"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/reminder"
+                android:textColor="@color/color_white"
+                android:textSize="@dimen/size_text_20"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_marginTop="@dimen/size_5"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_gravity="bottom"
+                android:background="@color/color_white" />
+
+
+            <android.support.v7.widget.RecyclerView
+                android:layout_marginLeft="@dimen/size_5"
+                android:id="@+id/rcv_reminders"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="8dp" />
+
+        </LinearLayout>
+
+
+    </LinearLayout>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_add"
@@ -48,44 +123,15 @@
         android:layout_marginEnd="@dimen/fab_margin"
         android:layout_marginRight="@dimen/fab_margin"
         app:backgroundTint="@color/colorPrimary"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
         app:rippleColor="@color/fab_riper_color"
-        app:srcCompat="@android:drawable/ic_input_add" />
+        app:srcCompat="@drawable/img_plus" />
 
     <ProgressBar
         android:id="@+id/progressBarReminder"
         style="?android:attr/progressBarStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintBottom_toBottomOf="@+id/rcv_reminders"
-        app:layout_constraintVertical_bias="0.5"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp" />
-
-    <TextView
-        android:id="@+id/textView4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/home_allow_tracking"
-        android:textSize="@dimen/size_text_15"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/sw_fall_detect"
-        android:layout_marginLeft="8dp"
-        app:layout_constraintLeft_toLeftOf="parent" />
-
-    <Switch
-        android:id="@+id/sw_allow_find"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="@+id/textView4"
-        android:layout_marginTop="0dp"
-        app:layout_constraintBottom_toBottomOf="@+id/textView4"
-        android:layout_marginBottom="0dp"
-        android:layout_marginRight="8dp"
-        app:layout_constraintVertical_bias="0.555"
-        app:layout_constraintRight_toRightOf="parent" />
-</android.support.constraint.ConstraintLayout>
+        android:layout_gravity="center"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp" />
+</android.support.design.widget.CoordinatorLayout>
