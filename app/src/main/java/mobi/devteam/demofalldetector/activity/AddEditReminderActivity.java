@@ -343,6 +343,9 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
     private boolean checkDuplicateReminder(MyNotification n) {
         Calendar c1 = n.getReminderCalendarRelateCurrent(get_selected_reminder());
         for (MyNotification myNotification : myNotificationArrayList) {
+            if (n.getPendingId() == myNotification.getPendingId())
+                continue;
+
             Calendar c2 = myNotification.getReminderCalendarRelateCurrent(get_selected_reminder());
             if (c1.compareTo(c2) == 0) {
                 Toast.makeText(this, getString(R.string.duplicate_reminder), Toast.LENGTH_SHORT).show();
