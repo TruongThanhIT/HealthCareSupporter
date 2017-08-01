@@ -107,6 +107,8 @@ public class Utils {
         service.setAction(Constants.ACTION.START_SERVICE);
         service.putExtra(Constants.KEY.ITEM_KEY, reminder);
 
+        if(reminder.getAlarms() == null)
+            return;
         for (MyNotification myNotification : reminder.getAlarms()) {
             PendingIntent sender = PendingIntent.getService(mActivity, myNotification.getPendingId(), service,
                     0);

@@ -331,13 +331,13 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
                             myNotification.setPendingId(Utils.getRandomPendingId());
                             myNotification.setEnable(true);
 
+                            if (checkDuplicateReminder(myNotification)) {
+                                return;
+                            }
+
                             if (isEdit) {
                                 myNotificationArrayList.remove(mLong_click_selected);
                                 mLong_click_selected = -1;
-                            }
-
-                            if (checkDuplicateReminder(myNotification)) {
-                                return;
                             }
 
                             myNotificationArrayList.add(myNotification);
@@ -357,6 +357,9 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
     private boolean checkDuplicateReminder(MyNotification n) {
         Calendar c1 = n.getReminderCalendarRelateCurrent(get_selected_reminder());
         for (MyNotification myNotification : myNotificationArrayList) {
+            if (n.getPendingId() == myNotification.getPendingId())
+                continue;
+
             Calendar c2 = myNotification.getReminderCalendarRelateCurrent(get_selected_reminder());
             if (c1.compareTo(c2) == 0) {
                 Toast.makeText(this, getString(R.string.duplicate_reminder), Toast.LENGTH_SHORT).show();
@@ -477,16 +480,16 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
 //            return false;
 //        }
 
-//        if (myNotificationArrayList.size() == 0) {
-//            //should have at least 1 alarm time
-//            ScaleAnimation scaleAnimation = new ScaleAnimation(1, 1.5f, 1, 1.5f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-//            scaleAnimation.setDuration(500);
-//            scaleAnimation.setRepeatMode(Animation.REVERSE);
-//            scaleAnimation.setRepeatCount(3);
-//            Toast.makeText(this, R.string.ae_reminder_require_alarm_time, Toast.LENGTH_SHORT).show();
-//            btnAddAlarm.startAnimation(scaleAnimation);
-//            return false;
-//        }
+        if (myNotificationArrayList.size() == 0 && get_selected_reminder() != ReminderType.TYPE_NEVER) {
+            //should have at least 1 alarm time
+            ScaleAnimation scaleAnimation = new ScaleAnimation(1, 1.5f, 1, 1.5f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+            scaleAnimation.setDuration(500);
+            scaleAnimation.setRepeatMode(Animation.REVERSE);
+            scaleAnimation.setRepeatCount(3);
+            Toast.makeText(this, R.string.ae_reminder_require_alarm_time, Toast.LENGTH_SHORT).show();
+            btnAddAlarm.startAnimation(scaleAnimation);
+            return false;
+        }
 
         return true;
     }

@@ -73,41 +73,32 @@ import static mobi.devteam.demofalldetector.utils.Common.WAITING_FOR_WIFI_AUTO_C
 public class ConfirmFallActivity extends AppCompatActivity implements OnStateChangeListener {
 
     private static final String LOG_TAG = "FallActivity";
+    private static final String EMERGENCY_TEL = "01282808428";
     @BindView(R.id.imgFall)
     ImageView imgFall;
-
     @BindView(R.id.swipe_btn)
     SwipeButton swipe_btn;
-
     @BindView(R.id.txtHoldOn)
     TextView txtHoldOn;
-
     @BindView(R.id.txtConfirm)
     TextView txtConfirm;
-
-
     @BindView(R.id.imgBackground)
     ImageView imgBackground;
-
     private ArrayList<Relative> relativeArrayList;
     private int current_call_position = -1;
     private long time_key;
     private FirebaseUser mCurrentUser;
     private FirebaseDatabase mDatabase;
     private Vibrator vibrator;
-
     private FusedLocationProviderClient mFusedLocationClient;
     private LocationCallback mLocationCallback;
     private LocationRequest mLocationRequest;
-
     private Location mLocation;
     private TimerTask task_wait_for_timeout;
     private Handler handler;
     private MediaPlayer mMediaPlayer;
     private TimerTask task_detect_handoff_call;
     private boolean isCallEmergency;
-    private static final String EMERGENCY_TEL = "01282808428";
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -188,9 +179,9 @@ public class ConfirmFallActivity extends AppCompatActivity implements OnStateCha
         vibrator.vibrate(pattern, 0);
 
         //set volume here
-//        AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-//        int streamMaxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-//        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC,streamMaxVolume,0);
+        AudioManager audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+        int streamMaxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, streamMaxVolume, 0);
 
         mMediaPlayer = MediaPlayer.create(this, R.raw.fall_alarm);
         mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
