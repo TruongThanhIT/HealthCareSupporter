@@ -119,4 +119,5 @@
     <string name="ae_reminder_confirm_delete_time">Bạn có thật sự muốn xóa nhắc nhở này?</string>
     <string name="ae_reminder_require_alarm_time">Xin hãy thêm giờ thông báo</string>
     <string name="err_empty_note_reminder">Please type your note</string>
+    <string name="duplicate_reminder">This alarm time is exist</string>
 </resources>

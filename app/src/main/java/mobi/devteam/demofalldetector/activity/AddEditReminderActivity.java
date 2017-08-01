@@ -19,8 +19,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.ScaleAnimation;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
@@ -107,6 +105,7 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
 
     private AlarmAdapter alarmAdapter;
     private int mLong_click_selected = -1;
+    private int old_spiner_position = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -188,6 +187,15 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
             spinReminderRepeat.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    for (MyNotification n : myNotificationArrayList) {
+                        if (checkDuplicateReminder(n)) {
+                            spinReminderRepeat.setSelection(old_spiner_position);
+                            return;
+                        }
+                    }
+
+                    old_spiner_position = position;
+
                     alarmAdapter.setAlarmType(get_selected_reminder());
                     alarmAdapter.notifyDataSetChanged();
                 }
@@ -276,6 +284,10 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
                     myNotification.setPendingId(Utils.getRandomPendingId());
                     myNotification.setEnable(true);
 
+                    if (checkDuplicateReminder(myNotification)) {
+                        return;
+                    }
+
                     if (isEdit) {
                         myNotificationArrayList.remove(mLong_click_selected);
                         mLong_click_selected = -1;
@@ -308,6 +320,10 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
                                 mLong_click_selected = -1;
                             }
 
+                            if (checkDuplicateReminder(myNotification)) {
+                                return;
+                            }
+
                             myNotificationArrayList.add(myNotification);
                             sortTimeArray();
                             alarmAdapter.notifyDataSetChanged();
@@ -320,6 +336,18 @@ public class AddEditReminderActivity extends AppCompatActivity implements IPickR
                     .build()
                     .show();
         }
+    }
+
+    private boolean checkDuplicateReminder(MyNotification n) {
+        Calendar c1 = n.getReminderCalendarRelateCurrent(get_selected_reminder());
+        for (MyNotification myNotification : myNotificationArrayList) {
+            Calendar c2 = myNotification.getReminderCalendarRelateCurrent(get_selected_reminder());
+            if (c1.compareTo(c2) == 0) {
+                Toast.makeText(this, getString(R.string.duplicate_reminder), Toast.LENGTH_SHORT).show();
+                return true;
+            }
+        }
+        return false;
     }
 
     private void sortTimeArray() {
